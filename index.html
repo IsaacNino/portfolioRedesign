@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <title>Isaac Nino — Applied AI Technologist</title>
+  <meta name="description" content="Isaac Nino is an Applied AI Technologist and Creative Technologist building tools, workflows, and interactive experiences that turn complex ideas into usable systems." />
+  <meta name="author" content="Isaac Nino" />
+
+  <meta property="og:title" content="Isaac Nino — Applied AI Technologist" />
+  <meta property="og:description" content="Tools, workflows, and interactive experiences that turn complex ideas into usable systems." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.isaacnino.com/" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anonymous+Pro:wght@400;700&display=swap" rel="stylesheet" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            base: {
+              50: '#fafaf9',
+              100: '#f5f5f4',
+              200: '#e7e5e4',
+              300: '#d6d3d1',
+              400: '#a8a29e',
+              500: '#78716c',
+              600: '#57534e',
+              700: '#44403c',
+              800: '#292524',
+              900: '#1c1917',
+              950: '#0f0e0d'
+            },
+            accent: {
+              DEFAULT: '#7c9dbd',
+              light: '#9bb7d3',
+              dark: '#5f7f9e',
+              muted: 'rgba(124,157,189,0.12)'
+            },
+            warm: {
+              white: '#faf8f5',
+              cream: '#f5f0e8',
+              sand: '#e8e0d4'
+            }
+          },
+          fontFamily: {
+            serif: ['Anonymous Pro', 'monospace'],
+            sans: ['Anonymous Pro', 'monospace'],
+            mono: ['Anonymous Pro', 'monospace']
+          }
+        }
+      }
+    };
+  </script>
+  <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
+  <link rel="icon" href="./assets/favicon.svg?v=2" type="image/svg+xml" />
+  <link rel="shortcut icon" href="./assets/favicon.svg?v=2" type="image/svg+xml" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+
+<body class="grain">
+  <div class="loader" id="loader" aria-hidden="true">
+    <div class="text-center">
+      <p class="font-mono text-xs tracking-[0.3em] text-accent mb-6 uppercase">Isaac Nino</p>
+      <div class="loader-bar mx-auto"></div>
+    </div>
+  </div>
+
+  <div class="cursor-dot" id="cursorDot" aria-hidden="true"></div>
+  <div class="cursor-ring" id="cursorRing" aria-hidden="true"></div>
+
+  <div class="ambient-glow bg-accent" style="top: -200px; right: -200px;" aria-hidden="true"></div>
+  <div class="ambient-glow bg-accent" style="top: 50%; left: -300px;" aria-hidden="true"></div>
+
+  <nav class="fixed top-0 left-0 right-0 z-50 px-6 md:px-12 py-5" id="navbar">
+    <div class="max-w-7xl mx-auto flex items-center justify-between">
+      <a href="#hero" class="flex items-center gap-3 group" aria-label="Isaac Nino home">
+        <div class="w-8 h-8 rounded-full border border-accent/40 flex items-center justify-center group-hover:border-accent transition-colors duration-500">
+          <span class="font-serif text-accent text-sm">IN</span>
+        </div>
+        <span class="font-mono text-xs tracking-[0.2em] text-base-400 hidden sm:block group-hover:text-accent transition-colors duration-500">NINO</span>
+      </a>
+
+      <div class="hidden md:flex items-center gap-10">
+        <a href="#work" class="nav-link font-mono text-xs tracking-[0.15em] text-base-400 hover:text-warm-cream transition-colors duration-300 uppercase">Work</a>
+        <a href="#systems" class="nav-link font-mono text-xs tracking-[0.15em] text-base-400 hover:text-warm-cream transition-colors duration-300 uppercase">Approach</a>
+        <a href="#lab" class="nav-link font-mono text-xs tracking-[0.15em] text-base-400 hover:text-warm-cream transition-colors duration-300 uppercase">Perspective</a>
+        <a href="#about" class="nav-link font-mono text-xs tracking-[0.15em] text-base-400 hover:text-warm-cream transition-colors duration-300 uppercase">About</a>
+        <a href="#contact" class="nav-link font-mono text-xs tracking-[0.15em] text-base-400 hover:text-warm-cream transition-colors duration-300 uppercase">Contact</a>
+      </div>
+
+      <div class="flex items-center gap-4">
+        <div class="hidden md:flex items-center gap-2">
+          <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 status-pulse"></div>
+          <span class="font-mono text-[10px] tracking-wider text-base-500">AVAILABLE</span>
+        </div>
+
+        <button class="mobile-menu-button md:hidden" id="menuToggle" aria-label="Open menu" type="button">
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="mobile-menu fixed inset-0 z-40 bg-base-950/98 backdrop-blur-xl flex flex-col items-center justify-center gap-8" id="mobileMenu">
+    <button class="mobile-close-button absolute top-5 right-6" id="menuClose" aria-label="Close menu" type="button">
+      <span></span>
+      <span></span>
+    </button>
+    <a href="#work" class="mobile-link font-serif text-3xl text-warm-cream hover:text-accent transition-colors">Work</a>
+    <a href="#systems" class="mobile-link font-serif text-3xl text-warm-cream hover:text-accent transition-colors">Approach</a>
+    <a href="#lab" class="mobile-link font-serif text-3xl text-warm-cream hover:text-accent transition-colors">Perspective</a>
+    <a href="#about" class="mobile-link font-serif text-3xl text-warm-cream hover:text-accent transition-colors">About</a>
+    <a href="#contact" class="mobile-link font-serif text-3xl text-warm-cream hover:text-accent transition-colors">Contact</a>
+  </div>
+
+  <main>
+    <section id="hero" class="relative min-h-screen flex items-center px-6 md:px-12 pt-24 overflow-hidden">
+      <div class="hero-orbit" aria-hidden="true"></div>
+      <div class="hero-grid" aria-hidden="true"></div>
+
+      <div class="max-w-7xl mx-auto w-full relative z-10">
+        <div class="grid lg:grid-cols-12 gap-8 items-center">
+          <div class="lg:col-span-8">
+            <div class="reveal">
+              <p class="font-mono text-[12px] tracking-[0.4em] text-accent uppercase mb-6">Applied AI Technologist</p>
+            </div>
+           <h1 class="reveal reveal-delay-1">
+            <span class="hero-title-line block font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-warm-cream">
+                Ideas shaped
+            </span>
+
+            <span class="hero-title-line block font-serif italic text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-accent/80">
+                through design
+            </span>
+
+            <span class="hero-title-line block font-serif text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-warm-cream">
+                and technology
+            </span>
+          </h1>
+            <div class="reveal reveal-delay-2 mt-10 max-w-xl">
+              <p class="text-base-400 text-sm md:text-base leading-relaxed font-light">
+                I turn complex ideas into usable tools, systems, and interactive experiences — blending creativity, technology, and rapid prototyping to solve real problems.
+              </p>
+            </div>
+
+            <div class="reveal reveal-delay-3 flex flex-wrap gap-4 mt-10">
+              <a href="#work" class="btn-accent inline-flex items-center gap-3 px-7 py-3.5 bg-accent/10 border border-accent/30 rounded-full text-accent text-sm font-mono tracking-wider hover:border-accent/60 hover:bg-accent/15 transition-all duration-500">
+                <span>View Work</span>
+                <i data-lucide="arrow-down-right" class="w-3.5 h-3.5"></i>
+              </a>
+
+              <a href="#contact" class="inline-flex items-center gap-3 px-7 py-3.5 border border-base-700 rounded-full text-base-400 text-sm font-mono tracking-wider hover:border-base-500 hover:text-base-300 transition-all duration-500">
+                <span>Get in Touch</span>
+              </a>
+            </div>
+          </div>
+
+          <aside class="lg:col-span-4 hidden lg:flex flex-col items-end gap-6 pt-16">
+            <div class="reveal reveal-delay-4 text-right">
+              <p class="font-mono text-[10px] tracking-[0.3em] text-accent uppercase mb-2">Local Time</p>
+              <p class="font-mono text-sm text-base-400" id="localTime">--:--:--</p>
+            </div>
+
+            <div class="reveal reveal-delay-5 text-right">
+              <p class="font-mono text-[10px] tracking-[0.3em] text-accent uppercase mb-2">Based In</p>
+              <p class="font-mono text-sm text-base-400">Colorado</p>
+            </div>
+
+            <div class="reveal reveal-delay-5 text-right">
+              <p class="font-mono text-[10px] tracking-[0.3em] text-accent uppercase mb-2">Focus</p>
+              <p class="font-mono text-sm text-base-400">AI · Automation</p>
+            </div>
+          </aside>
+        </div>
+      </div>
+
+      <div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 reveal reveal-delay-5">
+        <span class="font-mono text-[9px] tracking-[0.3em] text-base-600 uppercase">Scroll</span>
+        <div class="w-px h-12 bg-gradient-to-b from-accent/40 to-transparent"></div>
+      </div>
+    </section>
+
+    <div class="relative py-8 overflow-hidden border-y border-base-800/50">
+      <div class="ticker flex whitespace-nowrap">
+        <span class="ticker-row" aria-hidden="true">
+        <span>Applied AI</span><b>✦</b>
+        <span>Creative Systems</span><b>✦</b>
+        <span>Rapid Prototyping</span><b>✦</b>
+        <span>Tool Building</span><b>✦</b>
+        <span>Interactive Experiences</span><b>✦</b>
+        <span>Local-First Software</span><b>✦</b>
+        <span>Physical + Digital</span><b>✦</b>
+        <span>Applied AI</span><b>✦</b>
+        <span>Creative Systems</span><b>✦</b>
+        <span>Rapid Prototyping</span><b>✦</b>
+        <span>Tool Building</span><b>✦</b>
+        <span>Interactive Experiences</span><b>✦</b>
+        <span>Local-First Software</span><b>✦</b>
+        <span>Physical + Digital</span><b>✦</b>
+        </span>
+      </div>
+    </div>
+
+    <section id="work" class="relative px-6 md:px-12 py-24 md:py-36">
+      <div class="max-w-7xl mx-auto">
+        <div class="flex items-end justify-between mb-16 reveal">
+          <div>
+            <p class="font-mono text-[10px] tracking-[0.4em] text-accent uppercase mb-3">Selected Work</p>
+            <h2 class="font-serif text-3xl md:text-5xl text-warm-cream">Recent Projects</h2>
+          </div>
+          <p class="hidden md:block font-mono text-[12px] tracking-wider text-accent uppercase">2025 - 2026</p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6 md:gap-8">
+          <article class="project-card group cursor-pointer reveal" data-project="intrust" tabindex="0" role="button" aria-label="Open InTrust project">
+            <div class="project-frame">
+              <div class="project-visual visual-intrust" role="img" aria-label="Abstract legal document automation interface"></div>
+              <div class="project-overlay absolute inset-0 bg-gradient-to-t from-base-950/90 via-base-950/20 to-transparent"></div>
+              <div class="project-icon">
+                <i data-lucide="scale"></i>
+              </div>
+              <div class="project-content">
+                <div class="project-meta">
+                  <span>Local-First Tooling</span><span>·</span><span>Automation</span>
+                </div>
+                <h3>InTrust</h3>
+                <p>Estate planning software for law firms — generating high-fidelity legal document packages from structured intake data.</p>
+                <div class="project-tags">
+                  <span>Tauri</span><span>React</span><span>Rust</span><span>DOCX</span>
+                </div>
+              </div>
+              <div class="project-arrow"><i data-lucide="arrow-up-right" class="w-4 h-4 text-accent"></i></div>
+            </div>
+          </article>
+
+          <article class="project-card group cursor-pointer reveal reveal-delay-1" data-project="postcard" tabindex="0" role="button" aria-label="Open CES AI Postcard Generator project">
+            <div class="project-frame">
+              <div class="project-visual visual-postcard" role="img" aria-label="Abstract CES postcard generator interface"></div>
+              <div class="project-overlay absolute inset-0 bg-gradient-to-t from-base-950/90 via-base-950/20 to-transparent"></div>
+              <div class="project-icon">
+                <i data-lucide="zap"></i>
+              </div>
+              <div class="project-content">
+                <div class="project-meta">
+                  <span>Generative Interface</span><span>·</span><span>Experiential Web</span>
+                </div>
+                <h3>CES AI Postcard Generator</h3>
+                <p>A mobile-first interactive postcard concept using prompt-driven personalization to turn event identity into AI-generated visuals.</p>
+                <div class="project-tags">
+                  <span>AI Image</span><span>UX Flow</span><span>Tailwind</span><span>Prototype</span>
+                </div>
+              </div>
+              <div class="project-arrow"><i data-lucide="arrow-up-right" class="w-4 h-4 text-accent"></i></div>
+            </div>
+          </article>
+
+          <article class="project-card group cursor-pointer reveal" data-project="gallery" tabindex="0" role="button" aria-label="Open Dell Foundation Digital Gallery project">
+            <div class="project-frame">
+              <div class="project-visual visual-gallery" role="img" aria-label="Abstract digital gallery environment"></div>
+              <div class="project-overlay absolute inset-0 bg-gradient-to-t from-base-950/90 via-base-950/20 to-transparent"></div>
+              <div class="project-icon">
+                <i data-lucide="monitor-play"></i>
+              </div>
+              <div class="project-content">
+                <div class="project-meta">
+                  <span>Immersive Display</span><span>·</span><span>Storytelling System</span>
+                </div>
+                <h3>Dell Digital Gallery</h3>
+                <p>A large-format interactive gallery experience blending story, media, and motion for a foundation-facing digital museum environment.</p>
+                <div class="project-tags">
+                  <span>Interactive</span><span>JS</span><span>Vimeo</span><span>Large Display</span>
+                </div>
+              </div>
+              <div class="project-arrow"><i data-lucide="arrow-up-right" class="w-4 h-4 text-accent"></i></div>
+            </div>
+          </article>
+
+          <article class="project-card group cursor-pointer reveal reveal-delay-1" data-project="dogwood" tabindex="0" role="button" aria-label="Open Dogwood Counseling Website project">
+            <div class="project-frame">
+              <div class="project-visual visual-dogwood" role="img" aria-label="Abstract calm therapist website interface"></div>
+              <div class="project-overlay absolute inset-0 bg-gradient-to-t from-base-950/90 via-base-950/20 to-transparent"></div>
+              <div class="project-icon">
+                <i data-lucide="leaf"></i>
+              </div>
+              <div class="project-content">
+                <div class="project-meta">
+                  <span>Human-Centered Web</span><span>·</span><span>Client Site</span>
+                </div>
+                <h3>Dogwood Counseling Website</h3>
+                <p>A calm, trust-centered web presence for a Boulder therapist — built around clarity, warmth, accessibility, and local discoverability.</p>
+                <div class="project-tags">
+                  <span>Web Design</span><span>SEO</span><span>Tailwind</span><span>Client Work</span>
+                </div>
+              </div>
+              <div class="project-arrow"><i data-lucide="arrow-up-right" class="w-4 h-4 text-accent"></i></div>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <div class="hr-accent mx-6 md:mx-12 max-w-7xl md:mx-auto"></div>
+
+    <section id="systems" class="relative px-6 md:px-12 py-24 md:py-36">
+      <div class="max-w-7xl mx-auto">
+        <div class="grid lg:grid-cols-12 gap-12 lg:gap-20">
+          <div class="lg:col-span-5 reveal">
+            <p class="font-mono text-[12px] tracking-[0.4em] text-accent uppercase mb-3">How I Work</p>
+            <h2 class="font-serif text-2xl md:text-4xl text-warm-cream mb-6">Creative thinking grounded in technical execution</h2>
+            <p class="text-base-400 font-light leading-relaxed">
+              My work blends creative direction, technical systems, and rapid prototyping — helping transform complex ideas into clear, functional experiences people can actually use.
+            </p>
+          </div>
+
+          <div class="lg:col-span-7 grid sm:grid-cols-2 gap-4">
+            <div class="system-card reveal"><span>01</span><h3>AI + Automation</h3><p>Designing practical AI and automation pipelines that turn messy creative or operational needs into repeatable systems.</p></div>
+            <div class="system-card reveal reveal-delay-1"><span>02</span><h3>Local-First Tooling</h3><p>Building desktop and browser-based tools where control, privacy, and reliability matter.</p></div>
+            <div class="system-card reveal reveal-delay-2"><span>03</span><h3>Creative Technology</h3><p>Blending design, interaction, and engineering into cohesive digital experiences and tools.</p></div>
+            <div class="system-card reveal reveal-delay-3"><span>04</span><h3>Physical + Digital Bridges</h3><p>Connecting web, NFC, QR, AR, and real-world interaction into cohesive experiences.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="hr-accent mx-6 md:mx-12 max-w-7xl md:mx-auto"></div>
+
+    <section id="lab" class="relative px-6 md:px-12 py-24 md:py-36">
+      <div class="max-w-7xl mx-auto">
+        <div class="flex items-end justify-between mb-12 reveal">
+          <div>
+            <p class="font-mono text-[12px] tracking-[0.4em] text-accent uppercase mb-3">My Perspective</p>
+            <h2 class="font-serif text-2xl md:text-5xl text-warm-cream">Thoughts shaped through work and iteration</h2>
+          </div>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-5">
+          <article class="lab-card reveal">
+            <p class="lab-date">Field Note 001</p>
+            <h3>The AI landscape changes quickly, learning is part of the process.</h3>
+            <p>New tools, models, and workflows appear constantly. The advantage is not memorizing a single platform — it’s developing the ability to adapt, experiment, and recognize where technology becomes genuinely useful.</p>
+          </article>
+
+          <article class="lab-card reveal reveal-delay-1">
+            <p class="lab-date">Field Note 002</p>
+            <h3>AI is not a single discipline, it's an array of powerful tools.</h3>
+            <p>Automation, image generation, local tooling, workflows, agents, physical systems — each opens different possibilities. The challenge is understanding which approach actually fits the problem in front of you.</p>
+          </article>
+
+          <article class="lab-card reveal reveal-delay-2">
+            <p class="lab-date">Field Note 003</p>
+            <h3>Technical fluency is becoming a form of creative leverage.</h3>
+            <p>People who can think creatively while understanding systems, tools, and technology will have an increasing ability to shape ideas into reality. The future feels most exciting when technology expands human capability instead of replacing it.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <div class="hr-accent mx-6 md:mx-12 max-w-7xl md:mx-auto"></div>
+
+    <section id="about" class="relative px-6 md:px-12 py-24 md:py-36 overflow-hidden">
+      <div class="ambient-glow bg-accent" style="bottom: -200px; right: -100px;" aria-hidden="true"></div>
+
+      <div class="max-w-7xl mx-auto">
+        <div class="grid lg:grid-cols-12 gap-12 lg:gap-20 items-center">
+          <div class="lg:col-span-5 reveal">
+            <div class="portrait-card">
+              <img
+                src="./assets/images/siteShot.webp"
+                alt="Portrait of Isaac Nino"
+                class="portrait-image"
+              />
+            <div class="portrait-overlay"></div>
+            <div class="portrait-lines"></div>
+            </div>
+          </div>
+
+          <div class="lg:col-span-7">
+            <div class="reveal">
+              <p class="font-mono text-[12px] tracking-[0.4em] text-accent uppercase mb-3">About</p>
+              <h2 class="font-serif text-3xl md:text-5xl text-warm-cream mb-8">I work at the intersection of <span class="italic text-accent/80">systems</span> and <span class="italic text-accent/80">sense-making</span></h2>
+            </div>
+
+            <div class="space-y-5 reveal reveal-delay-1">
+              <p class="text-base-400 font-light leading-relaxed">
+                I’m Isaac Nino — an Applied AI Technologist and Creative Technologist based in Colorado. I build tools, workflows, and interactive experiences that help people use technology with more clarity, confidence, and intention.
+              </p>
+              <p class="text-base-400 font-light leading-relaxed">
+                My work moves across AI workflows, local-first software, immersive web experiences, automation, and physical/digital systems — always with a focus on making complex ideas feel practical and human.
+              </p>
+              <p class="text-base-400 font-light leading-relaxed">
+               I care most about the translation layer: turning technical potential into experiences that feel intuitive, useful, and grounded in real-world needs.
+              </p>
+            </div>
+
+            <div class="grid sm:grid-cols-2 gap-8 mt-12 reveal reveal-delay-2">
+              <div>
+                <p class="font-mono text-[10px] tracking-[0.3em] text-accent uppercase mb-4">Capabilities</p>
+                <ul class="cap-list">
+                  <li>Creative Systems Strategy</li>
+                  <li>Rapid Prototyping & Validation</li>
+                  <li>Cross-Functional Product Thinking</li>
+                  <li>Applied AI & Workflow Design</li>
+                </ul>
+              </div>
+
+              <div>
+                <p class="font-mono text-[10px] tracking-[0.3em] text-accent uppercase mb-4">Technical Practice</p>
+                <ul class="cap-list">
+                  <li>Experience-Focused Web Development</li>
+                  <li>Local Software & Workflow Architecture</li>
+                  <li>Generative AI Systems</li>
+                  <li>Interactive & Physical Prototyping</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="hr-accent mx-6 md:mx-12 max-w-7xl md:mx-auto"></div>
+
+  <section id="contact" class="relative px-6 md:px-12 py-24 md:py-36">
+    <div class="max-w-7xl mx-auto">
+        <div class="grid lg:grid-cols-12 gap-12 lg:gap-20 items-start">
+        <div class="lg:col-span-6 reveal">
+            <p class="font-mono text-[12px] tracking-[0.4em] text-accent uppercase mb-3">Contact</p>
+
+            <h2 class="font-serif text-4xl md:text-6xl text-warm-cream leading-[0.95]">
+            Interested in building something <span class="italic text-accent/80">useful</span>?
+            </h2>
+
+            <p class="contact-intro">
+            I’m always interested in thoughtful projects, creative technology, AI-enabled systems, and collaborative work that bridges ideas with real execution. Whether it’s prototyping a new concept, shaping a workflow, or building something from the ground up — I enjoy helping turn ambitious ideas into usable experiences.
+            </p>
+
+            <div class="contact-mini-links">
+            <a href="mailto:isaacdavidnino@gmail.com">Email Me Directly</a>
+            <a href="https://www.linkedin.com/in/isaacdnino" target="_blank" rel="noreferrer">LinkedIn</a>
+            <a href="https://github.com/isaacnino" target="_blank" rel="noreferrer">GitHub</a>
+            </div>
+        </div>
+
+        <div class="lg:col-span-6 reveal reveal-delay-2">
+            <form class="contact-form space-y-7" id="contactForm" action="https://formspree.io/f/xqenwere" method="POST">
+            <div>
+                <label class="contact-label" for="name">Name</label>
+                <input id="name" name="name" type="text" class="contact-input" placeholder="Your name" required />
+            </div>
+
+            <div>
+                <label class="contact-label" for="email">Email</label>
+                <input id="email" name="email" type="email" class="contact-input" placeholder="your@email.com" required />
+            </div>
+
+            <div>
+                <label class="contact-label" for="message">What are you building?</label>
+                <textarea id="message" name="message" rows="5" class="contact-input resize-none" placeholder="What are you building, exploring, or trying to solve?" required></textarea>
+            </div>
+
+            <button type="submit" class="btn-accent group inline-flex items-center gap-3 px-8 py-4 bg-accent/10 border border-accent/30 rounded-full text-accent text-sm font-mono tracking-wider hover:border-accent/60 hover:bg-accent/15 transition-all duration-500">
+                <span>Start a Conversation</span>
+                <i data-lucide="arrow-right" class="w-4 h-4 group-hover:translate-x-1 transition-transform duration-300"></i>
+            </button>
+              <p class="form-status" id="formStatus" aria-live="polite"></p>
+            </form>
+        </div>
+        </div>
+    </div>
+  </section>
+
+    <footer class="relative px-6 md:px-12 py-12 border-t border-base-800/50">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+        <div class="flex items-center gap-3">
+            <div class="w-6 h-6 rounded-full border border-accent/30 flex items-center justify-center">
+            <span class="font-serif text-accent text-[10px]">IN</span>
+            </div>
+            <span class="font-mono text-[10px] tracking-[0.2em] text-accent">© <span id="year"></span> Isaac Nino</span>
+        </div>
+
+        <p class="font-mono text-[10px] tracking-[0.2em] text-accent">Ideas shaped through design and technology.</p>
+
+        <div class="flex items-center gap-1">
+            <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 status-pulse"></div>
+            <span class="font-mono text-[10px] tracking-wider text-accent">Open to collaboration</span>
+        </div>
+        </div>
+    </footer>
+
+    <div class="project-modal" id="projectModal" aria-hidden="true">
+    <div class="project-modal-backdrop" data-close-modal></div>
+
+    <div class="project-modal-panel" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <button class="project-modal-close" type="button" aria-label="Close project" data-close-modal>
+        <span></span>
+        <span></span>
+        </button>
+
+        <div class="project-modal-visual" id="modalVisual"></div>
+
+        <div class="project-modal-body">
+        <div class="project-modal-kicker" id="modalKicker">Project</div>
+        <h2 id="modalTitle">Project Title</h2>
+        <p class="project-modal-summary" id="modalSummary"></p>
+
+        <div class="project-modal-grid">
+            <div>
+            <p class="modal-label">Role</p>
+            <p id="modalRole"></p>
+            </div>
+
+            <div>
+            <p class="modal-label">Focus</p>
+            <p id="modalFocus"></p>
+            </div>
+
+            <div>
+            <p class="modal-label">Tools</p>
+            <p id="modalTools"></p>
+            </div>
+
+            <div>
+            <p class="modal-label">Status</p>
+            <p id="modalStatus"></p>
+            </div>
+        </div>
+
+        <div class="project-modal-notes">
+            <div>
+            <p class="modal-label">Problem</p>
+            <p id="modalProblem"></p>
+            </div>
+
+            <div>
+            <p class="modal-label">Approach</p>
+            <p id="modalApproach"></p>
+            </div>
+
+            <div>
+            <p class="modal-label">Outcome</p>
+            <p id="modalOutcome"></p>
+            </div>
+            <div class="project-modal-actions" id="modalActions"></div>
+        </div>
+        </div>
+    </div>
+    </div>
+  
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="./script.js"></script>
+</body>
+</html>
