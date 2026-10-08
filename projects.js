@@ -1,19 +1,27 @@
-const track = document.getElementById('projectTrack');
-const controls = document.getElementById('projectControls');
-const previous = document.getElementById('projectPrevious');
-const next = document.getElementById('projectNext');
-const status = document.getElementById('projectStatus');
-const footnote = document.getElementById('projectFootnote');
+import { motionEnabled, onMotionChange } from './motion.js';
+const rowsElement = document.getElementById('projectRows');
+const hint = document.getElementById('galleryHint');
 const loadState = document.getElementById('projectLoadState');
 const retry = document.getElementById('projectRetry');
 const dialog = document.getElementById('projectDialog');
 const dialogContent = document.getElementById('projectDialogContent');
 const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
 const placeholder = './assets/projects/preview-pending.svg';
-let cards = [];
-let activeIndex = 0;
-let scrollTimer;
 let dialogTrigger;
+let rows = [];
+let idleUntil = 0;
+let keyboardFocus = false;
+let pressed = false;
+let galleryVisible = false;
+let previousFrame = 0;
+let speedRamp = 0;
+const IDLE_DELAY = 5000;
+const DRIFT_SPEED = 16;
+
+function interact() {
+  idleUntil = performance.now() + IDLE_DELAY;
+  speedRamp = 0;
+}
 
 function element(tag, className, text) {
   const node = document.createElement(tag);
@@ -68,6 +76,7 @@ function projectLink(label, value, project) {
 }
 
 function openDetails(project, trigger) {
+  interact();
   dialogTrigger = trigger;
   dialogContent.replaceChildren();
   dialogContent.append(projectImage(project, true));
@@ -108,10 +117,13 @@ dialog.addEventListener('click', (event) => {
 dialog.addEventListener('close', () => {
   document.documentElement.classList.remove('dialog-open');
   dialogTrigger?.focus({ preventScroll: true });
+  interact();
 });
 
-function cardFor(project, index) {
+function cardFor(project, index, copy = false) {
   const item = element('li', 'showcase-item');
+  item.dataset.projectId = project.id;
+  if (copy) { item.dataset.copy = ''; item.setAttribute('aria-hidden', 'true'); }
   const card = element('article', 'showcase-card');
   const media = element('div', 'showcase-media');
   media.append(projectImage(project, index === 0));
@@ -122,13 +134,7 @@ function cardFor(project, index) {
   previewLabel.setAttribute('aria-hidden', 'true');
   media.append(previewLabel);
   const body = element('div', 'showcase-body');
-  body.append(element('p', 'studio-eyebrow', project.category), element('h3', '', project.title), element('p', 'showcase-summary', project.summary));
-  if (project.tags?.length) {
-    const tags = element('ul', 'showcase-tags');
-    tags.setAttribute('aria-label', 'Project tags');
-    project.tags.forEach(tag => tags.append(element('li', '', tag)));
-    body.append(tags);
-  }
+  body.append(element('p', 'studio-eyebrow', project.category), element('h3', '', project.title));
   const actions = element('div', 'project-actions');
   const caseStudy = projectLink('Explore project', project.caseStudyUrl, project);
   if (caseStudy) {
@@ -138,7 +144,10 @@ function cardFor(project, index) {
     button.type = 'button';
     button.setAttribute('aria-label', `Explore project: ${project.title}`);
     button.setAttribute('aria-haspopup', 'dialog');
-    button.addEventListener('click', () => openDetails(project, button));
+    button.addEventListener('click', () => {
+      const original = rows.flatMap(row => row.cards).find(card => card.dataset.projectId === project.id);
+      openDetails(project, copy ? original.querySelector('button.project-action') : button);
+    });
     actions.append(button);
   }
   const live = projectLink('Visit live site', project.liveUrl, project);
@@ -146,63 +155,165 @@ function cardFor(project, index) {
   if (actions.children.length) body.append(actions);
   card.append(media, body);
   item.append(card);
+  if (copy) item.querySelectorAll('a, button').forEach(action => {
+    action.tabIndex = -1;
+    // Copies are visual loop continuations, never extra keyboard stops.
+    action.addEventListener('pointerdown', event => {
+      if (event.pointerType === 'mouse') event.preventDefault();
+    });
+  });
   return item;
 }
 
-function cardLeft(card) {
-  return card.getBoundingClientRect().left - track.getBoundingClientRect().left + track.scrollLeft;
+function cardLeft(row, card) {
+  return card.getBoundingClientRect().left - row.track.getBoundingClientRect().left + row.track.scrollLeft;
 }
 
-function updateControls() {
-  if (!cards.length) return;
-  activeIndex = cards.reduce((best, card, index) => Math.abs(cardLeft(card) - track.scrollLeft) < Math.abs(cardLeft(cards[best]) - track.scrollLeft) ? index : best, 0);
-  const overflowing = track.scrollWidth > track.clientWidth + 2;
-  controls.hidden = !overflowing;
-  footnote.hidden = !overflowing;
-  previous.disabled = track.scrollLeft < 2;
-  next.disabled = track.scrollLeft >= track.scrollWidth - track.clientWidth - 2;
-  const text = `Project ${activeIndex + 1} of ${cards.length}`;
-  if (status.textContent !== text) status.textContent = text;
+function measure(row) {
+  const { track, cards } = row;
+  const oldCycle = row.cycle;
+  const phase = oldCycle ? ((track.scrollLeft - row.start) % oldCycle + oldCycle) % oldCycle / oldCycle : 0;
+  row.start = cardLeft(row, cards[0]);
+  row.step = cards[0].getBoundingClientRect().width + (parseFloat(getComputedStyle(track).columnGap) || 0);
+  row.cycle = row.step * cards.length;
+  track.scrollLeft = motion.matches ? Math.min(track.scrollLeft, track.scrollWidth - track.clientWidth) : row.start + phase * row.cycle;
+  row.position = track.scrollLeft;
+  row.controls.hidden = track.scrollWidth <= track.clientWidth + 2;
 }
 
-function goTo(index, animate = true) {
-  if (!cards.length) return;
-  const target = Math.max(0, Math.min(cards.length - 1, index));
-  track.scrollTo({ left: cardLeft(cards[target]), behavior: animate && !motion.matches ? 'smooth' : 'instant' });
-  activeIndex = target;
+function navigate(row, direction) {
+  interact();
+  if (!motion.matches && row.cards.length > 1) {
+    // Normalize into the middle copy without changing what is visible.
+    row.track.scrollLeft = row.start + ((row.track.scrollLeft - row.start) % row.cycle + row.cycle) % row.cycle;
+  }
+  row.track.scrollBy({ left: direction * row.step, behavior: motion.matches ? 'instant' : 'smooth' });
 }
 
-previous.addEventListener('click', () => goTo(activeIndex - 1));
-next.addEventListener('click', () => goTo(activeIndex + 1));
-track.addEventListener('keydown', (event) => {
-  if (event.target !== track || event.altKey || event.ctrlKey || event.metaKey) return;
-  const keys = { ArrowLeft: activeIndex - 1, ArrowRight: activeIndex + 1, Home: 0, End: cards.length - 1 };
-  if (!(event.key in keys)) return;
-  event.preventDefault();
-  goTo(keys[event.key]);
-});
-track.addEventListener('focusin', (event) => {
-  const card = event.target.closest('.showcase-item');
-  if (!card) return;
-  const rect = card.getBoundingClientRect();
-  const viewport = track.getBoundingClientRect();
-  if (rect.left < viewport.left - 1 || rect.right > viewport.right + 1) goTo(cards.indexOf(card), false);
-});
-track.addEventListener('scroll', () => {
-  clearTimeout(scrollTimer);
-  scrollTimer = setTimeout(updateControls, 120);
-}, { passive: true });
+function createRow(projects, rowIndex, indexOffset) {
+  const section = element('div', 'project-row');
+  const toolbar = element('div', 'showcase-toolbar');
+  toolbar.append(element('p', 'project-row-label', `${String(rowIndex + 1).padStart(2, '0')} / Selected work`));
+  const controls = element('div', 'showcase-buttons');
+  const track = element('ul', 'project-track');
+  track.id = rowIndex === 0 ? 'projectTrack' : 'projectTrackBottom';
+  track.tabIndex = 0;
+  track.setAttribute('aria-label', `${rowIndex ? 'Bottom' : 'Top'} project row`);
+  track.setAttribute('aria-describedby', 'projectHelp');
+  track.classList.toggle('single-project', projects.length === 1);
+  const row = { track, controls, cards: [], start: 0, cycle: 0, step: 0, position: 0 };
+  for (const [direction, label, glyph] of [[-1, 'Previous', '←'], [1, 'Next', '→']]) {
+    const button = element('button', '', glyph);
+    button.type = 'button';
+    button.setAttribute('aria-label', `${label} project in ${rowIndex ? 'bottom' : 'top'} row`);
+    button.setAttribute('aria-controls', track.id);
+    button.addEventListener('click', () => navigate(row, direction));
+    controls.append(button);
+  }
+  toolbar.append(controls);
+  const groups = projects.length > 1 ? 5 : 1;
+  for (let group = 0; group < groups; group++) {
+    const copy = group !== Math.floor(groups / 2);
+    projects.forEach((project, index) => {
+      const card = cardFor(project, index + indexOffset, copy);
+      track.append(card);
+      if (!copy) row.cards.push(card);
+    });
+  }
+  track.addEventListener('keydown', event => {
+    if (event.target !== track || event.altKey || event.ctrlKey || event.metaKey) return;
+    if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+    event.preventDefault();
+    interact();
+    if (event.key.startsWith('Arrow')) navigate(row, event.key === 'ArrowLeft' ? -1 : 1);
+    else track.scrollTo({ left: cardLeft(row, event.key === 'Home' ? row.cards[0] : row.cards.at(-1)), behavior: motion.matches ? 'instant' : 'smooth' });
+  });
+  track.addEventListener('focusin', event => {
+    const card = event.target.closest('.showcase-item');
+    if (!card) return;
+    if (card.hasAttribute('data-copy')) {
+      const original = row.cards.find(item => item.dataset.projectId === card.dataset.projectId);
+      const actionIndex = [...card.querySelectorAll('.project-action')].indexOf(event.target);
+      original.querySelectorAll('.project-action')[actionIndex]?.focus({ preventScroll: true });
+      return;
+    }
+    const rect = card.getBoundingClientRect();
+    const viewport = track.getBoundingClientRect();
+    if (rect.left < viewport.left || rect.right > viewport.right) track.scrollTo({ left: cardLeft(row, card), behavior: 'instant' });
+  });
+  let drag;
+  let suppressClick = false;
+  track.addEventListener('pointerdown', event => {
+    pressed = true;
+    if (event.pointerType === 'mouse' && event.button === 0) drag = { x: event.clientX, left: track.scrollLeft, moved: false };
+  });
+  track.addEventListener('pointermove', event => {
+    if (!drag) return;
+    const distance = drag.x - event.clientX;
+    if (Math.abs(distance) > 6) {
+      drag.moved = true;
+      track.setPointerCapture(event.pointerId);
+      track.classList.add('is-dragging');
+    }
+    if (drag.moved) { event.preventDefault(); track.scrollLeft = drag.left + distance; }
+  });
+  const release = () => {
+    if (drag?.moved) { suppressClick = true; setTimeout(() => { suppressClick = false; }, 0); }
+    drag = null;
+    pressed = false;
+    track.classList.remove('is-dragging');
+    interact();
+  };
+  track.addEventListener('pointerup', release);
+  track.addEventListener('pointercancel', release);
+  track.addEventListener('lostpointercapture', release);
+  window.addEventListener('pointerup', () => { if (drag || pressed) release(); });
+  track.addEventListener('dragstart', event => event.preventDefault());
+  track.addEventListener('click', event => {
+    if (suppressClick) { event.preventDefault(); event.stopImmediatePropagation(); }
+  }, true);
+  track.addEventListener('scroll', () => {
+    // Extend the idle period through native touch momentum and arrow scrolling.
+    if (performance.now() < idleUntil) interact();
+  }, { passive: true });
+  section.append(toolbar, track);
+  rowsElement.append(section);
+  row.resize = new ResizeObserver(() => measure(row));
+  row.resize.observe(track);
+  return row;
+}
 
-// A trailing space allows the final card to align with the first card's position.
-// It never creates an extra slide or duplicates project links.
-const resize = new ResizeObserver(() => {
-  if (!cards.length) return;
-  const gap = parseFloat(getComputedStyle(track).columnGap) || 0;
-  track.style.setProperty('--end-space', `${Math.max(0, track.clientWidth - cards.at(-1).offsetWidth - gap)}px`);
-  goTo(activeIndex, false);
-  updateControls();
+rowsElement.addEventListener('pointerenter', interact);
+rowsElement.addEventListener('pointermove', interact);
+rowsElement.addEventListener('pointerleave', interact);
+rowsElement.addEventListener('pointerdown', () => { keyboardFocus = false; interact(); });
+rowsElement.addEventListener('wheel', interact, { passive: true });
+rowsElement.addEventListener('keydown', () => { keyboardFocus = true; interact(); });
+rowsElement.addEventListener('focusin', event => { keyboardFocus = event.target.matches(':focus-visible'); interact(); });
+rowsElement.addEventListener('focusout', event => { if (!rowsElement.contains(event.relatedTarget)) { keyboardFocus = false; interact(); } });
+new IntersectionObserver(entries => { galleryVisible = entries[0].isIntersecting; }, { threshold: .05 }).observe(rowsElement);
+onMotionChange(() => {
+  rows.forEach(measure);
+  interact();
+  hint.textContent = motion.matches ? 'Swipe or use the arrows to explore' : !motionEnabled() ? 'Motion off · Drag, swipe, or use the arrows to explore' : 'Drag, swipe, or use the arrows · Drift returns after 5 seconds idle';
 });
-resize.observe(track);
+
+function animate(now) {
+  const delta = Math.min((now - (previousFrame || now)) / 1000, .05);
+  previousFrame = now;
+  const moving = motionEnabled() && galleryVisible && !pressed && !keyboardFocus && now >= idleUntil && !document.querySelector('dialog[open]');
+  if (moving) speedRamp = Math.min(1, speedRamp + delta / .8);
+  else speedRamp = 0;
+  rows.forEach((row, index) => {
+    if (!moving || row.cards.length < 2 || !row.cycle) { row.position = row.track.scrollLeft; return; }
+    row.position += (index ? -1 : 1) * DRIFT_SPEED * delta * speedRamp;
+    if (row.position < row.start - row.cycle / 2) row.position += row.cycle;
+    if (row.position > row.start + row.cycle / 2) row.position -= row.cycle;
+    row.track.scrollLeft = row.position;
+  });
+  requestAnimationFrame(animate);
+}
+requestAnimationFrame(animate);
 
 function validate(projects) {
   if (!Array.isArray(projects)) throw new Error('Project content must be an array.');
@@ -235,12 +346,14 @@ async function loadProjects() {
       document.querySelectorAll('a[href="#work"]').forEach(link => { link.hidden = true; });
       return;
     }
-    track.replaceChildren(...projects.map(cardFor));
-    cards = [...track.children];
-    track.classList.toggle('single-project', cards.length === 1);
-    track.hidden = false;
+    rows.forEach(row => row.resize.disconnect());
+    rowsElement.replaceChildren();
+    rowsElement.hidden = false;
+    const split = Math.ceil(projects.length / 2);
+    rows = [createRow(projects.slice(0, split), 0, 0)];
+    if (projects.length > 1) rows.push(createRow(projects.slice(split), 1, split));
+    rows.forEach(measure);
     loadState.hidden = true;
-    requestAnimationFrame(updateControls);
   } catch (error) {
     document.getElementById('projectLoadMessage').textContent = 'Selected work couldn’t load. Please try again, or get in touch below.';
     retry.hidden = false;

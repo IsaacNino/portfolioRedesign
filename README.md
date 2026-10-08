@@ -1,9 +1,11 @@
 # Isaac Nino — portfolio
 
-A static HTML/CSS/JavaScript portfolio. The Direction B prototype lives on
-`codex/portfolio-redesign`: a dark, cinematic presentation with a responsive,
-user-controlled project showcase. Production deployment requires an explicit
-request; this branch is for review.
+A static HTML/CSS/JavaScript portfolio. This motion experiment lives on
+`codex/portfolio-motion-experiment`, based on `codex/portfolio-redesign`.
+It adds opposing project rows, a rotating contact invitation, a capabilities
+banner, and a light animated atmosphere. Production deployment requires an
+explicit request; this branch is for review. The agreed direction is recorded
+in [EXPERIMENT_BRIEF.md](EXPERIMENT_BRIEF.md).
 
 ## Run locally
 
@@ -25,7 +27,8 @@ remain external dependencies inherited from the original site.
 
 All project content, including the existing detail stories, lives in
 [`data/projects.json`](data/projects.json). The order of the array is the display
-order. Neither `index.html` nor the rendering code needs editing for content changes.
+order: the first half goes in the top row, and the remainder in the bottom row.
+Neither `index.html` nor the rendering code needs editing for content changes.
 
 1. Put an authentic project capture in `assets/projects/`. A WebP around
    1600 × 1000 pixels is a useful starting point. Optimize the file before adding it.
@@ -54,30 +57,42 @@ With no links or details, the project remains an informative card without empty
 buttons. Links use ordinary browser navigation, including the option to open in
 another tab. All displayed text is inserted as text, not HTML.
 
-The current project images are **clearly labeled placeholders**. Replace them
+The current project images are **clearly labeled, uniformly neutral placeholders**.
+All tiles use the same charcoal surface; project imagery supplies the color.
+Replace them
 with genuine screenshots or output from each project before publication. No
 project footage or generated product screenshots are implied by the prototype.
 
 ## Interaction and responsive behavior
 
-- Native horizontal scrolling supports touch and trackpads without intercepting
-  normal vertical scrolling or pinch zoom. There is no automatic rotation.
-- Previous/next buttons and a visible portion of the following card indicate
-  more work. Controls disable at the ends and disappear when unnecessary.
-- Focus the project list and use Left/Right or Home/End; Tab reaches normal
-  project links and buttons. Focused cards scroll into view.
-- Reduced-motion preferences use immediate carousel navigation. Native dialogs
-  contain focus, close with Escape, and restore focus on dismissal.
-- Card content controls its height. One project fills the available width with
-  no navigation; an empty array hides the showcase. Additional records need no
-  layout changes. Failed image loads show the labeled fallback. A failed content
-  request offers retry instead of leaving a blank section.
+- The top row drifts left and the bottom row right at 16 pixels per second.
+  Pointer interaction pauses both. Drag, swipe, wheel, and arrow navigation
+  reset a five-second idle delay, then drift eases back in over 800 milliseconds.
+- Native touch scrolling preserves vertical page scrolling and pinch zoom.
+  Mouse users can drag; each row also has previous/next buttons.
+- Keyboard focus and open dialogs keep the gallery still. Focus a project list
+  and use Left/Right or Home/End; Tab reaches the original project actions.
+  Repeated visual copies are hidden from assistive technology and tab order.
+- The Motion on/off toggle is persistent for the current page visit. Explicit
+  pause never times out. Reduced-motion preferences disable automatic movement
+  and visual loop copies, while retaining manual browsing.
+- The contact card cycles Talk, Plan, Think, Build every 3.6 seconds; all words
+  use the same contact link and accessible name. Hover or focus pauses the words.
+- The background uses 3.5% grain opacity and half-strength ambient light, matching
+  the approved reduction. Hidden tabs suspend motion and offscreen rows stop.
+- Titles and actions stay on the compact cards; summaries and project stories
+  remain in the detail dialog. Real images replace the neutral placeholders.
+- A row with one project stays still. An empty array hides the showcase. New
+  records require no layout edits; broken images fall back to the neutral
+  placeholder, and failed content requests offer retry.
 
 ## Files
 
 - `index.html`: page structure and supporting sections.
 - `styles.css`: original supporting-section styles.
 - `showcase.css`: Direction B foundation, carousel, dialogs, and responsive rules.
+- `portfolio-motion.css`: the experimental atmosphere and compact gallery styling.
+- `motion.js`: shared motion preferences, contact invitation, and background grain.
 - `script.js`: mobile navigation and the existing contact form.
 - `projects.js`: content loading, safe rendering, carousel controls, and project details.
 - `data/projects.json`: the single project-content source.
@@ -98,9 +113,10 @@ runner starts and stops its own local server. In HTTPS proxy environments, its
 asset helper uses `curl` with TLS verification to retrieve the existing CDN
 assets when the browser does not share the proxy's certificate trust store.
 
-Coverage includes 320–1920 px widths and landscape, enlarged text, next-card
-visibility, long content, 0/1/2/8 projects, optional fields, image and content-load
-failures, keyboard navigation, dialog focus, mobile-menu dismissal, reduced
-motion, native touch swipes, and vertical scrolling. Contact messages are not
+The suite covers 320–1920 px widths and landscape, enlarged text, long content,
+0/1/2/3/8 projects, uniform surfaces, image and content-load failures, opposing
+drift, the idle delay, explicit pause, keyboard navigation, dialog focus,
+mobile-menu dismissal, reduced motion, native touch swipes, and vertical
+scrolling. Contact messages are not
 sent by these tests. This is browser emulation; final review on actual iOS and
 Android devices remains useful, especially after real media is added.

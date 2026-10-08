@@ -62,9 +62,11 @@
   <link rel="shortcut icon" href="./assets/favicon.svg?v=2" type="image/svg+xml" />
   <link rel="stylesheet" href="./styles.css" />
   <link rel="stylesheet" href="./showcase.css" />
+  <link rel="stylesheet" href="./portfolio-motion.css" />
 </head>
 
 <body>
+  <div class="portfolio-atmosphere" aria-hidden="true"><div class="portfolio-light"></div><div class="portfolio-grain"></div></div>
   <a class="skip-link" href="#main">Skip to content</a>
   <nav class="fixed top-0 left-0 right-0 z-50 px-6 md:px-12 py-5" id="navbar">
     <div class="max-w-7xl mx-auto flex items-center justify-between">
@@ -83,10 +85,7 @@
       </div>
 
       <div class="flex items-center gap-4">
-        <div class="hidden md:flex items-center gap-2">
-          <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 status-pulse"></div>
-          <span class="font-mono text-[10px] tracking-wider text-base-500">AVAILABLE</span>
-        </div>
+        <a class="contact-invitation" id="contactInvitation" href="#contact" aria-label="Contact Isaac"><span class="invitation-phrase" aria-hidden="true">Let’s <span id="invitationWord">Talk</span></span><span aria-hidden="true">↗</span></a>
 
         <button class="mobile-menu-button md:hidden" id="menuToggle" aria-controls="mobileMenu" aria-expanded="false" aria-label="Open menu" type="button">
           <span></span>
@@ -121,6 +120,8 @@
       </div>
     </section>
 
+    <div class="capability-ribbon" aria-label="Applied AI, creative systems, interactive experiences, rapid prototyping"><div class="capability-ribbon-inner" aria-hidden="true"><span>APPLIED AI · CREATIVE SYSTEMS · INTERACTIVE EXPERIENCES · RAPID PROTOTYPING ·</span><span>APPLIED AI · CREATIVE SYSTEMS · INTERACTIVE EXPERIENCES · RAPID PROTOTYPING ·</span></div></div>
+
     <section id="work" class="showcase" aria-labelledby="workTitle">
       <div class="studio-container">
         <div class="showcase-heading">
@@ -130,21 +131,14 @@
           </div>
           <p class="showcase-intro">Tools, experiments, and experiences<br class="desktop-break"> built for real-world use.</p>
         </div>
-        <div class="showcase-toolbar" id="projectControls" hidden>
-          <p id="projectStatus" role="status" aria-live="polite" aria-atomic="true"></p>
-          <div class="showcase-buttons">
-            <button type="button" id="projectPrevious" aria-label="Previous project" aria-controls="projectTrack"><span aria-hidden="true">←</span></button>
-            <button type="button" id="projectNext" aria-label="Next project" aria-controls="projectTrack"><span aria-hidden="true">→</span></button>
-          </div>
-        </div>
-        <p id="projectHelp" class="visually-hidden">Swipe to browse projects, or focus this list and use the left and right arrow keys. Tab to project links.</p>
-        <ul id="projectTrack" class="project-track" role="list" aria-label="Selected projects" aria-describedby="projectHelp" tabindex="0" hidden></ul>
+        <div class="gallery-toolbar"><p id="galleryHint">Drag, swipe, or use the arrows · Drift returns after 5 seconds idle</p><button class="motion-toggle" id="motionToggle" type="button" aria-label="Automatic motion" aria-pressed="true">Motion on</button></div>
+        <p id="projectHelp" class="visually-hidden">Swipe to browse projects, or focus a list and use Left, Right, Home, or End. Tab to project links. Movement pauses during interaction and resumes after five seconds idle. Keyboard focus keeps the gallery paused.</p>
+        <div id="projectRows" hidden></div>
         <div class="project-load-state" id="projectLoadState" role="status">
           <p id="projectLoadMessage">Loading selected work…</p>
           <button type="button" class="studio-link" id="projectRetry" hidden>Try again</button>
         </div>
         <noscript><p class="project-load-state">Enable JavaScript to browse the project showcase, or <a href="#contact">get in touch about my work</a>.</p><style>#projectLoadState{display:none}</style></noscript>
-        <div class="showcase-footnote" id="projectFootnote" hidden><span>Explore at your own pace</span><span>Swipe or use the arrows <span aria-hidden="true">↔</span></span></div>
       </div>
     </section>
 
@@ -332,7 +326,6 @@
         <p class="font-mono text-[10px] tracking-[0.2em] text-accent">Ideas shaped through design and technology.</p>
 
         <div class="flex items-center gap-1">
-            <div class="w-1.5 h-1.5 rounded-full bg-emerald-500 status-pulse"></div>
             <span class="font-mono text-[10px] tracking-wider text-accent">Open to collaboration</span>
         </div>
         </div>

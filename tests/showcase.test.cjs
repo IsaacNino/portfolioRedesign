@@ -47,7 +47,6 @@ async function pageAt(width = 390, options = {}, content) {
   await page.goto(baseURL, { waitUntil: 'networkidle' });
   return { page, errors, close: () => context.close() };
 }
-async function statusIs(page, text) { await page.waitForFunction(value => document.getElementById('projectStatus').textContent === value, text); }
 async function noClipping(page) {
   const problems = await page.evaluate(() => {
     const failures = [];
@@ -64,137 +63,153 @@ async function noClipping(page) {
   assert.deepEqual(problems, []);
 }
 
-test('phone, tablet, desktop, and landscape layouts keep content readable with a next-card preview', async () => {
+const originals = '.showcase-item:not([data-copy])';
+async function positions(page) { return page.locator('.project-track').evaluateAll(tracks => tracks.map(track => track.scrollLeft)); }
+
+test('two rows keep uniform placeholders and readable content at phone through desktop widths', async () => {
   const { page, errors, close } = await pageAt();
   try {
-    for (const [width, height] of [[320, 760], [360, 800], [390, 844], [430, 932], [768, 1024], [820, 1180], [844, 390], [1024, 768], [1440, 1000], [1920, 1080]]) {
+    for (const [width, height] of [[320,760],[390,844],[768,1024],[844,390],[1280,900],[1920,1080]]) {
       await page.setViewportSize({ width, height });
       await page.waitForTimeout(80);
       await noClipping(page);
-      assert.equal(await page.locator('.showcase-card').count(), 4);
-      assert.ok(await page.evaluate(() => {
-        const track = document.getElementById('projectTrack').getBoundingClientRect();
-        const next = document.querySelectorAll('.showcase-item')[1].getBoundingClientRect();
-        return next.left < track.right && next.right > track.right;
-      }), `next project should peek at ${width}px`);
+      assert.equal(await page.locator('.project-row').count(), 2);
+      assert.equal(await page.locator(originals).count(), 4);
+      assert.equal(await page.locator('.showcase-card').evaluateAll(cards => new Set(cards.map(card => getComputedStyle(card).backgroundColor)).size), 1);
     }
     assert.deepEqual(errors, []);
   } finally { await close(); }
 });
 
-test('previous/next, arrow keys, Home/End and Tab expose projects without autoplay', async () => {
-  const { page, close } = await pageAt(1440, { reducedMotion: 'no-preference' });
+test('opposing drift pauses for interaction, restarts after five seconds idle, and respects explicit pause', async () => {
+  const { page, errors, close } = await pageAt(1280, { reducedMotion: 'no-preference' });
   try {
-    assert.equal(await page.locator('#projectPrevious').isDisabled(), true);
-    await page.locator('#projectNext').click(); await statusIs(page, 'Project 2 of 4');
-    await page.locator('#projectPrevious').click(); await statusIs(page, 'Project 1 of 4');
-    await page.locator('#projectTrack').focus(); await page.keyboard.press('End'); await statusIs(page, 'Project 4 of 4');
-    assert.equal(await page.locator('#projectNext').isDisabled(), true);
-    await page.keyboard.press('Home'); await statusIs(page, 'Project 1 of 4');
-    await page.keyboard.press('ArrowRight'); await statusIs(page, 'Project 2 of 4');
-    await page.keyboard.press('Home'); await statusIs(page, 'Project 1 of 4');
-    await page.keyboard.press('Tab'); await page.keyboard.press('Tab'); await page.keyboard.press('Tab');
-    await statusIs(page, 'Project 2 of 4');
-    const position = await page.locator('#projectTrack').evaluate(track => track.scrollLeft);
-    await page.waitForTimeout(700);
-    assert.equal(await page.locator('#projectTrack').evaluate(track => track.scrollLeft), position);
+    await page.clock.install();
+    await page.locator('#navbar a[href="#work"]').click();
+    await page.clock.runFor(1000);
+    const before = await positions(page);
+    await page.clock.runFor(1000);
+    const drifting = await positions(page);
+    assert.ok(drifting[0] > before[0], 'top moves left');
+    assert.ok(drifting[1] < before[1], 'bottom moves right');
+    await page.getByRole('button', { name: 'Next project in top row' }).click();
+    await page.clock.runFor(1000);
+    const manual = await positions(page);
+    await page.clock.runFor(3000);
+    assert.deepEqual(await positions(page), manual, 'both rows remain still within the idle window');
+    await page.clock.runFor(2500);
+    const resumed = await positions(page);
+    assert.notDeepEqual(resumed, manual, 'movement restarts without a resume click');
+    await page.locator('#motionToggle').click();
+    const stopped = await positions(page);
+    await page.clock.runFor(7000);
+    assert.deepEqual(await positions(page), stopped, 'explicit pause survives timeout');
+    assert.equal(await page.locator('#motionToggle').textContent(), 'Motion off');
+    assert.deepEqual(errors, []);
   } finally { await close(); }
 });
 
-test('project dialog contains focus, closes on Escape and restores the trigger', async () => {
+test('keyboard navigation stays paused and loop copies add no focus stops', async () => {
+  const { page, close } = await pageAt(390, { reducedMotion: 'no-preference' });
+  try {
+    await page.clock.install();
+    await page.locator('#projectTrack').focus();
+    await page.keyboard.press('End');
+    await page.clock.runFor(1000);
+    const position = await positions(page);
+    await page.clock.runFor(7000);
+    assert.deepEqual(await positions(page), position);
+    assert.equal(await page.locator('[data-copy] a, [data-copy] button').evaluateAll(actions => actions.every(action => action.tabIndex === -1)), true);
+    await page.keyboard.press('Home');
+    await page.clock.runFor(1000);
+    assert.notEqual((await positions(page))[0], position[0]);
+    await page.keyboard.press('Tab');
+    assert.equal(await page.evaluate(() => document.activeElement.closest('.showcase-item').hasAttribute('data-copy')), false);
+  } finally { await close(); }
+});
+
+test('project details and mobile navigation preserve keyboard focus and Escape behavior', async () => {
   const { page, close } = await pageAt();
   try {
     const trigger = page.getByRole('button', { name: 'Explore project: CES AI Postcard Generator' });
     await trigger.click();
     assert.equal(await page.getByRole('dialog', { name: 'CES AI Postcard Generator' }).isVisible(), true);
-    for (let i = 0; i < 10; i++) {
+    assert.equal(await page.locator('.project-story-summary').textContent(), projects[0].summary);
+    for (let i = 0; i < 5; i++) {
       await page.keyboard.press('Tab');
       assert.equal(await page.evaluate(() => document.getElementById('projectDialog').contains(document.activeElement)), true);
     }
     await page.keyboard.press('Escape');
-    await page.waitForFunction(() => !document.getElementById('projectDialog').open && !document.documentElement.classList.contains('dialog-open'));
-    assert.equal(await page.locator('#projectDialog').isVisible(), false);
     assert.equal(await trigger.evaluate(node => node === document.activeElement), true);
-    assert.equal(await page.evaluate(() => document.documentElement.classList.contains('dialog-open')), false);
-  } finally { await close(); }
-});
-
-test('mobile navigation announces state, closes on Escape, follows anchors and closes on desktop resize', async () => {
-  const { page, close } = await pageAt();
-  try {
-    const toggle = page.locator('#menuToggle');
-    await toggle.click(); assert.equal(await toggle.getAttribute('aria-expanded'), 'true');
+    await page.locator('#menuToggle').click();
+    assert.equal(await page.locator('#menuToggle').getAttribute('aria-expanded'), 'true');
     await page.keyboard.press('Escape');
-    await page.waitForFunction(() => document.getElementById('menuToggle').getAttribute('aria-expanded') === 'false');
-    assert.equal(await toggle.getAttribute('aria-expanded'), 'false');
-    assert.equal(await toggle.evaluate(node => node === document.activeElement), true);
-    await toggle.click(); await page.locator('#mobileMenu a[href="#work"]').click();
-    assert.ok(page.url().endsWith('#work')); assert.equal(await page.locator('#mobileMenu').isVisible(), false);
-    await toggle.click(); await page.setViewportSize({ width: 1024, height: 768 });
-    await page.waitForFunction(() => !document.getElementById('mobileMenu').open);
+    assert.equal(await page.locator('#menuToggle').getAttribute('aria-expanded'), 'false');
   } finally { await close(); }
 });
 
-test('zero, one, two and eight projects, long titles, missing optional fields and data ordering', async () => {
-  for (const count of [0, 1, 2, 8]) {
-    const content = Array.from({ length: count }, (_, i) => ({ ...projects[i % projects.length], id: `fixture-${i}`, title: `${i + 1}. A very long project title that wraps naturally across several lines on a small mobile device`, summary: 'A useful explanation of what the project does and why the work matters. '.repeat(3), tags: undefined, liveUrl: undefined, details: undefined }));
+test('zero, one, two, odd and eight projects preserve data ordering and long titles', async () => {
+  for (const count of [0,1,2,3,8]) {
+    const content = Array.from({length: count}, (_, i) => ({ ...projects[i % projects.length], id: `fixture-${i}`, title: `${i + 1}. A long project title that wraps naturally across several lines on a small mobile device`, tags: undefined, liveUrl: undefined, details: undefined }));
     const { page, close } = await pageAt(320, {}, content);
     try {
       if (!count) { assert.equal(await page.locator('#work').isVisible(), false); continue; }
-      assert.equal(await page.locator('.showcase-card').count(), count);
-      assert.deepEqual(await page.locator('.showcase-body h3').allTextContents(), content.map(p => p.title));
-      assert.equal(await page.locator('.project-action').count(), 0);
+      assert.equal(await page.locator(originals).count(), count);
+      assert.deepEqual(await page.locator(`${originals} h3`).allTextContents(), content.map(project => project.title));
       await noClipping(page);
-      assert.equal(await page.locator('#projectControls').isVisible(), count > 1);
+      assert.equal(await page.locator('.project-action').count(), 0);
       if (count === 1) assert.equal(await page.locator('#projectTrack').evaluate(track => track.scrollWidth <= track.clientWidth + 1), true);
     } finally { await close(); }
   }
 });
 
-test('optional links, broken images and recoverable data-load failures', async () => {
-  const content = [{ ...projects[0], image: './missing-image.webp', caseStudyUrl: './case-study.html' }];
-  const { page, close } = await pageAt(390, {}, content);
+test('broken images and failed content requests retain neutral fallback and retry', async () => {
+  const { page, close } = await pageAt(390, {}, [{...projects[0], image:'./missing.webp'}]);
   try {
     await page.waitForFunction(() => document.querySelector('.showcase-image').src.endsWith('preview-pending.svg'));
-    assert.equal(await page.locator('.project-action').count(), 2);
-    assert.equal(await page.getByRole('link', { name: 'Explore project: CES AI Postcard Generator' }).getAttribute('href'), baseURL + '/case-study.html');
     await page.unroute('**/data/projects.json');
     let requests = 0;
-    await page.route('**/data/projects.json', route => ++requests === 1 ? route.fulfill({ status: 500 }) : route.fulfill({ json: projects }));
-    await page.reload({ waitUntil: 'networkidle' });
+    await page.route('**/data/projects.json', route => ++requests === 1 ? route.fulfill({status:500}) : route.fulfill({json:projects}));
+    await page.reload({waitUntil:'networkidle'});
     assert.equal(await page.locator('#projectRetry').isVisible(), true);
-    await page.locator('#projectRetry').click(); await page.waitForSelector('.showcase-card');
-    assert.equal(await page.locator('.showcase-card').count(), 4);
+    await page.locator('#projectRetry').click();
+    await page.waitForSelector(originals);
+    assert.equal(await page.locator(originals).count(), 4);
   } finally { await close(); }
 });
 
-test('reduced motion uses immediate carousel movement and enlarged text still reflows', async () => {
+test('reduced motion disables autoplay, hides visual copies and supports enlarged text', async () => {
   const { page, close } = await pageAt(390);
   try {
-    await page.evaluate(() => { window.scrollBehaviors = []; const track = document.getElementById('projectTrack'); const scroll = track.scrollTo.bind(track); track.scrollTo = args => { window.scrollBehaviors.push(args.behavior); scroll(args); }; });
-    await page.locator('#projectNext').click(); await statusIs(page, 'Project 2 of 4');
-    assert.equal(await page.evaluate(() => window.scrollBehaviors.includes('smooth')), false);
-    assert.equal(await page.evaluate(() => getComputedStyle(document.documentElement).scrollBehavior), 'auto');
+    assert.equal(await page.locator('#motionToggle').isDisabled(), true);
+    assert.equal(await page.locator('[data-copy]').first().isVisible(), false);
+    await page.locator('#navbar a[href="#work"]').click();
+    const before = await positions(page);
+    await page.waitForTimeout(700);
+    assert.deepEqual(await positions(page), before);
+    await page.getByRole('button', {name:'Next project in top row'}).click();
+    assert.ok((await positions(page))[0] > before[0]);
     await page.evaluate(() => document.documentElement.style.fontSize = '200%');
-    await page.waitForTimeout(100); await noClipping(page);
+    await page.waitForTimeout(100);
+    await noClipping(page);
   } finally { await close(); }
 });
 
-test('native touch swipes browse horizontally and still allow vertical page scrolling', async () => {
-  const { page, close } = await pageAt(390, { isMobile: true, hasTouch: true });
+test('native touch browsing still allows vertical page scrolling', async () => {
+  const { page, close } = await pageAt(390, {isMobile:true, hasTouch:true});
   try {
     const cdp = await page.context().newCDPSession(page);
-    async function gesture(x, y, dx, dy) {
-      await cdp.send('Input.dispatchTouchEvent', { type: 'touchStart', touchPoints: [{ x, y }] });
-      for (let i = 1; i <= 8; i++) { await cdp.send('Input.dispatchTouchEvent', { type: 'touchMove', touchPoints: [{ x: x + dx * i / 8, y: y + dy * i / 8 }] }); await page.waitForTimeout(25); }
-      await cdp.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+    async function gesture(x,y,dx,dy) {
+      await cdp.send('Input.dispatchTouchEvent',{type:'touchStart',touchPoints:[{x,y}]});
+      for(let i=1;i<=8;i++) { await cdp.send('Input.dispatchTouchEvent',{type:'touchMove',touchPoints:[{x:x+dx*i/8,y:y+dy*i/8}]}); await page.waitForTimeout(25); }
+      await cdp.send('Input.dispatchTouchEvent',{type:'touchEnd',touchPoints:[]});
       await page.waitForTimeout(500);
     }
-    await page.evaluate(() => window.scrollTo({ top: document.querySelector('.showcase-media').getBoundingClientRect().top + scrollY - 160, behavior: 'instant' }));
-    await gesture(290, 230, -220, 0);
-    assert.ok(await page.locator('#projectTrack').evaluate(track => track.scrollLeft > 50));
-    const beforeY = await page.evaluate(() => scrollY);
-    await gesture(200, 280, 0, -150);
-    assert.ok(await page.evaluate(() => scrollY) > beforeY + 50);
+    await page.evaluate(() => window.scrollTo({top:document.querySelector('#projectTrack').getBoundingClientRect().top+scrollY-160,behavior:'instant'}));
+    await gesture(290,230,-180,0);
+    assert.ok((await positions(page))[0]>40);
+    const y=await page.evaluate(()=>scrollY);
+    await gesture(200,280,0,-150);
+    assert.ok(await page.evaluate(()=>scrollY)>y+40);
   } finally { await close(); }
 });

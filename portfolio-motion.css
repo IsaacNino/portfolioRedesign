@@ -1,0 +1,52 @@
+/* Motion experiment: calm surfaces, moving work, and a light atmosphere. */
+:root { --project-neutral: #20292c; }
+.portfolio-atmosphere { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+.portfolio-light { position: absolute; inset: -12%; max-width: none; opacity: .5; background: radial-gradient(ellipse at 80% 10%, #42697f66, transparent 48%), radial-gradient(ellipse at 10% 60%, #876f4533, transparent 45%); animation: light-drift 24s ease-in-out infinite alternate; }
+.portfolio-grain { position: absolute; inset: -15%; max-width: none; opacity: .035; animation: grain-shift 1.3s steps(3) infinite; }
+@keyframes light-drift { to { transform: translate(-4%, 5%) scale(1.07); } }
+@keyframes grain-shift { 0%,100% { transform: translate(0,0); } 33% { transform: translate(-3%,2%); } 66% { transform: translate(2%,-3%); } }
+.hero-footnote span:last-child::before { display: none; }
+.contact-invitation { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-shrink: 0; width: 9.6rem; min-height: 2.75rem; padding: .65rem .85rem; border: 1px solid var(--studio-line); border-radius: .4rem; background: var(--studio-surface); box-shadow: 0 3px 0 #101719, 0 4px 0 #42525488; font-size: .875rem; }
+.invitation-phrase { display: inline-flex; gap: .25em; overflow: hidden; }
+#invitationWord { display: inline-block; color: var(--studio-accent); }
+.capability-ribbon { overflow: hidden; padding-block: .8rem; border-block: 1px solid #425a5f66; color: var(--studio-muted); font: .75rem/1.5 var(--studio-mono); letter-spacing: .12em; }
+.capability-ribbon-inner { display: flex; width: max-content; max-width: none; animation: capability-drift 70s linear infinite; }
+.capability-ribbon-inner span { flex-shrink: 0; padding-right: 3rem; white-space: nowrap; }
+@keyframes capability-drift { to { transform: translateX(-50%); } }
+.capability-ribbon.is-offscreen .capability-ribbon-inner { animation-play-state: paused; }
+.gallery-toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: .75rem; margin: 1.5rem 0 .5rem; }
+.gallery-toolbar p, .project-row-label { font: .75rem/1.5 var(--studio-mono); color: var(--studio-muted); }
+.motion-toggle { min-height: 2.75rem; padding: .5rem .85rem; border: 1px solid var(--studio-line); border-radius: .4rem; background: var(--studio-surface); color: var(--studio-ink); font-size: .8rem; }
+.motion-toggle:hover:not(:disabled) { background: #2a383b; }
+.showcase-toolbar { margin: .5rem 0 .25rem; flex-wrap: wrap; }
+.showcase-buttons button { width: 2.75rem; height: 2.75rem; border-radius: .4rem; font-size: 1.1rem; }
+.project-row + .project-row { margin-top: .75rem; }
+.project-track { --card-width: 84%; --card-gap: .85rem; scroll-snap-type: none; scrollbar-width: none; padding-block: .4rem .75rem; }
+.project-track::-webkit-scrollbar { display: none; }
+.project-track::after { display: none; }
+.project-track.is-dragging { cursor: grabbing; user-select: none; }
+.showcase-item { scroll-snap-align: none; }
+.showcase-card { background: var(--project-neutral); border-color: #42525488; border-radius: .65rem; }
+.showcase-media, .showcase-image { background: var(--project-neutral); }
+.showcase-image { aspect-ratio: 16 / 9; max-height: 10rem; }
+.showcase-body { padding: 1rem 1.15rem; }
+.showcase-body h3 { font-size: clamp(1.25rem, 2vw, 1.65rem); margin-block: .65rem .75rem; }
+.showcase-summary { font-size: .875rem; line-height: 1.55; }
+.project-actions { gap: .5rem 1rem; padding-top: .6rem; }
+.project-action { font-size: .8125rem; }
+.preview-label { bottom: .7rem; font-size: .6875rem; }
+.project-number { top: .65rem; left: .65rem; padding: .2rem .5rem; font-size: .6875rem; }
+.single-project { --card-width: 100%; margin: 0; }
+.motion-reduced .showcase-item[data-copy] { display: none; }
+.motion-paused .portfolio-light, .motion-paused .portfolio-grain, .motion-paused .capability-ribbon-inner { animation-play-state: paused; }
+@media (min-width: 640px) {
+  .project-track { --card-width: 60%; }
+  .project-track.single-project { --card-width: 60%; }
+}
+@media (max-width: 380px) {
+  .contact-invitation { width: 8.75rem; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .showcase-item[data-copy] { display: none; }
+  .portfolio-light, .portfolio-grain, .capability-ribbon-inner { animation: none; }
+}
