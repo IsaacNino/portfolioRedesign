@@ -1,0 +1,10 @@
+{
+  "name": "isaac-nino-portfolio",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/showcase.test.cjs"
+  },
+  "devDependencies": {
+    "playwright": "1.62.1"
+  }
+}

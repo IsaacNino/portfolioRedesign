@@ -1,0 +1,91 @@
+[
+  {
+    "id": "postcard",
+    "title": "CES AI Postcard Generator",
+    "summary": "A prompt-driven postcard experience that turns a visitor’s choices into personalized AI-generated imagery.",
+    "image": "./assets/projects/preview-pending.svg",
+    "imageAlt": "Project preview image coming soon.",
+    "category": "Generative Interface",
+    "tags": [
+      "Generative AI",
+      "Interaction design"
+    ],
+    "liveUrl": "https://cespostcard26.vercel.app/",
+    "details": {
+      "role": "Creative Technologist / Web Developer",
+      "focus": "Generative interaction design and event engagement",
+      "tools": "Tailwind · JavaScript · FLUX Generative AI · Prompt Matrix",
+      "status": "Built / Concept Prototype",
+      "problem": "Most event touchpoints are forgettable. The challenge was to create a lightweight, memorable interaction that could turn a quick scan into a personalized creative artifact.",
+      "approach": "I designed a short prompt flow that captures a visitor’s CES mindset and translates it into a generated postcard composition with a consistent visual frame.",
+      "outcome": "The concept creates a flexible bridge between physical networking, mobile interaction, and generative media."
+    }
+  },
+  {
+    "id": "intrust",
+    "title": "InTrust",
+    "summary": "Local-first estate planning software that turns structured intake into carefully formatted legal document packages.",
+    "image": "./assets/projects/preview-pending.svg",
+    "imageAlt": "Project preview image coming soon.",
+    "category": "Local-First Tooling",
+    "tags": [
+      "Tauri",
+      "React",
+      "Rust"
+    ],
+    "liveUrl": "https://www.getintrust.com/",
+    "details": {
+      "role": "Product Developer / Workflow Designer",
+      "focus": "Legal document automation and workflow design",
+      "tools": "Tauri · React · Rust · DOCX generation",
+      "status": "Built / Iterating",
+      "problem": "Estate packages are often assembled through repetitive manual drafting, formatting, and document coordination. The challenge was to preserve legal formatting precision while making the workflow faster and easier to repeat.",
+      "approach": "I built a local-first desktop workflow that guides intake, applies rule-based logic, and generates formatted Word documents while respecting strict legal document conventions.",
+      "outcome": "The result is a practical automation tool that reduces repetitive drafting effort and creates a foundation for bespoke firm-specific estate planning workflows."
+    }
+  },
+  {
+    "id": "gallery",
+    "title": "Dell Foundation Digital Gallery",
+    "summary": "An interactive, large-format gallery for exploring foundation stories through media, motion, and touch.",
+    "image": "./assets/projects/preview-pending.svg",
+    "imageAlt": "Project preview image coming soon.",
+    "category": "Immersive Display",
+    "tags": [
+      "Interactive web",
+      "Large display"
+    ],
+    "liveUrl": "https://digital-museum-gallery.vercel.app/",
+    "details": {
+      "role": "Creative Technologist / Web Developer",
+      "focus": "Large-format web experience and content system",
+      "tools": "Tailwind · JavaScript",
+      "status": "Built / Delivered Prototype",
+      "problem": "The experience needed to organize rich media and story content for a large display environment without feeling like a conventional website.",
+      "approach": "I built a fullscreen interactive gallery structure with cinematic tile behavior, modal content, video embeds, and layout logic suited for large-screen viewing.",
+      "outcome": "The result was an immersive digital gallery prototype that made foundation stories easier to browse, present, and experience."
+    }
+  },
+  {
+    "id": "dogwood",
+    "title": "Dogwood Counseling Website",
+    "summary": "A welcoming web presence for a Boulder therapist, built around clear services, trust, and easy contact.",
+    "image": "./assets/projects/preview-pending.svg",
+    "imageAlt": "Project preview image coming soon.",
+    "category": "Human-Centered Web",
+    "tags": [
+      "Web design",
+      "Client work"
+    ],
+    "liveUrl": "https://www.dogwoodcounseling-mb.com/",
+    "details": {
+      "role": "Web Developer / Front-End Builder",
+      "focus": "Client site design, trust-building, and light SEO",
+      "tools": "Tailwind · JavaScript · SEO",
+      "status": "Built / Delivered",
+      "problem": "The provider needed a web presence that felt calmer, more trustworthy, and more aligned with the emotional tone of therapy work.",
+      "approach": "I focused on simple information architecture, warm visual language, clear service framing, and accessible contact pathways.",
+      "outcome": "The site became a more polished and approachable digital front door for prospective clients."
+    }
+  }
+]
