@@ -1,5 +1,5 @@
 /** Shared by the browser, build check, and content tests. No dependencies. */
-export const accents = ['violet', 'amber', 'blue', 'sage'];
+export const accents = ['acid', 'amber', 'blue', 'sage'];
 export function safeUrl(value, { image = false } = {}) {
   if (typeof value !== 'string' || /[\u0000-\u0020\\]/.test(value)) return false;
   if (image && /^\.\/assets\/[a-zA-Z0-9_./-]+$/.test(value) && !value.includes('..')) return true;

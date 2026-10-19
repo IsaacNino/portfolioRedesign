@@ -1,6 +1,6 @@
-# Isaac Nino — cinematic portfolio
+# Isaac Nino — industrial portfolio
 
-A dependency-free, static portfolio with a violet orbital canvas, scroll reveals, project filters, accessible case-study dialogs, and a single project data file. The existing project stories, résumé, portrait, social links, and Formspree contact endpoint are retained.
+A dependency-free, static portfolio with an original industrial hero image, scroll reveals, project filters, accessible case-study dialogs, and a single project data file. The existing project stories, résumé, portrait, social links, and Formspree contact endpoint are retained.
 
 ## Preview and publish
 
@@ -40,7 +40,7 @@ Example record (replace the illustrative text with your real project):
   "category": "Interactive experiences",
   "summary": "A short, honest description of the work.",
   "featured": false,
-  "accent": "violet",
+  "accent": "acid",
   "tags": ["JavaScript", "Interaction design"],
   "image": {
     "src": "./assets/images/new-project.webp",
@@ -56,7 +56,7 @@ Example record (replace the illustrative text with your real project):
 }
 ```
 
-Remove the entire `image` property if you do not have a screenshot yet. New projects automatically get abstract artwork; no component or layout change is required. The original four projects have bespoke CSS visual studies, explicitly labeled as studies rather than screenshots. `accent` accepts `violet`, `amber`, `blue`, or `sage`.
+Remove the entire `image` property if you do not have a screenshot yet. New projects automatically get abstract artwork; no component or layout change is required. The original four projects have bespoke CSS visual studies, explicitly labeled as studies rather than screenshots. `accent` accepts `acid`, `amber`, `blue`, or `sage`.
 
 The category label creates its filter automatically; `All work` is reserved. Project IDs power direct links such as `/#project/intrust`, so keep an ID stable after sharing it. The editor schema in `content/projects.schema.json` supplies field guidance; runtime and build checks catch missing fields, duplicate IDs, unsafe URLs, and missing local images.
 
@@ -65,7 +65,7 @@ The category label creates its filter automatically; `All work` is reserved. Pro
 - `index.html`: biography, approach, contact copy, metadata, and résumé link.
 - `styles.css`: colors, typography, responsive layouts, and transitions.
 - `content/project-visuals.js`: optional custom artwork. Normal content edits do not require this file.
-- `orbital.js`: deterministic canvas artwork; no third-party graphics library.
+- `assets/images/industrial-chamber.png`: original generated hero artwork. Its prompt and design notes are in `ART_DIRECTION.md`.
 - `script.js`: filters, dialogs, scroll effects, menu, and form submission.
 - `assets/docs/Isaac-Nino-Resume.pdf`: retained résumé.
 
@@ -74,7 +74,7 @@ The category label creates its filter automatically; `All work` is reserved. Pro
 - Native dialog focus containment, Escape dismissal, and focus return.
 - Keyboard-operable filters and menu, labeled form fields, skip link, and visible focus rings.
 - System reduced-motion support and a persistent animation pause control.
-- Canvas pauses when offscreen or when the tab is hidden. Device pixel ratio is capped.
+- Scroll-driven background movement uses a single scheduled animation frame and stops with the motion control. There is no continuously running canvas animation.
 - No scroll hijacking, fake loading screen, custom cursor, analytics, or runtime package dependencies.
 - Responsive layouts down to 320px; local images load lazily.
 - Project-load errors show a useful fallback. Without JavaScript, the biography, email, résumé, and project destination links remain available.

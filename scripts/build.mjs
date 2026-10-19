@@ -6,5 +6,5 @@ const root = fileURLToPath(new URL('../', import.meta.url));
 await check();
 await rm(resolve(root,'dist'),{recursive:true,force:true});
 await mkdir(resolve(root,'dist'),{recursive:true});
-for (const file of ['index.html','styles.css','script.js','orbital.js','assets','content']) await cp(resolve(root,file),resolve(root,'dist',file),{recursive:true});
+for (const file of ['index.html','styles.css','script.js','assets','content']) await cp(resolve(root,file),resolve(root,'dist',file),{recursive:true});
 console.log('Static site ready in dist/. No runtime dependencies.');
