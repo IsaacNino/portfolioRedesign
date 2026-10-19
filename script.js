@@ -1,357 +1,150 @@
-(() => {
-  const loader = document.getElementById('loader');
-  const cursorDot = document.getElementById('cursorDot');
-  const cursorRing = document.getElementById('cursorRing');
-  const navbar = document.getElementById('navbar');
-  const menuToggle = document.getElementById('menuToggle');
-  const menuClose = document.getElementById('menuClose');
-  const mobileMenu = document.getElementById('mobileMenu');
+import { validateProjects, getCategories, filterProjects, escapeHtml as esc } from './content/project-utils.js';
+import { projectVisual } from './content/project-visuals.js';
+import { createOrbital } from './orbital.js';
 
-  if (window.lucide) {
-    window.lucide.createIcons();
-  }
-
-  window.addEventListener('load', () => {
-    window.setTimeout(() => {
-      loader?.classList.add('hidden');
-    }, 900);
+const $ = id => document.getElementById(id);
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+let userMotion;
+try { userMotion = localStorage.getItem('isaac-motion'); } catch { /* Storage can be unavailable in private browsing. */ }
+let motionEnabled = userMotion ? userMotion === 'on' && !reducedMotion.matches : !reducedMotion.matches;
+const orbital = createOrbital($('orbitalCanvas'), () => motionEnabled);
+const revealObserver = 'IntersectionObserver' in window ? new IntersectionObserver(entries => {
+  entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.remove('reveal-pending'); revealObserver.unobserve(entry.target); } });
+}, { threshold: 0.08 }) : null;
+function observeReveals(root = document) {
+  root.querySelectorAll('.reveal').forEach(el => {
+    if (motionEnabled && revealObserver && el.getBoundingClientRect().top > innerHeight * .9) {
+      el.classList.add('reveal-pending'); revealObserver.observe(el);
+    }
   });
+}
+function applyMotion() {
+  document.body.classList.toggle('motion-enabled', motionEnabled);
+  document.body.classList.toggle('motion-off', !motionEnabled);
+  $('motionToggle').setAttribute('aria-pressed', String(!motionEnabled));
+  $('motionToggle').setAttribute('aria-label', motionEnabled ? 'Pause animations' : 'Animations paused; enable if system motion settings allow');
+  $('motionLabel').textContent = motionEnabled ? 'on' : 'off';
+  if (!motionEnabled) document.querySelectorAll('.reveal-pending').forEach(el => el.classList.remove('reveal-pending'));
+  orbital.refresh();
+  if (!motionEnabled) document.querySelector('.orbital-stage').style.transform = 'none';
+}
+$('motionToggle').addEventListener('click', () => {
+  motionEnabled = !motionEnabled && !reducedMotion.matches;
+  userMotion = motionEnabled ? 'on' : 'off';
+  try { localStorage.setItem('isaac-motion', userMotion); } catch { /* Preference remains active for this visit. */ }
+  applyMotion();
+});
+reducedMotion.addEventListener('change', () => { motionEnabled = !reducedMotion.matches && userMotion !== 'off'; applyMotion(); });
+applyMotion(); observeReveals();
 
-  document.getElementById('year').textContent = new Date().getFullYear();
+let scrollScheduled = false;
+function updateScroll() {
+  const range = document.documentElement.scrollHeight - innerHeight;
+  $('readingProgress').style.transform = `scaleX(${range > 0 ? Math.min(1, scrollY / range) : 0})`;
+  const heroProgress = Math.min(1, scrollY / Math.max(1, innerHeight));
+  orbital.setScroll(heroProgress);
+  document.querySelector('.orbital-stage').style.transform = motionEnabled ? `translate3d(0,${heroProgress * 65}px,0) rotate(${heroProgress * 4}deg)` : 'none';
+  scrollScheduled = false;
+}
+addEventListener('scroll', () => { if (!scrollScheduled) { scrollScheduled = true; requestAnimationFrame(updateScroll); } }, { passive:true });
+addEventListener('resize', updateScroll); updateScroll();
+$('year').textContent = new Date().getFullYear();
+function updateTime() { $('localTime').textContent = new Date().toLocaleTimeString('en-US', { timeZone:'America/Denver',hour:'2-digit',minute:'2-digit',hour12:false }) + ' MT'; }
+updateTime(); setInterval(updateTime, 60000);
 
-  let mouseX = 0;
-  let mouseY = 0;
-  let ringX = 0;
-  let ringY = 0;
+function closeMenu(restore = false) {
+  $('navigation').classList.remove('is-open');
+  $('menuToggle').setAttribute('aria-expanded', 'false');
+  $('menuToggle').lastElementChild.textContent = '＋';
+  if (restore) $('menuToggle').focus();
+}
+$('menuToggle').addEventListener('click', () => {
+  const open = $('menuToggle').getAttribute('aria-expanded') !== 'true';
+  $('navigation').classList.toggle('is-open', open);
+  $('menuToggle').setAttribute('aria-expanded', String(open));
+  $('menuToggle').lastElementChild.textContent = open ? '−' : '＋';
+});
+$('navigation').addEventListener('click', event => { if (event.target.closest('a')) closeMenu(); });
+document.addEventListener('keydown', event => { if (event.key === 'Escape' && $('menuToggle').getAttribute('aria-expanded') === 'true') closeMenu(true); });
+document.addEventListener('click', event => { if (!event.target.closest('.site-header')) closeMenu(); });
+matchMedia('(min-width: 761px)').addEventListener('change', event => { if (event.matches) closeMenu(); });
 
-  const supportsFinePointer = window.matchMedia('(pointer: fine)').matches;
-
-  if (supportsFinePointer && cursorDot && cursorRing) {
-    document.addEventListener('mousemove', (event) => {
-      mouseX = event.clientX;
-      mouseY = event.clientY;
-      cursorDot.style.left = `${mouseX - 4}px`;
-      cursorDot.style.top = `${mouseY - 4}px`;
-    });
-
-    const animateCursor = () => {
-      ringX += (mouseX - ringX) * 0.12;
-      ringY += (mouseY - ringY) * 0.12;
-      cursorRing.style.left = `${ringX - 20}px`;
-      cursorRing.style.top = `${ringY - 20}px`;
-      window.requestAnimationFrame(animateCursor);
-    };
-
-    animateCursor();
-
-    document.querySelectorAll('a, button, .project-card, .system-card, .lab-card').forEach((element) => {
-      element.addEventListener('mouseenter', () => {
-        cursorDot.style.transform = 'scale(2)';
-        cursorRing.style.transform = 'scale(1.5)';
-        cursorRing.style.borderColor = 'rgba(124,157,189,0.6)';
-      });
-
-      element.addEventListener('mouseleave', () => {
-        cursorDot.style.transform = 'scale(1)';
-        cursorRing.style.transform = 'scale(1)';
-        cursorRing.style.borderColor = 'rgba(124,157,189,0.4)';
-      });
-    });
-  }
-
-  const revealObserver = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-      }
-    });
-  }, {
-    threshold: 0.1,
-    rootMargin: '0px 0px -60px 0px'
+let projects = [];
+let lastProjectTrigger;
+let returnHash = '#work';
+const dialog = $('projectDialog');
+function renderProjects(category = 'All work') {
+  const filtered = filterProjects(projects, category);
+  $('projectsGrid').innerHTML = filtered.map(project => {
+    const index = projects.indexOf(project);
+    return `<article class="project-card reveal${project.featured && category === 'All work' ? ' featured' : ''}" data-accent="${esc(project.accent || 'violet')}"><button class="project-art-button" type="button" data-project="${esc(project.id)}" aria-label="Explore ${esc(project.title)} case study">${projectVisual(project,index)}<span class="project-open" aria-hidden="true">↗</span></button><div class="project-info"><div><p class="project-meta">${String(index + 1).padStart(2,'0')} / ${esc(project.category)}</p><h3><button data-project="${esc(project.id)}" type="button">${esc(project.title)}</button></h3><p class="project-summary">${esc(project.summary)}</p><div class="tag-list" aria-label="Tools">${project.tags.map(tag=>`<span>${esc(tag)}</span>`).join('')}</div></div><button class="case-link" data-project="${esc(project.id)}" type="button" aria-label="Read ${esc(project.title)} case study">CASE STUDY <span aria-hidden="true">↗</span></button></div></article>`;
+  }).join('');
+  $('projectCount').textContent = `${String(filtered.length).padStart(2,'0')} PROJECT${filtered.length === 1 ? '' : 'S'}`;
+  observeReveals($('projectsGrid')); updateScroll();
+}
+function openProject(project) {
+  $('dialogContent').innerHTML = `<div class="dialog-cover">${projectVisual(project,projects.indexOf(project))}</div><div class="dialog-body"><p class="eyebrow">${esc(project.category)}</p><h2 id="dialogTitle">${esc(project.title)}</h2><p class="dialog-summary">${esc(project.summary)}</p><dl class="dialog-facts">${[['Role',project.role],['Focus',project.focus],['Tools',project.tags.join(' · ')],['Status',project.status]].map(([label,value])=>`<div><dt>${label}</dt><dd>${esc(value)}</dd></div>`).join('')}</dl>${[['The challenge',project.problem],['The approach',project.approach],['The outcome',project.outcome]].map(([title,text])=>`<section class="case-section"><h3>${title}</h3><p>${esc(text)}</p></section>`).join('')}<div class="dialog-links">${project.links.map(link=>`<a class="button button-light" href="${esc(link.url)}" target="_blank" rel="noopener noreferrer">${esc(link.label)} <span aria-hidden="true">↗</span></a>`).join('')}</div></div>`;
+  if (!dialog.open) dialog.showModal();
+  dialog.scrollTop = 0;
+}
+function syncProjectHash() {
+  const slug = location.hash.startsWith('#project/') ? location.hash.slice(9) : '';
+  const project = projects.find(p => p.id === slug);
+  if (project) openProject(project); else if (dialog.open) dialog.close();
+}
+$('projectsGrid').addEventListener('click', event => {
+  const trigger = event.target.closest('[data-project]');
+  if (!trigger) return;
+  lastProjectTrigger = trigger;
+  if (!location.hash.startsWith('#project/')) returnHash = location.hash || '#work';
+  const hash = `#project/${trigger.dataset.project}`;
+  if (location.hash === hash) syncProjectHash(); else location.hash = hash;
+});
+$('closeProject').addEventListener('click', () => dialog.close());
+dialog.addEventListener('close', () => {
+  if (location.hash.startsWith('#project/')) history.replaceState(null,'',`${location.pathname}${location.search}${returnHash}`);
+  lastProjectTrigger?.focus({preventScroll:true});
+});
+addEventListener('hashchange', syncProjectHash);
+for (const modal of [dialog,$('contactDialog')]) {
+  modal.addEventListener('click', event => {
+    if (event.target !== modal) return;
+    const r = modal.getBoundingClientRect();
+    if (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom) modal.close();
   });
-
-  document.querySelectorAll('.reveal').forEach((element) => revealObserver.observe(element));
-
-  window.addEventListener('scroll', () => {
-    const scrolled = window.scrollY;
-
-    if (navbar) {
-      if (scrolled > 80) {
-        navbar.style.background = 'rgba(15, 14, 13, 0.85)';
-        navbar.style.backdropFilter = 'blur(20px)';
-        navbar.style.borderBottom = '1px solid rgba(41, 37, 36, 0.5)';
-      } else {
-        navbar.style.background = 'transparent';
-        navbar.style.backdropFilter = 'none';
-        navbar.style.borderBottom = '1px solid transparent';
-      }
-    }
-
-    document.querySelectorAll('.ambient-glow').forEach((glow, index) => {
-      const speed = index === 0 ? 0.05 : 0.03;
-      glow.style.transform = `translateY(${scrolled * speed}px)`;
-    });
-  }, { passive: true });
-
-  const openMobileMenu = () => {
-    mobileMenu?.classList.add('open');
-    document.body.style.overflow = 'hidden';
-  };
-
-  const closeMobileMenu = () => {
-    mobileMenu?.classList.remove('open');
-    document.body.style.overflow = '';
-  };
-
-  menuToggle?.addEventListener('click', openMobileMenu);
-  menuClose?.addEventListener('click', closeMobileMenu);
-  document.querySelectorAll('.mobile-link').forEach((link) => link.addEventListener('click', closeMobileMenu));
-
-  const updateTime = () => {
-    const timeElement = document.getElementById('localTime');
-    if (!timeElement) return;
-
-    timeElement.textContent = new Date().toLocaleTimeString('en-US', {
-      timeZone: 'America/Denver',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: true
-    });
-  };
-
-  updateTime();
-  window.setInterval(updateTime, 1000);
-
-  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-    anchor.addEventListener('click', (event) => {
-      const href = anchor.getAttribute('href');
-      if (!href || href === '#') return;
-
-      const target = document.querySelector(href);
-      if (!target) return;
-
-      event.preventDefault();
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
+}
+try {
+  const response = await fetch('./content/projects.json');
+  if (!response.ok) throw new Error(`Content request returned ${response.status}`);
+  projects = validateProjects(await response.json());
+  $('projectFilters').innerHTML = getCategories(projects).map((category,index)=>`<button class="filter" type="button" aria-pressed="${index===0}" data-category="${esc(category)}">${esc(category)}</button>`).join('');
+  $('projectFilters').addEventListener('click', event => {
+    const filter = event.target.closest('[data-category]');
+    if (!filter) return;
+    $('projectFilters').querySelectorAll('button').forEach(button=>button.setAttribute('aria-pressed',String(button===filter)));
+    renderProjects(filter.dataset.category);
   });
+  renderProjects(); syncProjectHash();
+} catch (error) { $('workError').hidden = false; console.error('Project content could not load:',error); }
 
-    const projectData = {
-    intrust: {
-        title: 'InTrust',
-        kicker: 'Local-First Tooling · Automation',
-        visualClass: 'visual-intrust',
-        summary: 'Estate planning software for law firms, designed to turn structured intake data into high-fidelity legal document packages.',
-        role: 'Product Developer / Workflow Designer',
-        focus: 'Legal document automation and workflow design',
-        tools: 'Tauri · React · Rust · DOCX generation',
-        status: 'Built / Iterating',
-        problem: 'Estate packages are often assembled through repetitive manual drafting, formatting, and document coordination. The challenge was to preserve legal formatting precision while making the workflow faster and easier to repeat.',
-        approach: 'I built a local-first desktop workflow that guides intake, applies rule-based logic, and generates formatted Word documents while respecting strict legal document conventions.',
-        outcome: 'The result is a practical automation tool that reduces repetitive drafting effort and creates a foundation for bespoke firm-specific estate planning workflows.',
-        links: [
-          { label: 'View Live Site', url: 'https://www.getintrust.com/' },
-        ]
-    },
-
-    postcard: {
-        title: 'CES AI Postcard Generator',
-        kicker: 'Generative Interface · Experiential Web',
-        visualClass: 'visual-postcard',
-        summary: 'A mobile-first interactive postcard concept using prompt-driven personalization to turn event identity into a shareable generated artifact.',
-        role: 'Creative Technologist / Web Developer',
-        focus: 'Generative interaction design and event engagement',
-        tools: 'Tailwind · JavaScript · FLUX Generative AI · Prompt Matrix',
-        status: 'Built / Concept Prototype',
-        problem: 'Most event touchpoints are forgettable. The challenge was to create a lightweight, memorable interaction that could turn a quick scan into a personalized creative artifact.',
-        approach: 'I designed a short prompt flow that captures a visitor’s CES mindset and translates it into a generated postcard composition with a consistent visual frame.',
-        outcome: 'The concept creates a flexible bridge between physical networking, mobile interaction, and generative media.',
-        links: [
-          { label: 'View Live Site', url: 'https://cespostcard26.vercel.app/' },
-        ]
-    },
-
-    gallery: {
-        title: 'Dell Foundation Digital Gallery',
-        kicker: 'Immersive Display · Storytelling System',
-        visualClass: 'visual-gallery',
-        summary: 'A large-format digital gallery experience blending media, interaction, and storytelling for a foundation-facing display environment.',
-        role: 'Creative Technologist / Web Developer',
-        focus: 'Large-format web experience and content system',
-        tools: 'Tailwind · JavaScript',
-        status: 'Built / Delivered Prototype',
-        problem: 'The experience needed to organize rich media and story content for a large display environment without feeling like a conventional website.',
-        approach: 'I built a fullscreen interactive gallery structure with cinematic tile behavior, modal content, video embeds, and layout logic suited for large-screen viewing.',
-        outcome: 'The result was an immersive digital gallery prototype that made foundation stories easier to browse, present, and experience.',
-        links: [
-          { label: 'View Live Site', url: 'https://digital-museum-gallery.vercel.app/' },
-        ]
-    },
-
-    dogwood: {
-        title: 'Dogwood Counseling Website',
-        kicker: 'Human-Centered Web · Client Site',
-        visualClass: 'visual-dogwood',
-        summary: 'A calm, trust-centered web presence for a Boulder therapist, designed around clarity, warmth, accessibility, and local discoverability.',
-        role: 'Web Developer / Front-End Builder',
-        focus: 'Client site design, trust-building, and light SEO',
-        tools: 'Tailwind · JavaScript · SEO',
-        status: 'Built / Delivered',
-        problem: 'The provider needed a web presence that felt calmer, more trustworthy, and more aligned with the emotional tone of therapy work.',
-        approach: 'I focused on simple information architecture, warm visual language, clear service framing, and accessible contact pathways.',
-        outcome: 'The site became a more polished and approachable digital front door for prospective clients.',
-        links: [
-          { label: 'View Live Site', url: 'https://www.dogwoodcounseling-mb.com/' },
-        ]
-    }
-    };
-
-    const projectModal = document.getElementById('projectModal');
-    const modalVisual = document.getElementById('modalVisual');
-
-    const modalFields = {
-    kicker: document.getElementById('modalKicker'),
-    title: document.getElementById('modalTitle'),
-    summary: document.getElementById('modalSummary'),
-    role: document.getElementById('modalRole'),
-    focus: document.getElementById('modalFocus'),
-    tools: document.getElementById('modalTools'),
-    status: document.getElementById('modalStatus'),
-    problem: document.getElementById('modalProblem'),
-    approach: document.getElementById('modalApproach'),
-    outcome: document.getElementById('modalOutcome'),
-    actions: document.getElementById('modalActions')
-    };
-
-    const openProjectModal = (projectKey) => {
-    const project = projectData[projectKey];
-    if (!project || !projectModal || !modalVisual) return;
-
-    modalVisual.className = `project-modal-visual ${project.visualClass}`;
-
-    modalFields.kicker.textContent = project.kicker;
-    modalFields.title.textContent = project.title;
-    modalFields.summary.textContent = project.summary;
-    modalFields.role.textContent = project.role;
-    modalFields.focus.textContent = project.focus;
-    modalFields.tools.textContent = project.tools;
-    modalFields.status.textContent = project.status;
-    modalFields.problem.textContent = project.problem;
-    modalFields.approach.textContent = project.approach;
-    modalFields.outcome.textContent = project.outcome;
-
-    modalFields.actions.innerHTML = '';
-
-    if (project.links && project.links.length) {
-    project.links.forEach((link) => {
-        
-        const anchor = document.createElement('a');
-        
-        anchor.href = link.url;
-        anchor.target = '_blank';
-        anchor.rel = 'noreferrer';
-        anchor.className = 'project-modal-link';
-        anchor.innerHTML = `<span>${link.label}</span><i data-lucide="arrow-up-right" class="w-4 h-4"></i>`;
-        modalFields.actions.appendChild(anchor);
-    });
-
-    if (window.lucide) {
-        window.lucide.createIcons();
-    }
-    }
-
-    projectModal.classList.add('open');
-    projectModal.setAttribute('aria-hidden', 'false');
-    document.body.classList.add('modal-open');
-    };
-
-    const closeProjectModal = () => {
-    if (!projectModal) return;
-
-    projectModal.classList.remove('open');
-    projectModal.setAttribute('aria-hidden', 'true');
-    document.body.classList.remove('modal-open');
-    };
-
-    document.querySelectorAll('[data-project]').forEach((card) => {
-    card.addEventListener('click', () => {
-        openProjectModal(card.dataset.project);
-    });
-
-    card.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        openProjectModal(card.dataset.project);
-        }
-    });
-    });
-
-    document.querySelectorAll('[data-close-modal]').forEach((button) => {
-    button.addEventListener('click', closeProjectModal);
-    });
-
-    document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') {
-        closeProjectModal();
-    }
-    });
-
-    const contactForm = document.getElementById('contactForm');
-    const formStatus = document.getElementById('formStatus');
-
-    if (contactForm) {
-    contactForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-
-        const button = contactForm.querySelector('button[type="submit"]');
-        const buttonText = button?.querySelector('span');
-        const originalText = buttonText?.textContent || 'Start a Conversation';
-
-        if (button) button.disabled = true;
-        if (buttonText) buttonText.textContent = 'Sending...';
-
-        if (formStatus) {
-        formStatus.textContent = '';
-        formStatus.classList.remove('visible', 'error');
-        }
-
-        try {
-        const response = await fetch(contactForm.action, {
-            method: 'POST',
-            body: new FormData(contactForm),
-            headers: {
-            Accept: 'application/json'
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error('Form submission failed');
-        }
-
-        contactForm.reset();
-
-        if (buttonText) buttonText.textContent = 'Message Sent';
-
-        if (formStatus) {
-            formStatus.textContent = 'Thanks — I got your message. I’ll follow up soon.';
-            formStatus.classList.add('visible');
-        }
-
-        window.setTimeout(() => {
-            if (buttonText) buttonText.textContent = originalText;
-            if (button) button.disabled = false;
-        }, 3500);
-        } catch (error) {
-        if (buttonText) buttonText.textContent = 'Try Again';
-
-        if (formStatus) {
-            formStatus.textContent = 'Something went wrong. You can email me directly instead.';
-            formStatus.classList.add('visible', 'error');
-        }
-
-        if (button) button.disabled = false;
-        console.error(error);
-        }
-    });
-    }
-})();
+$('contactOpen').addEventListener('click',()=> $('contactDialog').showModal());
+$('closeContact').addEventListener('click',()=> $('contactDialog').close());
+$('contactForm').addEventListener('submit',async event => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  if (!form.reportValidity()) return;
+  const button = form.querySelector('button[type="submit"]');
+  if (button.disabled) return;
+  const status = $('formStatus');
+  button.disabled = true; button.textContent = 'Sending…';
+  status.classList.remove('error'); status.textContent = '';
+  const controller = new AbortController();
+  const timeout = setTimeout(()=>controller.abort(),15000);
+  try {
+    const response = await fetch(form.action,{method:'POST',body:new FormData(form),headers:{Accept:'application/json'},signal:controller.signal});
+    if (!response.ok) throw new Error('Message not accepted');
+    form.reset(); status.textContent = 'Thanks — your message has been sent. I’ll be in touch.';
+  } catch {
+    status.classList.add('error'); status.textContent = 'Your message couldn’t be sent. Your text is still here — please try again, or email me directly below.';
+  } finally { clearTimeout(timeout); button.disabled = false; button.innerHTML = 'Send message <span aria-hidden="true">↗</span>'; }
+});

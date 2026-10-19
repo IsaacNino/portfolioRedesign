@@ -1,63 +1,86 @@
-# Isaac Nino Portfolio Redesign
+# Isaac Nino — cinematic portfolio
 
-Local static portfolio site based on the stronger Deepsite redesign direction.
+A dependency-free, static portfolio with a violet orbital canvas, scroll reveals, project filters, accessible case-study dialogs, and a single project data file. The existing project stories, résumé, portrait, social links, and Formspree contact endpoint are retained.
 
-## Structure
+## Preview and publish
 
-```txt
-portfolioRedesign/
-├── index.html
-├── styles.css
-├── script.js
-└── README.md
+Use Node.js 20 or later. There are no packages to install.
+
+```sh
+npm run dev
 ```
 
-## Local Preview
+Open `http://127.0.0.1:5177`. The source can also be served with any ordinary static HTTP server. ES modules and JSON loading require HTTP; opening `index.html` directly as a file will not work.
 
-From inside the project folder:
-
-```bash
-python3 -m http.server 5173
+```sh
+npm test
+npm run build
+npm run preview
 ```
 
-Then open:
+The production output is `dist/`. On Vercel, select **Other** as the framework, `npm run build` as the build command, and `dist` as the output directory. A static host that serves the repository root also works. The canonical URL remains `https://www.isaacnino.com/`.
 
-```txt
-http://localhost:5173
+## Add or edit a project
+
+**Edit only `content/projects.json` for project content.** The array order is the display order. Cards, filters, counts, project tools, and case studies all use the same record.
+
+1. Duplicate a project object in the `projects` array.
+2. Give it a unique lowercase `id`, such as `interactive-installation`.
+3. Update its title, category, summary, tags, and case-study text. Set `featured` to `true` for a full-width card.
+4. Optionally add a screenshot to `assets/images/` and include `image` with a relative `src` and meaningful `alt` text.
+5. Add HTTPS links, or use `"links": []` for work without a public destination.
+6. Run `npm run check` and preview. Commit and deploy using your normal workflow.
+
+Example record (replace the illustrative text with your real project):
+
+```json
+{
+  "id": "new-project",
+  "title": "New project",
+  "category": "Interactive experiences",
+  "summary": "A short, honest description of the work.",
+  "featured": false,
+  "accent": "violet",
+  "tags": ["JavaScript", "Interaction design"],
+  "image": {
+    "src": "./assets/images/new-project.webp",
+    "alt": "Describe the interface shown in your screenshot."
+  },
+  "role": "Your role",
+  "focus": "The area of work",
+  "status": "Prototype",
+  "problem": "What needed to change?",
+  "approach": "What did you design and build?",
+  "outcome": "What happened? Use verified results.",
+  "links": []
+}
 ```
 
-You can also use the VS Code Live Server extension.
+Remove the entire `image` property if you do not have a screenshot yet. New projects automatically get abstract artwork; no component or layout change is required. The original four projects have bespoke CSS visual studies, explicitly labeled as studies rather than screenshots. `accent` accepts `violet`, `amber`, `blue`, or `sage`.
 
-## What Changed From Deepsite
+The category label creates its filter automatically; `All work` is reserved. Project IDs power direct links such as `/#project/intrust`, so keep an ID stable after sharing it. The editor schema in `content/projects.schema.json` supplies field guidance; runtime and build checks catch missing fields, duplicate IDs, unsafe URLs, and missing local images.
 
-- Split inline CSS and JavaScript into separate files.
-- Removed the Deepsite badge script.
-- Removed placeholder/fake projects.
-- Replaced stock image URLs with CSS-generated abstract visuals.
-- Removed the fake contact form submit behavior.
-- Updated location from Los Angeles to Colorado.
-- Added real project framing:
-  - InTrust
-  - CES AI Postcard Generator
-  - Dell Foundation Digital Gallery
-  - NFC Identity System
-  - AI Video Experiments
-  - Dogwood Counseling Website
-- Added Systems and Lab Notes sections.
-- Added basic SEO/meta tags.
-- Added dynamic footer year.
-- Added Denver/Colorado time zone handling.
+## Other content
 
-## Suggested Next Pass
+- `index.html`: biography, approach, contact copy, metadata, and résumé link.
+- `styles.css`: colors, typography, responsive layouts, and transitions.
+- `content/project-visuals.js`: optional custom artwork. Normal content edits do not require this file.
+- `orbital.js`: deterministic canvas artwork; no third-party graphics library.
+- `script.js`: filters, dialogs, scroll effects, menu, and form submission.
+- `assets/docs/Isaac-Nino-Resume.pdf`: retained résumé.
 
-1. Replace `hello@isaacnino.com` with the preferred contact email.
-2. Confirm LinkedIn and GitHub URLs.
-3. Add real screenshots or short videos for each project.
-4. Decide whether project cards should open modals or link to individual case-study pages.
-5. Add `favicon.ico` and social preview image.
-6. Push to GitHub.
-7. Deploy with Vercel.
+## Interaction and accessibility
 
-## Optional Future Upgrade
+- Native dialog focus containment, Escape dismissal, and focus return.
+- Keyboard-operable filters and menu, labeled form fields, skip link, and visible focus rings.
+- System reduced-motion support and a persistent animation pause control.
+- Canvas pauses when offscreen or when the tab is hidden. Device pixel ratio is capped.
+- No scroll hijacking, fake loading screen, custom cursor, analytics, or runtime package dependencies.
+- Responsive layouts down to 320px; local images load lazily.
+- Project-load errors show a useful fallback. Without JavaScript, the biography, email, résumé, and project destination links remain available.
 
-This can stay as a simple static site, but a future Vite version would make it easier to componentize project cards, add case study routes, and manage content from a data file.
+Google Fonts is the only presentation dependency and has local font fallbacks. The contact form uses the existing `https://formspree.io/f/xqenwere` endpoint. It reports success only after an accepted response, preserves text on errors, and has a 15-second timeout. End-to-end email delivery requires the owner's configured Formspree account and has not been tested by sending a message.
+
+## Validation
+
+`npm test` checks data validation, automatic filters, adding a new project without component edits, screenshot validation, URL safety, and escaping. `npm run build` validates content and local assets before copying the static output. `npm run check` runs content checks without building.
