@@ -1,4 +1,4 @@
-# Isaac Nino — creative technology, human by nature
+# Isaac Nino — Vibe. Code. Craft.
 
 An original cyberpunk portfolio in graphite and icy blue with restrained red accents, IBM Plex Mono typography, an angular portrait composition, a selectable signal switchboard, scroll-driven project imagery, and case studies powered by one content file. Built with HTML, CSS, and JavaScript; no runtime packages.
 
@@ -52,11 +52,14 @@ Remove `image` if no screenshot is ready; a simple typographic placeholder appea
 
 The JSON schema provides editor guidance. Runtime and build validation reject missing fields, duplicate IDs, unsafe URLs, and missing local images.
 
+To edit the switchboard, update `content/practice-data.js`. Keep each `projectId` matched to a project record, and keep layer IDs aligned with the corresponding SVG groups in `content/discipline-visuals.js`. Adding portfolio work does not require a new switchboard channel.
+
 ## Where things live
 
 - `index.html`: biography, contact copy, metadata, portrait, résumé, and discipline controls.
 - `styles.css`: palette, layout, responsive styling, and transitions.
-- `script.js`: scroll choreography, discipline descriptions, filters, dialogs, and contact handling.
+- `script.js`: scroll choreography, switchboard selection, filters, dialogs, and contact handling.
+- `content/practice-data.js`: switchboard layer titles, explanations, detail rows, tools, and related project IDs. Each practice has four editable layers.
 - `content/project-visuals.js`: image renderer and automatic placeholder.
 - `content/discipline-visuals.js`: original SVG practice maps for the four switchboard channels.
 - `assets/images/projects/`: screenshots of Isaac’s own live project websites.
@@ -64,7 +67,7 @@ The JSON schema provides editor guidance. Runtime and build validation reject mi
 
 ## Motion and interaction
 
-The opening typography, scan line, portrait, and project-name ticker move with normal page scrolling. Four selectable switchboard channels redraw an original practice map with a short tracing animation; these diagrams illustrate a process rather than live statistics. The work section keeps a preview alongside the current story, then changes images as each project comes into view. Numbered controls jump between stories; filters narrow the collection. Smaller screens display each image within its story. Pointer movement adds a small perspective shift to the portrait and desktop preview. A persistent motion control and system reduced-motion preference disable decorative movement.
+The opening typography, scan line, portrait, and project-name ticker move with normal page scrolling. Four selectable switchboard channels contain distinct process studies: InTrust document assembly, the CES prompt workbench, Dell gallery interface states, and Dogwood responsive content. Each has four selectable layers that highlight the diagram and explain its inputs, decisions, and intent. Selections persist when moving between channels. A related-project button opens the matching case study. These are editorial illustrations grounded in the project descriptions, rather than live telemetry or exact architecture documentation. On small screens the detailed drawing scrolls horizontally and pans to the selected layer; the text and controls stay within the screen. The work section keeps a preview alongside the current story, then changes images as each project comes into view. Numbered controls jump between stories; filters narrow the collection. Smaller screens display each image within its story. Pointer movement adds a small perspective shift to the portrait and desktop preview. A persistent motion control and system reduced-motion preference disable decorative movement.
 
 Brief color-split glitches appear on the opening headline, headline hover, switchboard changes, and visible project transitions. They run once per interaction with a cooldown; the original text remains present and visual copies are hidden from assistive technology. Motion pause cancels active glitches, and system reduced-motion settings suppress them.
 

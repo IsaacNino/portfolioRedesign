@@ -1,6 +1,7 @@
 import { validateProjects, getCategories, filterProjects, escapeHtml as esc } from './content/project-utils.js';
 import { projectVisual } from './content/project-visuals.js';
 import { disciplineVisual } from './content/discipline-visuals.js';
+import { practices } from './content/practice-data.js';
 
 const $ = id => document.getElementById(id);
 const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
@@ -159,31 +160,62 @@ $('heroTitle').addEventListener('pointerenter', () => glitch($('heroTitle')));
 (document.fonts?.ready || Promise.resolve()).then(() => glitch($('heroTitle')));
 prepareGlitchText($('channelLabel'));
 
-const disciplines = {
-  systems: { title: 'Less friction. More possibility.', text: 'Local-first software and thoughtful workflows that make complex work easier to navigate.', tools: 'React / Rust / Tauri / Document automation' },
-  ai: { title: 'A little curiosity goes a long way.', text: 'Generative experiments that turn emerging capabilities into something people can try, shape, and share.', tools: 'Generative AI / Prompt design / JavaScript' },
-  interaction: { title: 'An invitation to explore.', text: 'Interfaces that respond, stories that unfold, and digital experiences built to be discovered through interaction.', tools: 'Interactive galleries / Motion / Creative development' },
-  web: { title: 'Clear, considered, connected.', text: 'Web experiences with a clear purpose, a thoughtful visual identity, and an approachable path from curiosity to action.', tools: 'Responsive design / Front-end development / SEO' }
-};
-$('signalVisual').innerHTML = disciplineVisual('systems');
+const selectedLayers = Object.fromEntries(Object.entries(practices).map(([mode, practice]) => [mode, practice.layers[0].id]));
+function updatePracticeProject() {
+  const project = projects.find(project => project.id === practices[$('signalConsole').dataset.mode].projectId);
+  const button = $('practiceProject');
+  button.hidden = !project;
+  if (project) {
+    button.dataset.project = project.id;
+    button.textContent = `In practice: ${project.title} ↗`;
+    button.setAttribute('aria-label', `Read ${project.title} case study`);
+  } else delete button.dataset.project;
+}
+function renderPracticeLayer(mode, layerId, animate = false) {
+  const practice = practices[mode];
+  const layer = practice.layers.find(layer => layer.id === layerId) || practice.layers[0];
+  const index = practice.layers.indexOf(layer);
+  selectedLayers[mode] = layer.id;
+  $('practiceLayers').querySelectorAll('button').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.layer === layer.id)));
+  $('signalVisual').innerHTML = disciplineVisual(mode, layer.id);
+  $('disciplineDetail').innerHTML = `<div class="layer-heading"><span class="mono">Layer ${number(index + 1)} / ${number(practice.layers.length)}</span><h3>${esc(layer.title)}</h3><p>${esc(layer.description)}</p></div><dl class="layer-parts">${layer.parts.map(([label, value]) => `<div><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`).join('')}</dl>`;
+  // On narrow screens the detailed drawing stays readable and pans to the selected layer.
+  const visual = $('signalVisual');
+  const svg = visual.querySelector('svg');
+  const selected = svg.querySelector('.is-selected');
+  if (selected && visual.scrollWidth > visual.clientWidth) {
+    const bounds = selected.getBBox();
+    const center = (bounds.x + bounds.width / 2) * svg.getBoundingClientRect().width / 760;
+    visual.scrollTo({ left: Math.max(0, center - visual.clientWidth / 2), behavior: animate && motionEnabled ? 'smooth' : 'instant' });
+  }
+  if (animate) glitch(visual);
+  scheduleScroll();
+}
+function renderPractice(mode, animate = false) {
+  const practice = practices[mode];
+  $('signalConsole').dataset.mode = mode;
+  document.querySelectorAll('.channel-button').forEach(button => {
+    const active = button.dataset.discipline === mode;
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-pressed', String(active));
+  });
+  $('channelLabel').textContent = `${number(Object.keys(practices).indexOf(mode) + 1)} / ${practice.label}`;
+  prepareGlitchText($('channelLabel'));
+  $('practiceLayers').innerHTML = practice.layers.map((layer, index) => `<button type="button" class="layer-button" data-layer="${esc(layer.id)}" aria-pressed="false" aria-controls="disciplineDetail"><span>${number(index + 1)}</span>${esc(layer.label)}</button>`).join('');
+  $('disciplineTools').textContent = practice.tools;
+  renderPracticeLayer(mode, selectedLayers[mode], animate);
+  updatePracticeProject();
+  if (animate) glitch($('channelLabel'));
+}
+renderPractice('systems');
 document.querySelector('.channel-selector').addEventListener('click', event => {
   const button = event.target.closest('[data-discipline]');
-  if (!button || button.dataset.discipline === $('signalConsole').dataset.mode) return;
-  document.querySelectorAll('.channel-button').forEach(el => {
-    el.classList.toggle('active', el === button);
-    el.setAttribute('aria-pressed', String(el === button));
-  });
-  const mode = button.dataset.discipline;
-  const detail = disciplines[mode];
-  $('signalConsole').dataset.mode = mode;
-  $('channelLabel').textContent = `${number(Object.keys(disciplines).indexOf(mode) + 1)} / ${mode === 'ai' ? 'Applied AI' : mode}`;
-  $('signalVisual').innerHTML = disciplineVisual(mode);
-  prepareGlitchText($('channelLabel'));
-  glitch($('channelLabel'));
-  glitch($('signalVisual'));
-  $('disciplineDetail').innerHTML = `<h3>${esc(detail.title)}</h3><p>${esc(detail.text)}</p>`;
-  $('disciplineTools').textContent = detail.tools;
-  if (motionEnabled) $('disciplineDetail').animate([{ opacity: .3, transform: 'translateY(8px)' }, { opacity: 1, transform: 'translateY(0)' }], { duration: 350, easing: 'ease-out' });
+  if (button && button.dataset.discipline !== $('signalConsole').dataset.mode) renderPractice(button.dataset.discipline, true);
+});
+$('practiceLayers').addEventListener('click', event => {
+  const button = event.target.closest('[data-layer]');
+  const mode = $('signalConsole').dataset.mode;
+  if (button && button.dataset.layer !== selectedLayers[mode]) renderPracticeLayer(mode, button.dataset.layer, true);
 });
 
 function setActiveProject(index) {
@@ -305,7 +337,7 @@ try {
     $('heroMarquee').innerHTML = marqueeProjects.map(project => `<span>${esc(project.title)}<sup>${number(projects.indexOf(project) + 1)}</sup></span>`).join('');
   }
   $('projectFilters').innerHTML = getCategories(projects).map((category,index) => `<button class="filter" type="button" aria-pressed="${index === 0}" data-category="${esc(category)}">${esc(category)}</button>`).join('');
-  renderProjects(); syncProjectHash();
+  renderProjects(); updatePracticeProject(); syncProjectHash();
 } catch (error) {
   $('workLayout').hidden = true; $('workError').hidden = false;
   console.error('Project content could not load:', error);
