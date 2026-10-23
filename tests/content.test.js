@@ -11,7 +11,7 @@ test('published portfolio data validates and all categories filter correctly',()
   for(const category of getCategories(projects).slice(1))assert.ok(filterProjects(projects,category).every(p=>p.category===category));
 });
 test('adding a project creates its own filter and fallback artwork without layout edits',()=>{
-  const data=sample();data.projects.push({...data.projects[0],id:'new-experiment',title:'New experiment',category:'New category',featured:false});
+  const data=sample();const added={...data.projects[0],id:'new-experiment',title:'New experiment',category:'New category',featured:false};delete added.image;data.projects.push(added);
   const projects=validateProjects(data);
   assert.ok(getCategories(projects).includes('New category'));
   assert.equal(filterProjects(projects,'New category').length,1);

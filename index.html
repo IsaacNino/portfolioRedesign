@@ -1,74 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#080a08" />
-  <title>Isaac Nino — Creative Technology & Applied AI</title>
-  <meta name="description" content="Isaac Nino builds useful tools, AI workflows, and interactive experiences. Explore selected work at the intersection of human ideas and emerging technology." />
-  <meta name="author" content="Isaac Nino" />
-  <meta property="og:title" content="Isaac Nino — Creative Technology & Applied AI" />
-  <meta property="og:description" content="Human ideas. Real systems. Applied AI, tools, and interactive experiences by Isaac Nino." />
-  <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://www.isaacnino.com/" />
-  <link rel="canonical" href="https://www.isaacnino.com/" />
-  <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700;800&family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="./styles.css" />
-  <script src="./script.js" type="module"></script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#101419">
+<title>Isaac Nino — Creative technology, human by nature.</title>
+<meta name="description" content="Isaac Nino is a creative technologist based in Colorado. Explore software, AI experiments, and interactive experiences built with curiosity and intention.">
+<meta name="author" content="Isaac Nino"><meta property="og:title" content="Isaac Nino — Creative technology, human by nature."><meta property="og:description" content="Ideas made tangible. Explore Isaac Nino’s tools, experiments, and interactive experiences."><meta property="og:type" content="website"><meta property="og:url" content="https://www.isaacnino.com/">
+<link rel="canonical" href="https://www.isaacnino.com/"><link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./styles.css"><script src="./script.js" type="module"></script>
 </head>
 <body>
-  <a class="skip-link" href="#work">Skip to selected work</a>
-  <div class="reading-progress" aria-hidden="true"><span id="readingProgress"></span></div>
-  <header class="site-header" id="header">
-    <a class="brand" href="#home" aria-label="Isaac Nino home"><span class="brand-symbol" aria-hidden="true">i<span>n</span><i></i></span><span>ISAAC NINO<span class="brand-sub">CREATIVE TECHNOLOGIST</span></span></a>
-    <button class="menu-toggle" id="menuToggle" aria-expanded="false" aria-controls="navigation" type="button">Menu <span aria-hidden="true">＋</span></button>
-    <nav id="navigation" aria-label="Main navigation">
-      <a href="#work"><span>01</span> Work</a><a href="#approach"><span>02</span> Approach</a><a href="#about"><span>03</span> About</a><a class="nav-contact" href="#contact">Let’s talk <span aria-hidden="true">↗</span></a>
-    </nav>
-  </header>
-  <main>
-    <section class="hero" id="home" aria-labelledby="heroTitle">
-      <div class="industrial-scene" aria-hidden="true"><img src="./assets/images/industrial-chamber.png" alt="" fetchpriority="high"><div class="scene-shade"></div></div><div class="hero-grain" aria-hidden="true"></div>
-      <div class="hero-coordinate mono" aria-hidden="true">INDEPENDENT PRACTICE / EST. IN CURIOSITY</div>
-      <div class="hero-copy">
-        <p class="eyebrow hero-ident"><span class="signal-dot"></span> ISAAC NINO <span class="ident-divider">//</span> APPLIED AI & CREATIVE TECHNOLOGY</p>
-        <h1 id="heroTitle">HUMAN IDEAS.<br><span class="light-text">REAL SYSTEMS.</span></h1>
-        <p class="hero-description">Complex problems. Unconventional thinking.<br>I build tools, AI workflows, and digital experiences<br class="desktop-break"> that make the possibilities practical.</p>
-        <div class="hero-actions"><a class="button button-light" href="#work">ENTER THE WORK <span aria-hidden="true">↘</span></a><a class="text-link" href="#about">THE HUMAN BEHIND IT <span aria-hidden="true">↗</span></a></div>
-      </div>
-      <div class="specimen-label" aria-hidden="true"><span class="specimen-cross">+</span><div>FIELD STUDY — 001<br><b>THE SHAPE OF THINGS TO COME</b></div><span class="mini-barcode"></span></div>
-      <div class="hero-side-index mono" aria-hidden="true">EXPERIMENT / BUILD / REPEAT</div>
-      <div class="hero-bottom"><a class="scroll-cue" href="#work"><span class="scroll-line"></span>SCROLL TO ACCESS <span aria-hidden="true">↓</span></a><div class="location mono"><span class="signal-dot"></span> COLORADO / US <span id="localTime"></span></div><button id="motionToggle" class="motion-toggle" type="button" aria-pressed="false">Motion <span id="motionLabel">on</span><span aria-hidden="true">▥</span></button></div>
-    </section>
-    <div class="practice-strip" aria-label="Areas of practice"><span>APPLIED AI</span><i>+</i><span>INTERACTIVE EXPERIENCES</span><i>+</i><span>LOCAL-FIRST TOOLS</span><i>+</i><span>CREATIVE SYSTEMS</span><i>+</i><span>PHYSICAL + DIGITAL</span></div>
-    <section class="work section-shell" id="work" aria-labelledby="workTitle">
-      <div class="section-heading reveal"><div><p class="eyebrow section-number">01 / PROJECT INDEX</p><h2 id="workTitle">SELECTED<br><em>WORK.</em></h2></div><p class="section-intro">Tools. Experiments. Digital experiences.<br>Built to solve real problems.<br>Open a project to get inside.</p></div>
-      <div class="work-toolbar reveal"><div class="filters" id="projectFilters" role="group" aria-label="Filter projects"></div><span class="project-count mono" id="projectCount" role="status" aria-live="polite"></span></div>
-      <div class="projects-grid" id="projectsGrid"></div>
-      <p class="work-error" id="workError" hidden>Project details couldn’t load. Please refresh, or <a href="https://github.com/IsaacNino">explore my GitHub</a>.</p>
-      <noscript><div class="noscript-work"><p>Selected work — enable JavaScript for the interactive case studies.</p><a href="https://www.getintrust.com/">InTrust</a><a href="https://cespostcard26.vercel.app/">CES AI Postcard Generator</a><a href="https://digital-museum-gallery.vercel.app/">Dell Foundation Digital Gallery</a><a href="https://www.dogwoodcounseling-mb.com/">Dogwood Counseling Website</a></div></noscript>
-      <div class="work-footnote"><span class="mono">BUILT WITH INTENTION. ALWAYS EVOLVING.</span><a class="text-link" href="https://github.com/IsaacNino" target="_blank" rel="noopener noreferrer">More on GitHub <span aria-hidden="true">↗</span></a></div>
-    </section>
-    <section class="approach section-shell" id="approach" aria-labelledby="approachTitle">
-      <div class="approach-intro reveal"><p class="eyebrow section-number">02 / THE APPROACH</p><h2 id="approachTitle">CREATIVE INSTINCT.<br><em>TECHNICAL INTENT.</em></h2><p>Technology gets interesting when it becomes useful. I connect the dots between what’s possible and what people actually need.</p><div class="approach-glyph" aria-hidden="true"><span></span><span></span><span></span><i>+</i></div></div>
-      <div class="approach-list">
-        <article class="approach-item reveal"><span class="mono">01</span><div><h3>Start with the human.</h3><p>Understand the real problem before reaching for the tools. Find the friction, ask better questions, and define what useful looks like.</p><div class="small-tags"><span>DISCOVERY</span><span>SYSTEMS THINKING</span></div></div><span class="item-symbol" aria-hidden="true">⌖</span></article>
-        <article class="approach-item reveal"><span class="mono">02</span><div><h3>Make the idea tangible.</h3><p>Move from abstract possibility to a working prototype. Combine AI, design, and code to learn through making.</p><div class="small-tags"><span>RAPID PROTOTYPING</span><span>CREATIVE TECHNOLOGY</span></div></div><span class="item-symbol" aria-hidden="true">⌘</span></article>
-        <article class="approach-item reveal"><span class="mono">03</span><div><h3>Build for the real world.</h3><p>Refine the details that turn a promising experiment into a thoughtful tool. Clear interactions. Reliable systems. Room to evolve.</p><div class="small-tags"><span>ITERATION</span><span>HUMAN-CENTERED SYSTEMS</span></div></div><span class="item-symbol" aria-hidden="true">↗</span></article>
-      </div>
-    </section>
-    <section class="perspective section-shell" aria-labelledby="perspectiveTitle"><div class="perspective-line" aria-hidden="true"></div><div class="reveal"><p class="eyebrow">A WORKING PERSPECTIVE</p><h2 id="perspectiveTitle">THE FUTURE ISN’T ABSTRACT.<br><em>IT’S WHAT WE MAKE USEFUL.</em></h2><p>AI isn’t one discipline. It’s an expanding set of possibilities.<br>My work is finding the right ones — and making them human.</p></div><span class="perspective-marker" aria-hidden="true">[ HUMAN INPUT REQUIRED ]</span></section>
-    <section class="about section-shell" id="about" aria-labelledby="aboutTitle">
-      <div class="portrait-block reveal"><div class="portrait-frame"><img src="./assets/images/siteShot.webp" alt="Isaac Nino wearing glasses and a black beanie, holding up a peace sign" loading="lazy" width="1290" height="2293"><span class="portrait-corner corner-one"></span><span class="portrait-corner corner-two"></span><div class="portrait-caption mono">THE HUMAN BEHIND THE SYSTEMS <span>↗</span></div></div><div class="portrait-meta mono"><span>ISAAC NINO</span><span>BASED IN COLORADO ↗</span></div></div>
-      <div class="about-copy reveal"><p class="eyebrow section-number">03 / MEET THE HUMAN</p><h2 id="aboutTitle">CURIOSITY IS MY<br><em>OPERATING SYSTEM.</em></h2><p>I’m an Applied AI Technologist and Creative Technologist based in Colorado. I build tools, workflows, and interactive experiences that make complex ideas practical.</p><p>My work moves between AI, local-first software, immersive web experiences, and the physical world. I care about the translation: taking technical potential and turning it into something intuitive, useful, and human.</p><div class="capability-grid"><div><h3 class="mono">WAYS I THINK</h3><p>Creative systems strategy<br>Product & experience design<br>Rapid prototyping</p></div><div><h3 class="mono">THINGS I BUILD</h3><p>AI workflows & tools<br>Interactive web experiences<br>Physical + digital systems</p></div></div><a class="text-link" href="./assets/docs/Isaac-Nino-Resume.pdf" download>Download résumé <span aria-hidden="true">↓</span></a></div>
-    </section>
-    <section class="contact section-shell" id="contact" aria-labelledby="contactTitle"><div class="contact-grid" aria-hidden="true"></div><div class="contact-copy reveal"><p class="eyebrow"><span class="signal-dot"></span> OPEN TO THOUGHTFUL COLLABORATIONS</p><h2 id="contactTitle">GOT A <em>WHAT IF?</em><br>LET’S PUT IT TO WORK.</h2><a class="contact-email" href="mailto:isaacdavidnino@gmail.com">isaacdavidnino@gmail.com <span aria-hidden="true">↗</span></a><div class="contact-links"><button class="text-link" id="contactOpen" type="button">Send a message <span aria-hidden="true">↗</span></button><a href="https://www.linkedin.com/in/isaacdnino" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a><a href="https://github.com/IsaacNino" target="_blank" rel="noopener noreferrer">GitHub ↗</a></div></div></section>
-  </main>
-  <footer class="footer"><a class="brand footer-brand" href="#home"><span class="brand-symbol" aria-hidden="true">i<span>n</span><i></i></span><span>ISAAC NINO</span></a><p>© <span id="year">2026</span> Isaac Nino. Made of curiosity.</p><a class="mono" href="#home">BACK TO TOP ↑</a></footer>
-  <dialog class="project-dialog" id="projectDialog" aria-labelledby="dialogTitle"><div class="dialog-top"><span class="mono">PROJECT / CASE STUDY</span><button class="icon-button" id="closeProject" type="button" aria-label="Close project">✕</button></div><div id="dialogContent"></div></dialog>
-  <dialog class="contact-dialog" id="contactDialog" aria-labelledby="contactFormTitle"><div class="dialog-top"><span class="mono">START A CONVERSATION</span><button class="icon-button" id="closeContact" type="button" aria-label="Close contact form">✕</button></div><h2 id="contactFormTitle">What are you building?</h2><p>Tell me a little about your idea.</p><form id="contactForm" action="https://formspree.io/f/xqenwere" method="POST"><label for="contactName">Your name</label><input id="contactName" name="name" autocomplete="name" required maxlength="100"><label for="contactEmail">Email</label><input id="contactEmail" name="email" type="email" autocomplete="email" required maxlength="254"><label for="contactMessage">Your idea</label><textarea id="contactMessage" name="message" rows="4" required maxlength="5000"></textarea><button class="button button-light" type="submit">Send message <span aria-hidden="true">↗</span></button><p id="formStatus" role="status" aria-live="polite"></p></form><a class="text-link" href="mailto:isaacdavidnino@gmail.com">Or email me directly ↗</a></dialog>
+<a class="skip-link" href="#work">Skip to selected work</a>
+<div class="reading-progress" aria-hidden="true"><span id="readingProgress"></span></div>
+<header class="site-header" id="header"><a class="brand" href="#home" aria-label="Isaac Nino home">Isaac Nino<span>Design × technology × curiosity</span></a><nav aria-label="Main navigation"><a href="#work">Work <sup id="navCount">04</sup></a><a class="about-nav" href="#about">About</a><a class="contact-pill" href="#contact"><i></i> Let’s collaborate <span aria-hidden="true">↗</span></a></nav></header>
+<main>
+<section class="hero" id="home" aria-labelledby="heroTitle">
+<h1 class="sr-only" id="heroTitle">Isaac Nino. Creative technology, human by nature.</h1>
+<div class="hero-grid" aria-hidden="true"></div>
+<div class="hero-marquee" aria-hidden="true"><div id="heroMarquee"><span>InTrust<sup>01</sup></span><span>CES / 26<sup>02</sup></span><span>Dell Gallery<sup>03</sup></span><span>Dogwood<sup>04</sup></span><span>InTrust<sup>01</sup></span></div></div>
+<div class="portrait-composition" id="portraitComposition">
+<div class="portrait-perspective" id="portraitPerspective"><div class="portrait-frame" id="portraitFrame"><img src="./assets/images/siteShot.webp" alt="Isaac Nino in a black beanie and blue sweatshirt, giving a peace sign" width="1290" height="2293" fetchpriority="high"><div class="portrait-tint"></div></div></div>
+<div class="portrait-tag tag-name"><span class="tiny-cross" aria-hidden="true">+</span> The human behind the work.</div>
+<div class="portrait-tag tag-location"><span class="live-dot"></span> Colorado, USA</div>
+<div class="portrait-mark mono" aria-hidden="true">IN / 001<br>Always a work in progress.</div>
+</div>
+<div class="hero-footer shell"><a class="scroll-button" href="#about" aria-label="Scroll to meet Isaac">↓</a><p>I’m Isaac, a creative technologist turning<br class="desktop-only"> complex ideas into useful tools and<br class="desktop-only"> experiences with a little personality.</p><div class="hero-disciplines"><span class="asterisk" aria-hidden="true">✳</span><span>Applied AI<br>& creative systems</span></div><div class="hero-disciplines"><span class="fold-glyph" aria-hidden="true"></span><span>Digital ideas.<br>Real-world impact.</span></div></div>
+<div class="hero-corner mono" aria-hidden="true">SCROLL TO FIND OUT / ↓</div>
+</section>
+<div class="practice-strip" aria-hidden="true"><div id="practiceTrack"><span>Curiosity is the starting point.</span><b>↗</b><span>Design is how it feels.</span><b>↗</b><span>Technology makes it real.</span><b>↗</b><span>Curiosity is the starting point.</span><b>↗</b></div></div>
+<section class="about shell section-space" id="about" aria-labelledby="aboutTitle">
+<div class="section-kicker"><span>/about</span><span class="mono">Creative instinct. Technical intent.</span></div>
+<div class="about-intro"><h2 id="aboutTitle" class="reveal">A curious mind.<br>A practical pair of hands.</h2><p class="reveal">I move between design, code, and emerging technology to make ideas tangible. Sometimes that means a desktop tool. Sometimes an AI experiment. Always something built around people.</p></div>
+<div class="instrument reveal" aria-label="Explore my areas of practice"><div class="instrument-top mono"><span>Ways of working</span><span>SELECT A DISCIPLINE / ↓</span></div><div class="dials" role="group" aria-label="Areas of practice">
+<button class="dial-button active" type="button" data-discipline="systems" aria-pressed="true"><span class="dial-status"></span><span class="dial-face"><span class="dial-notch"></span><span class="dial-center">A</span></span><span class="dial-label">Tools & systems</span><span class="dial-index mono">01 / BUILD</span></button>
+<button class="dial-button" type="button" data-discipline="ai" aria-pressed="false"><span class="dial-status"></span><span class="dial-face"><span class="dial-notch"></span><span class="dial-center">B</span></span><span class="dial-label">Applied AI</span><span class="dial-index mono">02 / EXPERIMENT</span></button>
+<button class="dial-button" type="button" data-discipline="interaction" aria-pressed="false"><span class="dial-status"></span><span class="dial-face"><span class="dial-notch"></span><span class="dial-center">C</span></span><span class="dial-label">Interaction</span><span class="dial-index mono">03 / EXPERIENCE</span></button>
+<button class="dial-button" type="button" data-discipline="web" aria-pressed="false"><span class="dial-status"></span><span class="dial-face"><span class="dial-notch"></span><span class="dial-center">D</span></span><span class="dial-label">Web & design</span><span class="dial-index mono">04 / CONNECT</span></button>
+</div><div class="instrument-detail"><div id="disciplineDetail" aria-live="polite"><h3>Less friction. More possibility.</h3><p>Local-first software and thoughtful workflows that make complex work easier to navigate.</p></div><div class="instrument-tools"><span class="mono">In the toolbox</span><p id="disciplineTools">React / Rust / Tauri / Document automation</p><a class="text-link" href="#work">See it in practice <span aria-hidden="true">↗</span></a></div></div></div>
+<div class="about-bottom"><p>Based in Colorado.<br>Built on curiosity.</p><a class="text-link" href="./assets/docs/Isaac-Nino-Resume.pdf" download>Download my résumé <span aria-hidden="true">↓</span></a></div>
+</section>
+<section class="work shell section-space" id="work" aria-labelledby="workTitle">
+<div class="section-kicker"><span>/selected_work</span><span class="mono" id="projectCount">04 projects</span></div>
+<div class="work-heading"><h2 class="reveal" id="workTitle">A few things I’ve<br><span>put into motion.</span></h2><p class="reveal">Different problems. Different mediums.<br>The same drive to make something useful.</p></div>
+<div class="filters" id="projectFilters" role="group" aria-label="Filter selected work"></div>
+<div class="work-layout" id="workLayout"><div class="project-stories" id="projectStories"></div><aside class="showcase" id="showcase" aria-label="Selected project preview"><div class="showcase-top"><span class="mono" id="showcaseNumber">01 / 04</span><div id="projectJumps" class="project-jumps" role="group" aria-label="Jump to a project"></div><span class="mono">SCROLL TO EXPLORE</span></div><div class="showcase-tilt" id="showcaseTilt"><div class="showcase-stage" id="showcaseStage"></div></div><div class="showcase-caption"><div><span class="mono" id="showcaseCategory"></span><h3 id="showcaseTitle"></h3></div><button class="round-button" id="showcaseOpen" type="button" aria-label="Open selected project case study">↗</button></div><div class="showcase-line" aria-hidden="true"><span id="showcaseProgress"></span></div></aside></div>
+<p class="work-empty" id="workEmpty" hidden>New work is on the way. In the meantime, <a href="https://github.com/IsaacNino">explore my GitHub ↗</a>.</p>
+<p class="work-error" id="workError" hidden>Project details couldn’t load. Please refresh, or <a href="https://github.com/IsaacNino">explore my GitHub ↗</a>.</p>
+<noscript><div class="noscript-work"><p>Selected projects</p><a href="https://www.getintrust.com/">InTrust ↗</a><a href="https://cespostcard26.vercel.app/">CES AI Postcard Generator ↗</a><a href="https://digital-museum-gallery.vercel.app/">Dell Foundation Digital Gallery ↗</a><a href="https://www.dogwoodcounseling-mb.com/">Dogwood Counseling ↗</a></div></noscript>
+<div class="work-bottom"><span class="mono">A living collection. Always evolving.</span><a class="text-link" href="https://github.com/IsaacNino" target="_blank" rel="noopener noreferrer">More on GitHub ↗</a></div>
+</section>
+<section class="perspective" id="perspective"><div class="perspective-lines" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div><div class="perspective-copy shell"><span class="mono">The thread through it all.</span><h2><span class="perspective-first">Make it thoughtful.</span><span class="perspective-second">Make it useful.</span><span class="perspective-third">Make it human.</span></h2><p>I’m most interested in the space between what technology can do and what people actually need.</p></div></section>
+<section class="contact shell section-space" id="contact" aria-labelledby="contactTitle"><div class="section-kicker"><span>/next_project</span><span class="mono">The interesting part starts here.</span></div><div class="contact-title"><h2 id="contactTitle">Have a<br><em>what if?</em></h2><div class="contact-asterisk" id="contactAsterisk" aria-hidden="true">✳</div></div><div class="contact-bottom"><p>Let’s give it a shape.<br>A prototype. A product. A new possibility.</p><div class="contact-actions"><button class="button-light" id="contactOpen" type="button">Start a conversation <span aria-hidden="true">↗</span></button><a href="mailto:isaacdavidnino@gmail.com">isaacdavidnino@gmail.com</a></div></div></section>
+</main>
+<footer class="footer shell"><a class="brand" href="#home">Isaac Nino<span>Creative technology. Human by nature.</span></a><div><a href="https://www.linkedin.com/in/isaacdnino" target="_blank" rel="noopener noreferrer">LinkedIn ↗</a><a href="https://github.com/IsaacNino" target="_blank" rel="noopener noreferrer">GitHub ↗</a><a href="#home">Back to top ↑</a></div><span class="mono">© <span id="year">2026</span></span></footer>
+<button class="motion-toggle" id="motionToggle" type="button" aria-pressed="true"><span id="motionIcon" aria-hidden="true">Ⅱ</span><span id="motionLabel">Motion on</span></button>
+<dialog class="project-dialog" id="projectDialog" aria-labelledby="dialogTitle"><div class="dialog-top"><span class="mono">Inside the project</span><button class="round-button" id="closeProject" type="button" aria-label="Close project">×</button></div><div id="dialogContent"></div></dialog>
+<dialog class="contact-dialog" id="contactDialog" aria-labelledby="contactFormTitle"><div class="dialog-top"><span class="mono">Start a conversation</span><button class="round-button" id="closeContact" type="button" aria-label="Close contact form">×</button></div><h2 id="contactFormTitle">What’s on your mind?</h2><p>A little context is a good place to start.</p><form id="contactForm" action="https://formspree.io/f/xqenwere" method="POST"><label for="contactName">Your name</label><input id="contactName" name="name" autocomplete="name" required maxlength="100"><label for="contactEmail">Email</label><input id="contactEmail" name="email" type="email" autocomplete="email" required maxlength="254"><label for="contactMessage">Your idea</label><textarea id="contactMessage" name="message" rows="4" required maxlength="5000"></textarea><button class="button-light" type="submit">Send message ↗</button><p id="formStatus" role="status" aria-live="polite"></p></form><a class="text-link" href="mailto:isaacdavidnino@gmail.com">Or email me directly ↗</a></dialog>
 </body>
 </html>
