@@ -157,7 +157,8 @@ applyMotion(); observeReveals();
 $('year').textContent = new Date().getFullYear();
 [...$('heroTitle').children].forEach(prepareGlitchText);
 $('heroTitle').addEventListener('pointerenter', () => glitch($('heroTitle')));
-(document.fonts?.ready || Promise.resolve()).then(() => glitch($('heroTitle')));
+if (window.signalBoot?.active) addEventListener('signal:entered', () => glitch($('heroTitle')), { once: true });
+else (document.fonts?.ready || Promise.resolve()).then(() => glitch($('heroTitle')));
 prepareGlitchText($('channelLabel'));
 
 const selectedLayers = Object.fromEntries(Object.entries(practices).map(([mode, practice]) => [mode, practice.layers[0].id]));
@@ -327,6 +328,7 @@ $('contactForm').addEventListener('submit', async event => {
   } finally { clearTimeout(timeout); button.disabled = false; button.innerHTML = 'Send message <span aria-hidden="true">↗</span>'; }
 });
 
+window.signalBoot?.ready('interface');
 try {
   const response = await fetch('./content/projects.json');
   if (!response.ok) throw new Error(`Content request returned ${response.status}`);
@@ -338,7 +340,9 @@ try {
   }
   $('projectFilters').innerHTML = getCategories(projects).map((category,index) => `<button class="filter" type="button" aria-pressed="${index === 0}" data-category="${esc(category)}">${esc(category)}</button>`).join('');
   renderProjects(); updatePracticeProject(); syncProjectHash();
+  window.signalBoot?.ready('work');
 } catch (error) {
   $('workLayout').hidden = true; $('workError').hidden = false;
+  window.signalBoot?.ready('work', false);
   console.error('Project content could not load:', error);
 }

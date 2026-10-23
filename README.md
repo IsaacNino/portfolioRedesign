@@ -59,6 +59,7 @@ To edit the switchboard, update `content/practice-data.js`. Keep each `projectId
 - `index.html`: biography, contact copy, metadata, portrait, résumé, and discipline controls.
 - `styles.css`: palette, layout, responsive styling, and transitions.
 - `script.js`: scroll choreography, switchboard selection, filters, dialogs, and contact handling.
+- `assets/boot.js`: independent loading sequence, readiness checks, skip behavior, and fail-open timeout.
 - `content/practice-data.js`: switchboard layer titles, explanations, detail rows, tools, and related project IDs. Each practice has four editable layers.
 - `content/project-visuals.js`: image renderer and automatic placeholder.
 - `content/discipline-visuals.js`: original SVG practice maps for the four switchboard channels.
@@ -66,6 +67,8 @@ To edit the switchboard, update `content/practice-data.js`. Keep each `projectId
 - `assets/docs/Isaac-Nino-Resume.pdf`: existing résumé.
 
 ## Motion and interaction
+
+A brief SIGNAL boot sequence precedes the hero on full page loads. Four checks follow interface setup, typography, the portrait, and project content; failures settle as fallbacks. Each check gets a short visual beat, followed by a clipped reveal after about two seconds on a normal load. A separate 4.5-second watchdog releases the page even if the app module or an asset stalls. Skip intro and Escape exit immediately and restore keyboard access. Direct section/case-study links, saved motion pause, and system reduced motion bypass the intro. With JavaScript unavailable the overlay stays hidden.
 
 The opening typography, scan line, portrait, and project-name ticker move with normal page scrolling. Four selectable switchboard channels contain distinct process studies: InTrust document assembly, the CES prompt workbench, Dell gallery interface states, and Dogwood responsive content. Each has four selectable layers that highlight the diagram and explain its inputs, decisions, and intent. Selections persist when moving between channels. A related-project button opens the matching case study. These are editorial illustrations grounded in the project descriptions, rather than live telemetry or exact architecture documentation. On small screens the detailed drawing scrolls horizontally and pans to the selected layer; the text and controls stay within the screen. The work section keeps a preview alongside the current story, then changes images as each project comes into view. Numbered controls jump between stories; filters narrow the collection. Smaller screens display each image within its story. Pointer movement adds a small perspective shift to the portrait and desktop preview. A persistent motion control and system reduced-motion preference disable decorative movement.
 
@@ -77,4 +80,4 @@ The existing Formspree endpoint remains `https://formspree.io/f/xqenwere`. The f
 
 ## Validation
 
-`npm test` covers project validation, filters, adding work without layout edits, image validation, escaping, and unsafe URLs. `npm run build` checks content and local assets before creating production output. `npm run check` runs those checks without building.
+`npm test` covers loader bypasses, timeout recovery, Escape cleanup, asset failure completion, project validation, filters, adding work without layout edits, image validation, escaping, and unsafe URLs. `npm run build` checks content and local assets before creating production output. `npm run check` runs those checks without building.
