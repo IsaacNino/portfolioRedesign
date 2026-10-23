@@ -1,6 +1,6 @@
 # Isaac Nino — creative technology, human by nature
 
-A portrait-led portfolio in graphite and icy blue, with tactile discipline controls, scroll-driven project imagery, and case studies powered by one content file. Built with HTML, CSS, and JavaScript; no runtime packages.
+An original cyberpunk portfolio in graphite and icy blue with restrained red accents, an angular portrait composition, a selectable signal switchboard, scroll-driven project imagery, and case studies powered by one content file. Built with HTML, CSS, and JavaScript; no runtime packages.
 
 ## Preview and publish
 
@@ -58,12 +58,13 @@ The JSON schema provides editor guidance. Runtime and build validation reject mi
 - `styles.css`: palette, layout, responsive styling, and transitions.
 - `script.js`: scroll choreography, discipline descriptions, filters, dialogs, and contact handling.
 - `content/project-visuals.js`: image renderer and automatic placeholder.
+- `content/discipline-visuals.js`: original SVG practice maps for the four switchboard channels.
 - `assets/images/projects/`: screenshots of Isaac’s own live project websites.
 - `assets/docs/Isaac-Nino-Resume.pdf`: existing résumé.
 
 ## Motion and interaction
 
-The opening portrait and oversized project names move with normal page scrolling. The work section keeps a preview alongside the current story, then changes images as each project comes into view. Numbered controls jump between stories; filters narrow the collection. Smaller screens display each image within its story. Pointer movement adds a small perspective shift to the portrait and desktop preview. A persistent motion control and system reduced-motion preference disable decorative movement.
+The opening typography, scan line, portrait, and project-name ticker move with normal page scrolling. Four selectable switchboard channels redraw an original practice map with a short tracing animation; these diagrams illustrate a process rather than live statistics. The work section keeps a preview alongside the current story, then changes images as each project comes into view. Numbered controls jump between stories; filters narrow the collection. Smaller screens display each image within its story. Pointer movement adds a small perspective shift to the portrait and desktop preview. A persistent motion control and system reduced-motion preference disable decorative movement.
 
 Native dialogs support keyboard focus containment, Escape, and focus return. The page includes a skip link, visible focus outlines, labeled form fields, loading-error fallback, and project links for visitors without JavaScript. Motion uses scheduled animation frames on scroll instead of a permanent rendering loop.
 

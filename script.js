@@ -1,5 +1,6 @@
 import { validateProjects, getCategories, filterProjects, escapeHtml as esc } from './content/project-utils.js';
 import { projectVisual } from './content/project-visuals.js';
+import { disciplineVisual } from './content/discipline-visuals.js';
 
 const $ = id => document.getElementById(id);
 const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
@@ -67,15 +68,19 @@ function updateScroll() {
   const heroRect = hero.getBoundingClientRect();
   const heroProgress = motionEnabled ? clamp(-heroRect.top / heroRect.height) : 0;
   $('heroMarquee').style.transform = `translate3d(${-220 - heroProgress * 550}px,0,0)`;
-  $('portraitComposition').style.transform = `translate(-50%,calc(-50% + ${heroProgress * 110}px)) scale(${1 - heroProgress * .07})`;
-  $('portraitFrame').style.borderRadius = `${230 - heroProgress * 150}px`;
+  $('portraitComposition').style.transform = `translate3d(0,${heroProgress * 85}px,0)`;
+  document.querySelector('.hero-copy').style.transform = `translate3d(0,${heroProgress * -60}px,0)`;
+  $('portraitFrame').style.setProperty('--scan-y', `${heroProgress * 100}%`);
+  const consoleRect = $('signalConsole').getBoundingClientRect();
+  const consoleProgress = motionEnabled ? clamp((innerHeight - consoleRect.top) / (innerHeight + consoleRect.height)) : .5;
+  $('signalVisual').style.setProperty('--scan-position', `${consoleProgress * 100}%`);
   $('practiceTrack').style.transform = `translate3d(${-40 - heroProgress * 130}px,0,0)`;
   const pRect = perspective.getBoundingClientRect();
   const pProgress = motionEnabled ? clamp((innerHeight - pRect.top) / (innerHeight + pRect.height)) : .5;
   perspectiveWords.forEach((word, index) => { word.style.transform = `translateX(${(pProgress - .5) * (index - 1) * 70}px)`; });
   perspectiveLines.style.setProperty('--line-shift', (pProgress - .5) * 180);
   const contactProgress = motionEnabled ? clamp((innerHeight - $('contact').getBoundingClientRect().top) / (innerHeight + $('contact').offsetHeight)) : 0;
-  $('contactAsterisk').style.transform = `rotate(${contactProgress * 105}deg)`;
+  $('contactAsterisk').style.transform = `translate3d(${contactProgress * 25}px,${contactProgress * -25}px,0)`;
   if (storyElements.length) {
     const target = innerHeight * .48;
     let closest = 0, distance = Infinity;
@@ -119,14 +124,19 @@ const disciplines = {
   interaction: { title: 'An invitation to explore.', text: 'Interfaces that respond, stories that unfold, and digital experiences built to be discovered through interaction.', tools: 'Interactive galleries / Motion / Creative development' },
   web: { title: 'Clear, considered, connected.', text: 'Web experiences with a clear purpose, a thoughtful visual identity, and an approachable path from curiosity to action.', tools: 'Responsive design / Front-end development / SEO' }
 };
-document.querySelector('.dials').addEventListener('click', event => {
+$('signalVisual').innerHTML = disciplineVisual('systems');
+document.querySelector('.channel-selector').addEventListener('click', event => {
   const button = event.target.closest('[data-discipline]');
   if (!button) return;
-  document.querySelectorAll('.dial-button').forEach(el => {
+  document.querySelectorAll('.channel-button').forEach(el => {
     el.classList.toggle('active', el === button);
     el.setAttribute('aria-pressed', String(el === button));
   });
-  const detail = disciplines[button.dataset.discipline];
+  const mode = button.dataset.discipline;
+  const detail = disciplines[mode];
+  $('signalConsole').dataset.mode = mode;
+  $('channelLabel').textContent = `${number(Object.keys(disciplines).indexOf(mode) + 1)} / ${mode === 'ai' ? 'Applied AI' : mode}`;
+  $('signalVisual').innerHTML = disciplineVisual(mode);
   $('disciplineDetail').innerHTML = `<h3>${esc(detail.title)}</h3><p>${esc(detail.text)}</p>`;
   $('disciplineTools').textContent = detail.tools;
   if (motionEnabled) $('disciplineDetail').animate([{ opacity: .3, transform: 'translateY(8px)' }, { opacity: 1, transform: 'translateY(0)' }], { duration: 350, easing: 'ease-out' });

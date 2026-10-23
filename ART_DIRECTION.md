@@ -1,9 +1,11 @@
-# Personal / Signal
+# Signal / independent creative practice
 
-The current direction uses graphite, icy blue, an oversized project-name backdrop, and a pill-shaped portrait of Isaac. The visual reference was https://www.blunar.cz/ for its personal introduction, tactile interaction, and expressive portfolio rhythm. The implementation, typography, palette, writing, and motion are adapted for Isaac; no reference assets or source code are used.
+An original cyberpunk identity for Isaac Nino. Graphite and icy blue remain the foundation, with restrained signal-red details. Condensed typography, clipped corners, orthogonal traces, subtle scan lines, and an asymmetric composition give the page a harder technical character. The aesthetic takes a broad cue from Cyberpunk 2077 without using its assets, logo, signature typography, or fictional terminology.
 
-The central portrait gives the site a human focal point. A four-dial console makes disciplines exploratory. A sticky work stage links motion to the project stories, using actual screenshots captured from Isaac’s own four public project sites. A pale-blue typographic interlude changes the pace before the contact section.
+The previous circular discipline controls are replaced by a signal switchboard. Four selectable channels each redraw a distinct, original SVG practice map: systems, applied AI, interaction, and web. Each diagram supports the real description of Isaac’s work; no fake performance metrics are shown. Keyboard-operable buttons expose their selected state.
 
-Decorative motion follows scrolling and pointer input. Reduced-motion preferences and an explicit pause control are supported. Mobile uses inline imagery with gentle movement instead of the sticky desktop stage.
+The portrait uses the existing photograph with a CSS blue monochrome and scan-line treatment. No replacement identity or generated portrait is used. The work section retains actual project screenshots and natural scrolling, now with angular frames and vertical image transitions. The contact symbol is a geometric arrow, and the interlude stays dark.
 
-Earlier industrial and cosmic source assets may remain in the repository for history; the current interface does not reference them.
+Decorative movement follows scroll and pointer input. Channel transitions are brief and event-driven. System reduced-motion support and the persistent motion control remain available. Mobile uses a two-column channel selector and inline project imagery.
+
+Project content remains in content/projects.json. Older unused artwork remains available in repository history and is not referenced by this interface.
