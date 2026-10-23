@@ -1,6 +1,6 @@
 # Isaac Nino — creative technology, human by nature
 
-An original cyberpunk portfolio in graphite and icy blue with restrained red accents, an angular portrait composition, a selectable signal switchboard, scroll-driven project imagery, and case studies powered by one content file. Built with HTML, CSS, and JavaScript; no runtime packages.
+An original cyberpunk portfolio in graphite and icy blue with restrained red accents, IBM Plex Mono typography, an angular portrait composition, a selectable signal switchboard, scroll-driven project imagery, and case studies powered by one content file. Built with HTML, CSS, and JavaScript; no runtime packages.
 
 ## Preview and publish
 
@@ -65,6 +65,8 @@ The JSON schema provides editor guidance. Runtime and build validation reject mi
 ## Motion and interaction
 
 The opening typography, scan line, portrait, and project-name ticker move with normal page scrolling. Four selectable switchboard channels redraw an original practice map with a short tracing animation; these diagrams illustrate a process rather than live statistics. The work section keeps a preview alongside the current story, then changes images as each project comes into view. Numbered controls jump between stories; filters narrow the collection. Smaller screens display each image within its story. Pointer movement adds a small perspective shift to the portrait and desktop preview. A persistent motion control and system reduced-motion preference disable decorative movement.
+
+Brief color-split glitches appear on the opening headline, headline hover, switchboard changes, and visible project transitions. They run once per interaction with a cooldown; the original text remains present and visual copies are hidden from assistive technology. Motion pause cancels active glitches, and system reduced-motion settings suppress them.
 
 Native dialogs support keyboard focus containment, Escape, and focus return. The page includes a skip link, visible focus outlines, labeled form fields, loading-error fallback, and project links for visitors without JavaScript. Motion uses scheduled animation frames on scroll instead of a permanent rendering loop.
 

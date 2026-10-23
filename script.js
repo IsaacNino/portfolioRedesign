@@ -12,6 +12,42 @@ try { userMotion = localStorage.getItem('isaac-motion'); } catch { /* Storage is
 let motionEnabled = !reducedMotion.matches && userMotion !== 'off';
 let projects = [], visibleProjects = [], storyElements = [], cards = [], activeIndex = -1;
 let scrollScheduled = false;
+const activeGlitches = new Map();
+const glitchCooldown = new WeakMap();
+
+// Duplicate only the visual layer; assistive technology reads the stable original.
+function prepareGlitchText(element) {
+  const text = [...element.childNodes].filter(node => !node.classList?.contains('glitch-layer')).map(node => node.textContent).join('');
+  element.querySelectorAll(':scope > .glitch-layer').forEach(layer => layer.remove());
+  element.classList.add('glitch-text');
+  for (const tone of ['cyan', 'red']) {
+    const layer = document.createElement('span');
+    layer.className = `glitch-layer glitch-${tone}`;
+    layer.setAttribute('aria-hidden', 'true');
+    layer.textContent = text;
+    element.append(layer);
+  }
+}
+function glitch(element) {
+  if (!motionEnabled || document.hidden) return;
+  const rect = element.getBoundingClientRect();
+  if (rect.bottom <= 0 || rect.top >= innerHeight || rect.width === 0) return;
+  const now = performance.now();
+  if (now - (glitchCooldown.get(element) ?? -Infinity) < 1400) return;
+  glitchCooldown.set(element, now);
+  element.classList.add('glitch-burst');
+  activeGlitches.set(element, setTimeout(() => {
+    element.classList.remove('glitch-burst');
+    activeGlitches.delete(element);
+  }, 650));
+}
+function stopGlitches() {
+  activeGlitches.forEach((timer, element) => {
+    clearTimeout(timer);
+    element.classList.remove('glitch-burst');
+  });
+  activeGlitches.clear();
+}
 const hero = $('home');
 const perspective = $('perspective');
 const perspectiveLines = document.querySelector('.perspective-lines');
@@ -41,6 +77,7 @@ function applyMotion() {
   $('motionLabel').textContent = motionEnabled ? 'Motion on' : 'Motion off';
   $('motionIcon').textContent = motionEnabled ? 'Ⅱ' : '▷';
   if (!motionEnabled) {
+    stopGlitches();
     document.querySelectorAll('.reveal-pending').forEach(el => el.classList.remove('reveal-pending'));
     revealObserver?.disconnect();
   }
@@ -117,6 +154,10 @@ tilt(hero, $('portraitPerspective'), '--rx', '--ry', 8);
 tilt($('showcaseTilt'), $('showcaseStage'), '--tilt-x', '--tilt-y', 6);
 applyMotion(); observeReveals();
 $('year').textContent = new Date().getFullYear();
+[...$('heroTitle').children].forEach(prepareGlitchText);
+$('heroTitle').addEventListener('pointerenter', () => glitch($('heroTitle')));
+(document.fonts?.ready || Promise.resolve()).then(() => glitch($('heroTitle')));
+prepareGlitchText($('channelLabel'));
 
 const disciplines = {
   systems: { title: 'Less friction. More possibility.', text: 'Local-first software and thoughtful workflows that make complex work easier to navigate.', tools: 'React / Rust / Tauri / Document automation' },
@@ -127,7 +168,7 @@ const disciplines = {
 $('signalVisual').innerHTML = disciplineVisual('systems');
 document.querySelector('.channel-selector').addEventListener('click', event => {
   const button = event.target.closest('[data-discipline]');
-  if (!button) return;
+  if (!button || button.dataset.discipline === $('signalConsole').dataset.mode) return;
   document.querySelectorAll('.channel-button').forEach(el => {
     el.classList.toggle('active', el === button);
     el.setAttribute('aria-pressed', String(el === button));
@@ -137,6 +178,9 @@ document.querySelector('.channel-selector').addEventListener('click', event => {
   $('signalConsole').dataset.mode = mode;
   $('channelLabel').textContent = `${number(Object.keys(disciplines).indexOf(mode) + 1)} / ${mode === 'ai' ? 'Applied AI' : mode}`;
   $('signalVisual').innerHTML = disciplineVisual(mode);
+  prepareGlitchText($('channelLabel'));
+  glitch($('channelLabel'));
+  glitch($('signalVisual'));
   $('disciplineDetail').innerHTML = `<h3>${esc(detail.title)}</h3><p>${esc(detail.text)}</p>`;
   $('disciplineTools').textContent = detail.tools;
   if (motionEnabled) $('disciplineDetail').animate([{ opacity: .3, transform: 'translateY(8px)' }, { opacity: 1, transform: 'translateY(0)' }], { duration: 350, easing: 'ease-out' });
@@ -155,6 +199,8 @@ function setActiveProject(index) {
   $('showcaseNumber').textContent = `${number(index + 1)} / ${number(visibleProjects.length)}`;
   $('showcaseCategory').textContent = project.category;
   $('showcaseTitle').textContent = project.title;
+  prepareGlitchText($('showcaseTitle'));
+  if (desktop.matches) { glitch($('showcaseTitle')); glitch($('showcaseStage')); }
   $('showcaseOpen').dataset.project = project.id;
   $('showcaseOpen').setAttribute('aria-label', `Read ${project.title} case study`);
   $('showcaseProgress').style.transform = `scaleX(${(index + 1) / visibleProjects.length})`;
