@@ -1,357 +1,388 @@
-(() => {
-  const loader = document.getElementById('loader');
-  const cursorDot = document.getElementById('cursorDot');
-  const cursorRing = document.getElementById('cursorRing');
-  const navbar = document.getElementById('navbar');
-  const menuToggle = document.getElementById('menuToggle');
-  const menuClose = document.getElementById('menuClose');
-  const mobileMenu = document.getElementById('mobileMenu');
+import { validateProjects, getCategories, filterProjects, escapeHtml as esc } from './content/project-utils.js';
+import { projectVisual } from './content/project-visuals.js';
+import { disciplineVisual } from './content/discipline-visuals.js';
+import { practices } from './content/practice-data.js';
 
-  if (window.lucide) {
-    window.lucide.createIcons();
+const $ = id => document.getElementById(id);
+const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
+const number = value => String(value).padStart(2, '0');
+const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
+const desktop = matchMedia('(min-width: 761px)');
+let userMotion;
+try { userMotion = localStorage.getItem('isaac-motion'); } catch { /* Storage is optional. */ }
+let motionEnabled = !reducedMotion.matches && userMotion !== 'off';
+let projects = [], visibleProjects = [], storyElements = [], cards = [], activeIndex = -1;
+let scrollScheduled = false;
+const activeGlitches = new Map();
+const glitchCooldown = new WeakMap();
+let heroGlitchTimer = null, heroInView = false, bannerInView = false;
+
+// Only schedule a repeat while the headline can actually be seen.
+function syncAmbientMotion() {
+  const active = motionEnabled && !document.hidden && !document.documentElement.classList.contains('boot-pending');
+  $('practiceStrip').classList.toggle('is-running', active && bannerInView);
+  if (!active || !heroInView) {
+    clearTimeout(heroGlitchTimer);
+    heroGlitchTimer = null;
+    return;
   }
+  if (heroGlitchTimer !== null) return;
+  heroGlitchTimer = setTimeout(() => {
+    heroGlitchTimer = null;
+    glitch($('heroTitle'));
+    syncAmbientMotion();
+  }, 3200);
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) stopGlitches();
+  syncAmbientMotion();
+});
 
-  window.addEventListener('load', () => {
-    window.setTimeout(() => {
-      loader?.classList.add('hidden');
-    }, 900);
+// Duplicate only the visual layer; assistive technology reads the stable original.
+function prepareGlitchText(element) {
+  const text = [...element.childNodes].filter(node => !node.classList?.contains('glitch-layer')).map(node => node.textContent).join('');
+  element.querySelectorAll(':scope > .glitch-layer').forEach(layer => layer.remove());
+  element.classList.add('glitch-text');
+  for (const tone of ['cyan', 'red']) {
+    const layer = document.createElement('span');
+    layer.className = `glitch-layer glitch-${tone}`;
+    layer.setAttribute('aria-hidden', 'true');
+    layer.textContent = text;
+    element.append(layer);
+  }
+}
+function glitch(element) {
+  if (!motionEnabled || document.hidden) return;
+  const rect = element.getBoundingClientRect();
+  if (rect.bottom <= 0 || rect.top >= innerHeight || rect.width === 0) return;
+  const now = performance.now();
+  if (now - (glitchCooldown.get(element) ?? -Infinity) < 1400) return;
+  glitchCooldown.set(element, now);
+  element.classList.add('glitch-burst');
+  activeGlitches.set(element, setTimeout(() => {
+    element.classList.remove('glitch-burst');
+    activeGlitches.delete(element);
+  }, 650));
+}
+function stopGlitches() {
+  activeGlitches.forEach((timer, element) => {
+    clearTimeout(timer);
+    element.classList.remove('glitch-burst');
   });
+  activeGlitches.clear();
+}
+const hero = $('home');
+const perspective = $('perspective');
+const perspectiveLines = document.querySelector('.perspective-lines');
+const perspectiveWords = [...perspective.querySelectorAll('h2 span')];
 
-  document.getElementById('year').textContent = new Date().getFullYear();
-
-  let mouseX = 0;
-  let mouseY = 0;
-  let ringX = 0;
-  let ringY = 0;
-
-  const supportsFinePointer = window.matchMedia('(pointer: fine)').matches;
-
-  if (supportsFinePointer && cursorDot && cursorRing) {
-    document.addEventListener('mousemove', (event) => {
-      mouseX = event.clientX;
-      mouseY = event.clientY;
-      cursorDot.style.left = `${mouseX - 4}px`;
-      cursorDot.style.top = `${mouseY - 4}px`;
-    });
-
-    const animateCursor = () => {
-      ringX += (mouseX - ringX) * 0.12;
-      ringY += (mouseY - ringY) * 0.12;
-      cursorRing.style.left = `${ringX - 20}px`;
-      cursorRing.style.top = `${ringY - 20}px`;
-      window.requestAnimationFrame(animateCursor);
-    };
-
-    animateCursor();
-
-    document.querySelectorAll('a, button, .project-card, .system-card, .lab-card').forEach((element) => {
-      element.addEventListener('mouseenter', () => {
-        cursorDot.style.transform = 'scale(2)';
-        cursorRing.style.transform = 'scale(1.5)';
-        cursorRing.style.borderColor = 'rgba(124,157,189,0.6)';
-      });
-
-      element.addEventListener('mouseleave', () => {
-        cursorDot.style.transform = 'scale(1)';
-        cursorRing.style.transform = 'scale(1)';
-        cursorRing.style.borderColor = 'rgba(124,157,189,0.4)';
-      });
-    });
+const revealObserver = 'IntersectionObserver' in window ? new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.remove('reveal-pending');
+      revealObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.08 }) : null;
+function observeReveals(root = document) {
+  root.querySelectorAll('.reveal').forEach(el => {
+    if (motionEnabled && revealObserver && el.getBoundingClientRect().top > innerHeight * .92) {
+      el.classList.add('reveal-pending');
+      revealObserver.observe(el);
+    }
+  });
+}
+function applyMotion() {
+  document.body.classList.toggle('motion-off', !motionEnabled);
+  document.documentElement.style.scrollBehavior = motionEnabled ? 'smooth' : 'auto';
+  $('motionToggle').setAttribute('aria-pressed', String(motionEnabled));
+  $('motionToggle').setAttribute('aria-label', motionEnabled ? 'Pause motion' : reducedMotion.matches ? 'Motion off: system reduced motion is enabled' : 'Enable motion');
+  $('motionLabel').textContent = motionEnabled ? 'Motion on' : 'Motion off';
+  $('motionIcon').textContent = motionEnabled ? 'Ⅱ' : '▷';
+  if (!motionEnabled) {
+    stopGlitches();
+    document.querySelectorAll('.reveal-pending').forEach(el => el.classList.remove('reveal-pending'));
+    revealObserver?.disconnect();
   }
-
-  const revealObserver = new IntersectionObserver((entries) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
+  syncAmbientMotion();
+  scheduleScroll();
+}
+$('motionToggle').addEventListener('click', () => {
+  motionEnabled = !motionEnabled && !reducedMotion.matches;
+  userMotion = motionEnabled ? 'on' : 'off';
+  try { localStorage.setItem('isaac-motion', userMotion); } catch { /* Keep the preference for this visit. */ }
+  applyMotion();
+});
+reducedMotion.addEventListener('change', () => {
+  motionEnabled = !reducedMotion.matches && userMotion !== 'off';
+  applyMotion();
+});
+function scheduleScroll() {
+  if (scrollScheduled) return;
+  scrollScheduled = true;
+  requestAnimationFrame(updateScroll);
+}
+function updateScroll() {
+  scrollScheduled = false;
+  const pageRange = document.documentElement.scrollHeight - innerHeight;
+  $('readingProgress').style.transform = `scaleX(${pageRange > 0 ? clamp(scrollY / pageRange) : 0})`;
+  const heroRect = hero.getBoundingClientRect();
+  const heroProgress = motionEnabled ? clamp(-heroRect.top / heroRect.height) : 0;
+  $('heroMarquee').style.transform = `translate3d(${-220 - heroProgress * 550}px,0,0)`;
+  $('portraitComposition').style.transform = `translate3d(0,${heroProgress * 85}px,0)`;
+  document.querySelector('.hero-copy').style.transform = `translate3d(0,${heroProgress * -60}px,0)`;
+  $('portraitFrame').style.setProperty('--scan-y', `${heroProgress * 100}%`);
+  const consoleRect = $('signalConsole').getBoundingClientRect();
+  const consoleProgress = motionEnabled ? clamp((innerHeight - consoleRect.top) / (innerHeight + consoleRect.height)) : .5;
+  $('signalVisual').style.setProperty('--scan-position', `${consoleProgress * 100}%`);
+  const pRect = perspective.getBoundingClientRect();
+  const pProgress = motionEnabled ? clamp((innerHeight - pRect.top) / (innerHeight + pRect.height)) : .5;
+  perspectiveWords.forEach((word, index) => { word.style.transform = `translateX(${(pProgress - .5) * (index - 1) * 70}px)`; });
+  perspectiveLines.style.setProperty('--line-shift', (pProgress - .5) * 180);
+  const contactProgress = motionEnabled ? clamp((innerHeight - $('contact').getBoundingClientRect().top) / (innerHeight + $('contact').offsetHeight)) : 0;
+  $('contactAsterisk').style.transform = `translate3d(${contactProgress * 25}px,${contactProgress * -25}px,0)`;
+  if (storyElements.length) {
+    const target = innerHeight * .48;
+    let closest = 0, distance = Infinity;
+    storyElements.forEach((story, index) => {
+      const rect = story.getBoundingClientRect();
+      const next = Math.abs(rect.top + rect.height * .5 - target);
+      if (next < distance) { closest = index; distance = next; }
+      if (!desktop.matches) {
+        const progress = motionEnabled ? clamp((innerHeight - rect.top) / (innerHeight + rect.height)) : .5;
+        story.style.setProperty('--mobile-y', `${(progress - .5) * 18}px`);
       }
     });
-  }, {
-    threshold: 0.1,
-    rootMargin: '0px 0px -60px 0px'
+    setActiveProject(closest);
+    const rect = storyElements[closest].getBoundingClientRect();
+    const progress = motionEnabled ? clamp((target - rect.top) / rect.height) : .5;
+    cards[closest]?.style.setProperty('--image-y', `${(progress - .5) * -30}px`);
+    cards[closest]?.style.setProperty('--image-scale', String(1 + Math.abs(progress - .5) * .035));
+  }
+}
+addEventListener('scroll', scheduleScroll, { passive: true });
+addEventListener('resize', scheduleScroll);
+function tilt(element, target, xName, yName, strength) {
+  element.addEventListener('pointermove', event => {
+    if (!motionEnabled || event.pointerType === 'touch') return;
+    const rect = element.getBoundingClientRect();
+    target.style.setProperty(xName, `${-(event.clientY - rect.top - rect.height / 2) / rect.height * strength}deg`);
+    target.style.setProperty(yName, `${(event.clientX - rect.left - rect.width / 2) / rect.width * strength}deg`);
   });
-
-  document.querySelectorAll('.reveal').forEach((element) => revealObserver.observe(element));
-
-  window.addEventListener('scroll', () => {
-    const scrolled = window.scrollY;
-
-    if (navbar) {
-      if (scrolled > 80) {
-        navbar.style.background = 'rgba(15, 14, 13, 0.85)';
-        navbar.style.backdropFilter = 'blur(20px)';
-        navbar.style.borderBottom = '1px solid rgba(41, 37, 36, 0.5)';
-      } else {
-        navbar.style.background = 'transparent';
-        navbar.style.backdropFilter = 'none';
-        navbar.style.borderBottom = '1px solid transparent';
-      }
-    }
-
-    document.querySelectorAll('.ambient-glow').forEach((glow, index) => {
-      const speed = index === 0 ? 0.05 : 0.03;
-      glow.style.transform = `translateY(${scrolled * speed}px)`;
-    });
-  }, { passive: true });
-
-  const openMobileMenu = () => {
-    mobileMenu?.classList.add('open');
-    document.body.style.overflow = 'hidden';
-  };
-
-  const closeMobileMenu = () => {
-    mobileMenu?.classList.remove('open');
-    document.body.style.overflow = '';
-  };
-
-  menuToggle?.addEventListener('click', openMobileMenu);
-  menuClose?.addEventListener('click', closeMobileMenu);
-  document.querySelectorAll('.mobile-link').forEach((link) => link.addEventListener('click', closeMobileMenu));
-
-  const updateTime = () => {
-    const timeElement = document.getElementById('localTime');
-    if (!timeElement) return;
-
-    timeElement.textContent = new Date().toLocaleTimeString('en-US', {
-      timeZone: 'America/Denver',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      hour12: true
-    });
-  };
-
-  updateTime();
-  window.setInterval(updateTime, 1000);
-
-  document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
-    anchor.addEventListener('click', (event) => {
-      const href = anchor.getAttribute('href');
-      if (!href || href === '#') return;
-
-      const target = document.querySelector(href);
-      if (!target) return;
-
-      event.preventDefault();
-      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
+  element.addEventListener('pointerleave', () => {
+    target.style.setProperty(xName, '0deg'); target.style.setProperty(yName, '0deg');
   });
-
-    const projectData = {
-    intrust: {
-        title: 'InTrust',
-        kicker: 'Local-First Tooling · Automation',
-        visualClass: 'visual-intrust',
-        summary: 'Estate planning software for law firms, designed to turn structured intake data into high-fidelity legal document packages.',
-        role: 'Product Developer / Workflow Designer',
-        focus: 'Legal document automation and workflow design',
-        tools: 'Tauri · React · Rust · DOCX generation',
-        status: 'Built / Iterating',
-        problem: 'Estate packages are often assembled through repetitive manual drafting, formatting, and document coordination. The challenge was to preserve legal formatting precision while making the workflow faster and easier to repeat.',
-        approach: 'I built a local-first desktop workflow that guides intake, applies rule-based logic, and generates formatted Word documents while respecting strict legal document conventions.',
-        outcome: 'The result is a practical automation tool that reduces repetitive drafting effort and creates a foundation for bespoke firm-specific estate planning workflows.',
-        links: [
-          { label: 'View Live Site', url: 'https://www.getintrust.com/' },
-        ]
-    },
-
-    postcard: {
-        title: 'CES AI Postcard Generator',
-        kicker: 'Generative Interface · Experiential Web',
-        visualClass: 'visual-postcard',
-        summary: 'A mobile-first interactive postcard concept using prompt-driven personalization to turn event identity into a shareable generated artifact.',
-        role: 'Creative Technologist / Web Developer',
-        focus: 'Generative interaction design and event engagement',
-        tools: 'Tailwind · JavaScript · FLUX Generative AI · Prompt Matrix',
-        status: 'Built / Concept Prototype',
-        problem: 'Most event touchpoints are forgettable. The challenge was to create a lightweight, memorable interaction that could turn a quick scan into a personalized creative artifact.',
-        approach: 'I designed a short prompt flow that captures a visitor’s CES mindset and translates it into a generated postcard composition with a consistent visual frame.',
-        outcome: 'The concept creates a flexible bridge between physical networking, mobile interaction, and generative media.',
-        links: [
-          { label: 'View Live Site', url: 'https://cespostcard26.vercel.app/' },
-        ]
-    },
-
-    gallery: {
-        title: 'Dell Foundation Digital Gallery',
-        kicker: 'Immersive Display · Storytelling System',
-        visualClass: 'visual-gallery',
-        summary: 'A large-format digital gallery experience blending media, interaction, and storytelling for a foundation-facing display environment.',
-        role: 'Creative Technologist / Web Developer',
-        focus: 'Large-format web experience and content system',
-        tools: 'Tailwind · JavaScript',
-        status: 'Built / Delivered Prototype',
-        problem: 'The experience needed to organize rich media and story content for a large display environment without feeling like a conventional website.',
-        approach: 'I built a fullscreen interactive gallery structure with cinematic tile behavior, modal content, video embeds, and layout logic suited for large-screen viewing.',
-        outcome: 'The result was an immersive digital gallery prototype that made foundation stories easier to browse, present, and experience.',
-        links: [
-          { label: 'View Live Site', url: 'https://digital-museum-gallery.vercel.app/' },
-        ]
-    },
-
-    dogwood: {
-        title: 'Dogwood Counseling Website',
-        kicker: 'Human-Centered Web · Client Site',
-        visualClass: 'visual-dogwood',
-        summary: 'A calm, trust-centered web presence for a Boulder therapist, designed around clarity, warmth, accessibility, and local discoverability.',
-        role: 'Web Developer / Front-End Builder',
-        focus: 'Client site design, trust-building, and light SEO',
-        tools: 'Tailwind · JavaScript · SEO',
-        status: 'Built / Delivered',
-        problem: 'The provider needed a web presence that felt calmer, more trustworthy, and more aligned with the emotional tone of therapy work.',
-        approach: 'I focused on simple information architecture, warm visual language, clear service framing, and accessible contact pathways.',
-        outcome: 'The site became a more polished and approachable digital front door for prospective clients.',
-        links: [
-          { label: 'View Live Site', url: 'https://www.dogwoodcounseling-mb.com/' },
-        ]
+}
+tilt(hero, $('portraitPerspective'), '--rx', '--ry', 8);
+tilt($('showcaseTilt'), $('showcaseStage'), '--tilt-x', '--tilt-y', 6);
+applyMotion(); observeReveals();
+$('year').textContent = new Date().getFullYear();
+[...$('heroTitle').children].forEach(prepareGlitchText);
+$('heroTitle').addEventListener('pointerenter', () => glitch($('heroTitle')));
+if (window.signalBoot?.active) addEventListener('signal:entered', () => { glitch($('heroTitle')); syncAmbientMotion(); }, { once: true });
+else (document.fonts?.ready || Promise.resolve()).then(() => glitch($('heroTitle')));
+prepareGlitchText($('channelLabel'));
+if ('IntersectionObserver' in window) {
+  const ambientObserver = new IntersectionObserver(entries => {
+    for (const entry of entries) {
+      const visible = entry.isIntersecting && entry.intersectionRatio >= .1;
+      if (entry.target === $('heroTitle')) heroInView = visible;
+      else bannerInView = visible;
     }
-    };
+    syncAmbientMotion();
+  }, { threshold: .1 });
+  ambientObserver.observe($('heroTitle'));
+  ambientObserver.observe($('practiceStrip'));
+}
 
-    const projectModal = document.getElementById('projectModal');
-    const modalVisual = document.getElementById('modalVisual');
+const selectedLayers = Object.fromEntries(Object.entries(practices).map(([mode, practice]) => [mode, practice.layers[0].id]));
+function updatePracticeProject() {
+  const project = projects.find(project => project.id === practices[$('signalConsole').dataset.mode].projectId);
+  const button = $('practiceProject');
+  button.hidden = !project;
+  if (project) {
+    button.dataset.project = project.id;
+    button.textContent = `In practice: ${project.title} ↗`;
+    button.setAttribute('aria-label', `Read ${project.title} case study`);
+  } else delete button.dataset.project;
+}
+function renderPracticeLayer(mode, layerId, animate = false) {
+  const practice = practices[mode];
+  const layer = practice.layers.find(layer => layer.id === layerId) || practice.layers[0];
+  const index = practice.layers.indexOf(layer);
+  selectedLayers[mode] = layer.id;
+  $('practiceLayers').querySelectorAll('button').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.layer === layer.id)));
+  $('signalVisual').innerHTML = disciplineVisual(mode, layer.id);
+  $('disciplineDetail').innerHTML = `<div class="layer-heading"><span class="mono">Layer ${number(index + 1)} / ${number(practice.layers.length)}</span><h3>${esc(layer.title)}</h3><p>${esc(layer.description)}</p></div><dl class="layer-parts">${layer.parts.map(([label, value]) => `<div><dt>${esc(label)}</dt><dd>${esc(value)}</dd></div>`).join('')}</dl>`;
+  // On narrow screens the detailed drawing stays readable and pans to the selected layer.
+  const visual = $('signalVisual');
+  const svg = visual.querySelector('svg');
+  const selected = svg.querySelector('.is-selected');
+  if (selected && visual.scrollWidth > visual.clientWidth) {
+    const bounds = selected.getBBox();
+    const center = (bounds.x + bounds.width / 2) * svg.getBoundingClientRect().width / 760;
+    visual.scrollTo({ left: Math.max(0, center - visual.clientWidth / 2), behavior: animate && motionEnabled ? 'smooth' : 'instant' });
+  }
+  if (animate) glitch(visual);
+  scheduleScroll();
+}
+function renderPractice(mode, animate = false) {
+  const practice = practices[mode];
+  $('signalConsole').dataset.mode = mode;
+  document.querySelectorAll('.channel-button').forEach(button => {
+    const active = button.dataset.discipline === mode;
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-pressed', String(active));
+  });
+  $('channelLabel').textContent = `${number(Object.keys(practices).indexOf(mode) + 1)} / ${practice.label}`;
+  prepareGlitchText($('channelLabel'));
+  $('practiceLayers').innerHTML = practice.layers.map((layer, index) => `<button type="button" class="layer-button" data-layer="${esc(layer.id)}" aria-pressed="false" aria-controls="disciplineDetail"><span>${number(index + 1)}</span>${esc(layer.label)}</button>`).join('');
+  $('disciplineTools').textContent = practice.tools;
+  renderPracticeLayer(mode, selectedLayers[mode], animate);
+  updatePracticeProject();
+  if (animate) glitch($('channelLabel'));
+}
+renderPractice('systems');
+document.querySelector('.channel-selector').addEventListener('click', event => {
+  const button = event.target.closest('[data-discipline]');
+  if (button && button.dataset.discipline !== $('signalConsole').dataset.mode) renderPractice(button.dataset.discipline, true);
+});
+$('practiceLayers').addEventListener('click', event => {
+  const button = event.target.closest('[data-layer]');
+  const mode = $('signalConsole').dataset.mode;
+  if (button && button.dataset.layer !== selectedLayers[mode]) renderPracticeLayer(mode, button.dataset.layer, true);
+});
 
-    const modalFields = {
-    kicker: document.getElementById('modalKicker'),
-    title: document.getElementById('modalTitle'),
-    summary: document.getElementById('modalSummary'),
-    role: document.getElementById('modalRole'),
-    focus: document.getElementById('modalFocus'),
-    tools: document.getElementById('modalTools'),
-    status: document.getElementById('modalStatus'),
-    problem: document.getElementById('modalProblem'),
-    approach: document.getElementById('modalApproach'),
-    outcome: document.getElementById('modalOutcome'),
-    actions: document.getElementById('modalActions')
-    };
+function setActiveProject(index) {
+  if (index === activeIndex || !visibleProjects[index]) return;
+  activeIndex = index;
+  const project = visibleProjects[index];
+  cards.forEach((card, i) => {
+    card.classList.toggle('active', i === index);
+    card.classList.toggle('past', i < index);
+    card.setAttribute('aria-hidden', String(i !== index));
+  });
+  $('projectJumps').querySelectorAll('button').forEach((button, i) => button.setAttribute('aria-pressed', String(i === index)));
+  $('showcaseNumber').textContent = `${number(index + 1)} / ${number(visibleProjects.length)}`;
+  $('showcaseCategory').textContent = project.category;
+  $('showcaseTitle').textContent = project.title;
+  prepareGlitchText($('showcaseTitle'));
+  if (desktop.matches) { glitch($('showcaseTitle')); glitch($('showcaseStage')); }
+  $('showcaseOpen').dataset.project = project.id;
+  $('showcaseOpen').setAttribute('aria-label', `Read ${project.title} case study`);
+  $('showcaseProgress').style.transform = `scaleX(${(index + 1) / visibleProjects.length})`;
+}
+function renderProjects(category = 'All work') {
+  visibleProjects = filterProjects(projects, category);
+  activeIndex = -1;
+  $('workLayout').hidden = visibleProjects.length === 0;
+  $('workEmpty').hidden = visibleProjects.length !== 0;
+  $('projectStories').innerHTML = visibleProjects.map(project => {
+    const index = projects.indexOf(project);
+    const link = project.links[0];
+    return `<article class="project-story" id="work-${esc(project.id)}"><div class="project-number mono">${number(index + 1)} / ${esc(project.category)}</div><h3>${esc(project.title)}</h3><div class="mobile-media">${projectVisual(project)}</div><p>${esc(project.summary)}</p><div class="tag-list" aria-label="Tools">${project.tags.map(tag => `<span>${esc(tag)}</span>`).join('')}</div><div class="story-actions"><button class="case-link" type="button" data-project="${esc(project.id)}" aria-label="Read ${esc(project.title)} case study">Inside the project <span aria-hidden="true">↗</span></button>${link ? `<a class="text-link" href="${esc(link.url)}" target="_blank" rel="noopener noreferrer">Visit site ↗</a>` : ''}</div><div class="story-role mono">${esc(project.role)}</div></article>`;
+  }).join('');
+  $('showcaseStage').innerHTML = visibleProjects.map((project, index) => `<div class="showcase-card" data-id="${esc(project.id)}" aria-hidden="true"><div class="screen-top" aria-hidden="true"><span class="screen-dots"><i></i><i></i><i></i></span><span>SELECTED WORK / ${number(index + 1)}</span></div>${projectVisual(project)}</div>`).join('');
+  $('projectJumps').innerHTML = visibleProjects.map((project, index) => `<button class="jump-button" type="button" data-jump="${index}" aria-label="Scroll to ${esc(project.title)}" aria-pressed="false">${number(index + 1)}</button>`).join('');
+  $('projectCount').textContent = `${number(visibleProjects.length)} project${visibleProjects.length === 1 ? '' : 's'}`;
+  storyElements = [...$('projectStories').children];
+  cards = [...$('showcaseStage').children];
+  setActiveProject(0);
+  scheduleScroll();
+}
+$('projectJumps').addEventListener('click', event => {
+  const button = event.target.closest('[data-jump]');
+  if (!button) return;
+  storyElements[Number(button.dataset.jump)]?.scrollIntoView({ behavior: motionEnabled ? 'smooth' : 'instant', block: 'start' });
+});
+$('projectFilters').addEventListener('click', event => {
+  const filter = event.target.closest('[data-category]');
+  if (!filter) return;
+  $('projectFilters').querySelectorAll('button').forEach(button => button.setAttribute('aria-pressed', String(button === filter)));
+  renderProjects(filter.dataset.category);
+});
 
-    const openProjectModal = (projectKey) => {
-    const project = projectData[projectKey];
-    if (!project || !projectModal || !modalVisual) return;
+const dialog = $('projectDialog');
+const contactDialog = $('contactDialog');
+let lastProjectTrigger, returnHash = '#work';
+function syncModalLock() { document.body.classList.toggle('modal-open', dialog.open || contactDialog.open); }
+function openProject(project) {
+  const facts = [
+    ['Role', esc(project.role)],
+    ['Focus', esc(project.focus)],
+    ['Tools', `<ul class="dialog-tools" aria-label="Project tools">${project.tags.map(tag => `<li>${esc(tag)}</li>`).join('')}</ul>`],
+    ['Status', `<span class="dialog-status">${esc(project.status)}</span>`]
+  ];
+  $('dialogContent').innerHTML = `<div class="dialog-cover">${projectVisual(project)}</div><div class="dialog-body"><p class="mono">${esc(project.category)}</p><h2 id="dialogTitle">${esc(project.title)}</h2><p class="dialog-summary">${esc(project.summary)}</p><dl class="dialog-facts">${facts.map(([label,value]) => `<div><dt>${label}</dt><dd>${value}</dd></div>`).join('')}</dl>${[['The challenge',project.problem],['The approach',project.approach],['The outcome',project.outcome]].map(([title,text]) => `<section class="case-section"><h3>${title}</h3><p>${esc(text)}</p></section>`).join('')}<div class="dialog-links">${project.links.map(link => `<a class="button-light" href="${esc(link.url)}" target="_blank" rel="noopener noreferrer">${esc(link.label)} <span aria-hidden="true">↗</span></a>`).join('')}</div></div>`;
+  if (!dialog.open) dialog.showModal();
+  dialog.scrollTop = 0;
+  syncModalLock();
+}
+function syncProjectHash() {
+  const slug = location.hash.startsWith('#project/') ? location.hash.slice(9) : '';
+  const project = projects.find(project => project.id === slug);
+  if (project) openProject(project); else if (dialog.open) dialog.close();
+}
+document.addEventListener('click', event => {
+  const trigger = event.target.closest('[data-project]');
+  if (!trigger) return;
+  lastProjectTrigger = trigger;
+  if (!location.hash.startsWith('#project/')) returnHash = location.hash || '#work';
+  const hash = `#project/${trigger.dataset.project}`;
+  if (location.hash === hash) syncProjectHash(); else location.hash = hash;
+});
+$('closeProject').addEventListener('click', () => dialog.close());
+dialog.addEventListener('close', () => {
+  if (location.hash.startsWith('#project/')) history.replaceState(null, '', `${location.pathname}${location.search}${returnHash}`);
+  syncModalLock();
+  lastProjectTrigger?.focus({ preventScroll: true });
+});
+addEventListener('hashchange', syncProjectHash);
+for (const modal of [dialog, contactDialog]) {
+  modal.addEventListener('click', event => {
+    if (event.target !== modal) return;
+    const rect = modal.getBoundingClientRect();
+    if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) modal.close();
+  });
+}
+$('contactOpen').addEventListener('click', () => { contactDialog.showModal(); syncModalLock(); });
+$('closeContact').addEventListener('click', () => contactDialog.close());
+contactDialog.addEventListener('close', () => { syncModalLock(); $('contactOpen').focus({ preventScroll: true }); });
+$('contactForm').addEventListener('submit', async event => {
+  event.preventDefault();
+  const form = event.currentTarget;
+  if (!form.reportValidity()) return;
+  const button = form.querySelector('button[type="submit"]');
+  if (button.disabled) return;
+  const status = $('formStatus');
+  button.disabled = true; button.textContent = 'Sending…';
+  status.classList.remove('error'); status.textContent = '';
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 15000);
+  try {
+    const response = await fetch(form.action, { method: 'POST', body: new FormData(form), headers: { Accept: 'application/json' }, signal: controller.signal });
+    if (!response.ok) throw new Error('Message not accepted');
+    form.reset(); status.textContent = 'Thanks — your message has been sent. I’ll be in touch.';
+  } catch {
+    status.classList.add('error'); status.textContent = 'Your message couldn’t be sent. Your text is still here — please try again, or email me directly below.';
+  } finally { clearTimeout(timeout); button.disabled = false; button.innerHTML = 'Send message <span aria-hidden="true">↗</span>'; }
+});
 
-    modalVisual.className = `project-modal-visual ${project.visualClass}`;
-
-    modalFields.kicker.textContent = project.kicker;
-    modalFields.title.textContent = project.title;
-    modalFields.summary.textContent = project.summary;
-    modalFields.role.textContent = project.role;
-    modalFields.focus.textContent = project.focus;
-    modalFields.tools.textContent = project.tools;
-    modalFields.status.textContent = project.status;
-    modalFields.problem.textContent = project.problem;
-    modalFields.approach.textContent = project.approach;
-    modalFields.outcome.textContent = project.outcome;
-
-    modalFields.actions.innerHTML = '';
-
-    if (project.links && project.links.length) {
-    project.links.forEach((link) => {
-        
-        const anchor = document.createElement('a');
-        
-        anchor.href = link.url;
-        anchor.target = '_blank';
-        anchor.rel = 'noreferrer';
-        anchor.className = 'project-modal-link';
-        anchor.innerHTML = `<span>${link.label}</span><i data-lucide="arrow-up-right" class="w-4 h-4"></i>`;
-        modalFields.actions.appendChild(anchor);
-    });
-
-    if (window.lucide) {
-        window.lucide.createIcons();
-    }
-    }
-
-    projectModal.classList.add('open');
-    projectModal.setAttribute('aria-hidden', 'false');
-    document.body.classList.add('modal-open');
-    };
-
-    const closeProjectModal = () => {
-    if (!projectModal) return;
-
-    projectModal.classList.remove('open');
-    projectModal.setAttribute('aria-hidden', 'true');
-    document.body.classList.remove('modal-open');
-    };
-
-    document.querySelectorAll('[data-project]').forEach((card) => {
-    card.addEventListener('click', () => {
-        openProjectModal(card.dataset.project);
-    });
-
-    card.addEventListener('keydown', (event) => {
-        if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        openProjectModal(card.dataset.project);
-        }
-    });
-    });
-
-    document.querySelectorAll('[data-close-modal]').forEach((button) => {
-    button.addEventListener('click', closeProjectModal);
-    });
-
-    document.addEventListener('keydown', (event) => {
-    if (event.key === 'Escape') {
-        closeProjectModal();
-    }
-    });
-
-    const contactForm = document.getElementById('contactForm');
-    const formStatus = document.getElementById('formStatus');
-
-    if (contactForm) {
-    contactForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-
-        const button = contactForm.querySelector('button[type="submit"]');
-        const buttonText = button?.querySelector('span');
-        const originalText = buttonText?.textContent || 'Start a Conversation';
-
-        if (button) button.disabled = true;
-        if (buttonText) buttonText.textContent = 'Sending...';
-
-        if (formStatus) {
-        formStatus.textContent = '';
-        formStatus.classList.remove('visible', 'error');
-        }
-
-        try {
-        const response = await fetch(contactForm.action, {
-            method: 'POST',
-            body: new FormData(contactForm),
-            headers: {
-            Accept: 'application/json'
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error('Form submission failed');
-        }
-
-        contactForm.reset();
-
-        if (buttonText) buttonText.textContent = 'Message Sent';
-
-        if (formStatus) {
-            formStatus.textContent = 'Thanks — I got your message. I’ll follow up soon.';
-            formStatus.classList.add('visible');
-        }
-
-        window.setTimeout(() => {
-            if (buttonText) buttonText.textContent = originalText;
-            if (button) button.disabled = false;
-        }, 3500);
-        } catch (error) {
-        if (buttonText) buttonText.textContent = 'Try Again';
-
-        if (formStatus) {
-            formStatus.textContent = 'Something went wrong. You can email me directly instead.';
-            formStatus.classList.add('visible', 'error');
-        }
-
-        if (button) button.disabled = false;
-        console.error(error);
-        }
-    });
-    }
-})();
+window.signalBoot?.ready('interface');
+try {
+  const response = await fetch('./content/projects.json');
+  if (!response.ok) throw new Error(`Content request returned ${response.status}`);
+  projects = validateProjects(await response.json());
+  $('navCount').textContent = number(projects.length);
+  if (projects.length) {
+    const marqueeProjects = [...projects, projects[0]];
+    $('heroMarquee').innerHTML = marqueeProjects.map(project => `<span>${esc(project.title)}<sup>${number(projects.indexOf(project) + 1)}</sup></span>`).join('');
+  }
+  $('projectFilters').innerHTML = getCategories(projects).map((category,index) => `<button class="filter" type="button" aria-pressed="${index === 0}" data-category="${esc(category)}">${esc(category)}</button>`).join('');
+  renderProjects(); updatePracticeProject(); syncProjectHash();
+  window.signalBoot?.ready('work');
+} catch (error) {
+  $('workLayout').hidden = true; $('workError').hidden = false;
+  window.signalBoot?.ready('work', false);
+  console.error('Project content could not load:', error);
+}

@@ -1,5 +1,1 @@
-<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
-  <rect width="64" height="64" rx="32" fill="#111315"/>
-  <circle cx="32" cy="32" r="25" fill="none" stroke="#7c9dbd" stroke-width="2"/>
-  <text x="32" y="37" text-anchor="middle" font-family="monospace" font-size="17" font-weight="700" fill="#7c9dbd">IN</text>
-</svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path fill="#080d12" d="M9 0h55v55l-9 9H0V9z"/><path fill="#a2d7ff" d="M9 13h9v38H9zm16 0h9l12 23V13h9v38h-9L34 28v23h-9z"/><path fill="#ff7067" d="M9 57h15v2H9z"/></svg>
