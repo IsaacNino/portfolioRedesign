@@ -307,7 +307,13 @@ const contactDialog = $('contactDialog');
 let lastProjectTrigger, returnHash = '#work';
 function syncModalLock() { document.body.classList.toggle('modal-open', dialog.open || contactDialog.open); }
 function openProject(project) {
-  $('dialogContent').innerHTML = `<div class="dialog-cover">${projectVisual(project)}</div><div class="dialog-body"><p class="mono">${esc(project.category)}</p><h2 id="dialogTitle">${esc(project.title)}</h2><p class="dialog-summary">${esc(project.summary)}</p><dl class="dialog-facts">${[['Role',project.role],['Focus',project.focus],['Tools',project.tags.join(' · ')],['Status',project.status]].map(([label,value]) => `<div><dt>${label}</dt><dd>${esc(value)}</dd></div>`).join('')}</dl>${[['The challenge',project.problem],['The approach',project.approach],['The outcome',project.outcome]].map(([title,text]) => `<section class="case-section"><h3>${title}</h3><p>${esc(text)}</p></section>`).join('')}<div class="dialog-links">${project.links.map(link => `<a class="button-light" href="${esc(link.url)}" target="_blank" rel="noopener noreferrer">${esc(link.label)} <span aria-hidden="true">↗</span></a>`).join('')}</div></div>`;
+  const facts = [
+    ['Role', esc(project.role)],
+    ['Focus', esc(project.focus)],
+    ['Tools', `<ul class="dialog-tools" aria-label="Project tools">${project.tags.map(tag => `<li>${esc(tag)}</li>`).join('')}</ul>`],
+    ['Status', `<span class="dialog-status">${esc(project.status)}</span>`]
+  ];
+  $('dialogContent').innerHTML = `<div class="dialog-cover">${projectVisual(project)}</div><div class="dialog-body"><p class="mono">${esc(project.category)}</p><h2 id="dialogTitle">${esc(project.title)}</h2><p class="dialog-summary">${esc(project.summary)}</p><dl class="dialog-facts">${facts.map(([label,value]) => `<div><dt>${label}</dt><dd>${value}</dd></div>`).join('')}</dl>${[['The challenge',project.problem],['The approach',project.approach],['The outcome',project.outcome]].map(([title,text]) => `<section class="case-section"><h3>${title}</h3><p>${esc(text)}</p></section>`).join('')}<div class="dialog-links">${project.links.map(link => `<a class="button-light" href="${esc(link.url)}" target="_blank" rel="noopener noreferrer">${esc(link.label)} <span aria-hidden="true">↗</span></a>`).join('')}</div></div>`;
   if (!dialog.open) dialog.showModal();
   dialog.scrollTop = 0;
   syncModalLock();
