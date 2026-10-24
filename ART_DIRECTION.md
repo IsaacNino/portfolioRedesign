@@ -12,6 +12,8 @@ Project content remains in content/projects.json. Older unused artwork remains a
 
 Monospace headings are resized for their wider proportions, including small-screen layouts. Glitches are localized, brief color separations and horizontal signal tears tied to deliberate moments: the opening headline, channel changes, and visible project changes. Body text stays steady. The visual text copies are hidden from assistive technology, with a per-element cooldown and immediate cancellation when motion is paused.
 
-The hero reads “Creative thinking. Made real.” Its positioning centers Isaac’s deep agency experience, creative judgment, and a tinkerer’s curiosity. Supporting copy connects strategy, design, and technology from the first conversation to the final detail. On phones, detailed diagrams retain a readable canvas and pan to the selected layer; explanatory text remains in the normal page flow.
+The hero reads “Considered digital experiences.” Its positioning centers Isaac’s deep agency experience, creative judgment, and a tinkerer’s curiosity. Supporting copy connects strategy, design, and technology from the first conversation to the final detail. On phones, detailed diagrams retain a readable canvas and pan to the selected layer; explanatory text remains in the normal page flow.
 
 A finite ISAAC NINO acquisition screen introduces the portfolio with oversized monospace type, cyan/coral sliced offsets, scan lines, and four readiness checks. The reveal lifts the overlay into the hero; it does not add ongoing flashing. The intro follows the existing motion preference, supports an immediate skip, and fails open if loading stalls.
+
+The hero register reads “Strategic perspective. Personal attention.” The practice statements form a seamless running banner, pausing on hover and following motion preferences. Brief headline glitches recur every 3.2 seconds while the headline is visible, with no timer running when it is offscreen or paused.

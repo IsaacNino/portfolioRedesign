@@ -15,6 +15,28 @@ let projects = [], visibleProjects = [], storyElements = [], cards = [], activeI
 let scrollScheduled = false;
 const activeGlitches = new Map();
 const glitchCooldown = new WeakMap();
+let heroGlitchTimer = null, heroInView = false, bannerInView = false;
+
+// Only schedule a repeat while the headline can actually be seen.
+function syncAmbientMotion() {
+  const active = motionEnabled && !document.hidden && !document.documentElement.classList.contains('boot-pending');
+  $('practiceStrip').classList.toggle('is-running', active && bannerInView);
+  if (!active || !heroInView) {
+    clearTimeout(heroGlitchTimer);
+    heroGlitchTimer = null;
+    return;
+  }
+  if (heroGlitchTimer !== null) return;
+  heroGlitchTimer = setTimeout(() => {
+    heroGlitchTimer = null;
+    glitch($('heroTitle'));
+    syncAmbientMotion();
+  }, 3200);
+}
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) stopGlitches();
+  syncAmbientMotion();
+});
 
 // Duplicate only the visual layer; assistive technology reads the stable original.
 function prepareGlitchText(element) {
@@ -82,6 +104,7 @@ function applyMotion() {
     document.querySelectorAll('.reveal-pending').forEach(el => el.classList.remove('reveal-pending'));
     revealObserver?.disconnect();
   }
+  syncAmbientMotion();
   scheduleScroll();
 }
 $('motionToggle').addEventListener('click', () => {
@@ -112,7 +135,6 @@ function updateScroll() {
   const consoleRect = $('signalConsole').getBoundingClientRect();
   const consoleProgress = motionEnabled ? clamp((innerHeight - consoleRect.top) / (innerHeight + consoleRect.height)) : .5;
   $('signalVisual').style.setProperty('--scan-position', `${consoleProgress * 100}%`);
-  $('practiceTrack').style.transform = `translate3d(${-40 - heroProgress * 130}px,0,0)`;
   const pRect = perspective.getBoundingClientRect();
   const pProgress = motionEnabled ? clamp((innerHeight - pRect.top) / (innerHeight + pRect.height)) : .5;
   perspectiveWords.forEach((word, index) => { word.style.transform = `translateX(${(pProgress - .5) * (index - 1) * 70}px)`; });
@@ -157,9 +179,21 @@ applyMotion(); observeReveals();
 $('year').textContent = new Date().getFullYear();
 [...$('heroTitle').children].forEach(prepareGlitchText);
 $('heroTitle').addEventListener('pointerenter', () => glitch($('heroTitle')));
-if (window.signalBoot?.active) addEventListener('signal:entered', () => glitch($('heroTitle')), { once: true });
+if (window.signalBoot?.active) addEventListener('signal:entered', () => { glitch($('heroTitle')); syncAmbientMotion(); }, { once: true });
 else (document.fonts?.ready || Promise.resolve()).then(() => glitch($('heroTitle')));
 prepareGlitchText($('channelLabel'));
+if ('IntersectionObserver' in window) {
+  const ambientObserver = new IntersectionObserver(entries => {
+    for (const entry of entries) {
+      const visible = entry.isIntersecting && entry.intersectionRatio >= .1;
+      if (entry.target === $('heroTitle')) heroInView = visible;
+      else bannerInView = visible;
+    }
+    syncAmbientMotion();
+  }, { threshold: .1 });
+  ambientObserver.observe($('heroTitle'));
+  ambientObserver.observe($('practiceStrip'));
+}
 
 const selectedLayers = Object.fromEntries(Object.entries(practices).map(([mode, practice]) => [mode, practice.layers[0].id]));
 function updatePracticeProject() {
