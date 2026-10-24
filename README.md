@@ -1,4 +1,4 @@
-# Isaac Nino — Vibe. Code. Craft.
+# Isaac Nino — Creative thinking. Made real.
 
 An original cyberpunk portfolio in graphite and icy blue with restrained red accents, IBM Plex Mono typography, an angular portrait composition, a selectable signal switchboard, scroll-driven project imagery, and case studies powered by one content file. Built with HTML, CSS, and JavaScript; no runtime packages.
 
