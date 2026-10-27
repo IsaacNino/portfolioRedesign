@@ -20,6 +20,8 @@ export function validateProjects(data) {
     if (p.featured !== undefined && typeof p.featured !== 'boolean') throw new Error(`${label}: featured must be true or false.`);
     if (p.accent !== undefined && !accents.includes(p.accent)) throw new Error(`${label}: unsupported accent.`);
     if (p.image && (!safeUrl(p.image.src, { image: true }) || typeof p.image.alt !== 'string' || !p.image.alt.trim())) throw new Error(`${label}: image needs a safe src and descriptive alt.`);
+    if (p.image?.fit !== undefined && !['cover','contain'].includes(p.image.fit)) throw new Error(`${label}: image.fit must be cover or contain.`);
+    if (p.credit !== undefined && (typeof p.credit !== 'string' || !p.credit.trim())) throw new Error(`${label}: credit must be nonempty text.`);
     if (!Array.isArray(p.links) || p.links.some(l => typeof l.label !== 'string' || !l.label.trim() || !safeUrl(l.url))) throw new Error(`${label}: links must contain labels and HTTPS URLs (or an empty array).`);
   });
   return data.projects;

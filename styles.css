@@ -94,6 +94,18 @@ button{border:0;background:none}
 .showcase-card[data-id=dogwood]{background:linear-gradient(135deg,#455248,#202c28)}
 .showcase-card .project-visual{width:100%;transform:translateY(var(--image-y,0px)) scale(var(--image-scale,1));transition:transform .15s linear;position:relative;border-radius:7px;box-shadow:0 17px 35px #0005;overflow:hidden}
 .project-image{width:100%;height:auto;aspect-ratio:1280/900;object-fit:cover;object-position:top}
+.project-visual-contained{background:#0b1219}
+.project-visual-contained .project-image{object-fit:contain;object-position:center}
+.project-story .story-credit{font-size:10px;line-height:1.7;color:#8fa4b4;margin-top:8px;max-width:370px}
+.dialog-credit{margin-top:14px;padding-left:12px;border-left:1px solid #466174;font-size:11px;line-height:1.8;color:#91a9b9}
+.brand-section{padding-bottom:78px}
+.brand-heading{display:flex;justify-content:space-between;align-items:baseline;gap:20px;padding-top:28px;border-top:1px solid #2b414f}
+.brand-heading h2{color:#abc6d8;font-size:10px;letter-spacing:.1em;font-weight:400}
+.brand-heading p{font-size:10px;color:#8b9eac}
+.brand-names{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));column-gap:28px;row-gap:26px;list-style:none;padding:34px 0;margin:0;border-bottom:1px solid #2b414f}
+.brand-names li{font-size:clamp(14px,1.7vw,24px);font-weight:500;letter-spacing:-.055em;color:#9aabb7;line-height:1.4;transition:color .3s}
+.brand-names li:hover{color:var(--ice)}
+@media(max-width:760px){.brand-section{padding-bottom:50px}.brand-heading{display:block}.brand-heading p{margin-top:10px;line-height:1.7}.brand-names{grid-template-columns:repeat(2,minmax(0,1fr));gap:22px 18px;padding:28px 0}.brand-names li{font-size:16px}.project-story .story-credit{font-size:10px}}
 .showcase-card .screen-top{position:absolute;top:12px;left:20px;right:20px;display:flex;align-items:center;justify-content:space-between;font:9px 'IBM Plex Mono';color:#c6dded80}
 .screen-dots{display:flex;gap:4px}
 .screen-dots i{width:4px;height:4px;background:#c6dded80;border-radius:50%}
@@ -143,10 +155,12 @@ button{border:0;background:none}
 .generic-art:after{content:'';position:absolute;inset:20px;border:1px solid #aacbe742;border-radius:8px}
 .project-dialog,.contact-dialog{background:#151f29;color:var(--ink);border:1px solid #475e70;border-radius:18px;padding:0;width:min(860px,calc(100% - 40px));max-height:88svh;box-shadow:0 30px 100px #0008;overscroll-behavior:contain}
 .project-dialog::backdrop,.contact-dialog::backdrop{background:#02070dc9;backdrop-filter:blur(12px)}
-.project-dialog .dialog-top{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:14px 30px;border-bottom:1px solid #2c4a5d}
+.project-dialog .dialog-top{position:sticky;top:0;z-index:2;display:flex;align-items:center;justify-content:space-between;gap:20px;padding:14px 30px;border-bottom:1px solid #2c4a5d;background:#101f2b}
 .project-dialog .dialog-top>.mono{font-size:10px;letter-spacing:.12em}
 .project-dialog .dialog-cover{padding:24px 30px;border-bottom:1px solid #2c4a5d}
 .project-dialog .dialog-cover .project-image{display:block;width:100%;height:min(30svh,260px);object-fit:contain;object-position:center}
+.project-dialog .dialog-cover .project-visual-contained{max-width:700px;margin-inline:auto;background:transparent}
+.project-dialog .dialog-cover .project-visual-contained .project-image{height:auto;max-height:min(44svh,380px);aspect-ratio:auto}
 .project-dialog .dialog-body{padding:32px}
 .project-dialog .dialog-body>.mono{font-size:10px;color:var(--ice);margin-bottom:14px}
 .dialog-summary{margin-top:18px;color:#a9bdcb}

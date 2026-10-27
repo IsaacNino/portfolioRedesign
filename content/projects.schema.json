@@ -82,6 +82,14 @@
               "alt": {
                 "type": "string",
                 "minLength": 1
+              },
+              "fit": {
+                "enum": [
+                  "cover",
+                  "contain"
+                ],
+                "default": "cover",
+                "description": "Use contain to preserve the full artwork or portrait media."
               }
             }
           },
@@ -129,6 +137,11 @@
                 }
               }
             }
+          },
+          "credit": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Agency or collaboration credit, separate from your personal role."
           }
         }
       }

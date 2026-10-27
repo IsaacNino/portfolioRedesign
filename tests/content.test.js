@@ -18,12 +18,18 @@ test('adding a project creates its own filter and fallback artwork without layou
   assert.match(projectVisual(projects.at(-1)),/generic-art/);
 });
 test('rejects duplicate ids, missing fields, unsafe links, invalid tags and reserved categories',()=>{
-  for(const mutate of [d=>d.projects.push(d.projects[0]),d=>delete d.projects[0].title,d=>d.projects[0].links[0].url='javascript:alert(1)',d=>d.projects[0].tags=[],d=>d.projects[0].category='All work']){const data=sample();mutate(data);assert.throws(()=>validateProjects(data));}
+  for(const mutate of [d=>d.projects.push(d.projects[0]),d=>delete d.projects[0].title,d=>d.projects[0].links=[{label:'Unsafe link',url:'javascript:alert(1)'}],d=>d.projects[0].tags=[],d=>d.projects[0].category='All work']){const data=sample();mutate(data);assert.throws(()=>validateProjects(data));}
 });
 test('accepts optional screenshots and validates alt text and safe URLs',()=>{
   const data=sample();data.projects[0].image={src:'./assets/images/siteShot.webp',alt:'A project screenshot'};assert.doesNotThrow(()=>validateProjects(data));
   data.projects[0].image.alt='';assert.throws(()=>validateProjects(data));
   for(const url of ['javascript:alert(1)','//example.com/x.png','./assets/../secret','https://name:password@example.com','https:\\example.com'])assert.equal(safeUrl(url,{image:true}),false);
+});
+test('supports agency credits and uncropped artwork without accepting invalid presentation values',()=>{
+  const data=sample();data.projects[0].credit='Created with the team at Subvrsive.';data.projects[0].image.fit='contain';
+  assert.doesNotThrow(()=>validateProjects(data));assert.match(projectVisual(data.projects[0]),/project-visual-contained/);
+  data.projects[0].image.fit='unknown';assert.throws(()=>validateProjects(data));
+  data.projects[0].image.fit='cover';data.projects[0].credit=42;assert.throws(()=>validateProjects(data));
 });
 test('escapes user-authored content and allows an empty portfolio',()=>{
   assert.equal(escapeHtml('<script>"&'), '&lt;script&gt;&quot;&amp;');

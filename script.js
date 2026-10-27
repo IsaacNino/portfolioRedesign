@@ -2,10 +2,12 @@ import { validateProjects, getCategories, filterProjects, escapeHtml as esc } fr
 import { projectVisual } from './content/project-visuals.js';
 import { disciplineVisual } from './content/discipline-visuals.js';
 import { practices } from './content/practice-data.js';
+import { brands } from './content/brand-data.js';
 
 const $ = id => document.getElementById(id);
 const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 const number = value => String(value).padStart(2, '0');
+$('brandNames').innerHTML = brands.map(brand => `<li>${esc(brand)}</li>`).join('');
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 const desktop = matchMedia('(min-width: 761px)');
 let userMotion;
@@ -280,7 +282,7 @@ function renderProjects(category = 'All work') {
   $('projectStories').innerHTML = visibleProjects.map(project => {
     const index = projects.indexOf(project);
     const link = project.links[0];
-    return `<article class="project-story" id="work-${esc(project.id)}"><div class="project-number mono">${number(index + 1)} / ${esc(project.category)}</div><h3>${esc(project.title)}</h3><div class="mobile-media">${projectVisual(project)}</div><p>${esc(project.summary)}</p><div class="tag-list" aria-label="Tools">${project.tags.map(tag => `<span>${esc(tag)}</span>`).join('')}</div><div class="story-actions"><button class="case-link" type="button" data-project="${esc(project.id)}" aria-label="Read ${esc(project.title)} case study">Inside the project <span aria-hidden="true">↗</span></button>${link ? `<a class="text-link" href="${esc(link.url)}" target="_blank" rel="noopener noreferrer">Visit site ↗</a>` : ''}</div><div class="story-role mono">${esc(project.role)}</div></article>`;
+    return `<article class="project-story" id="work-${esc(project.id)}"><div class="project-number mono">${number(index + 1)} / ${esc(project.category)}</div><h3>${esc(project.title)}</h3><div class="mobile-media">${projectVisual(project)}</div><p>${esc(project.summary)}</p><div class="tag-list" aria-label="Tools and methods">${project.tags.map(tag => `<span>${esc(tag)}</span>`).join('')}</div><div class="story-actions"><button class="case-link" type="button" data-project="${esc(project.id)}" aria-label="Read ${esc(project.title)} case study">Inside the project <span aria-hidden="true">↗</span></button>${link ? `<a class="text-link" href="${esc(link.url)}" target="_blank" rel="noopener noreferrer">${esc(link.label)} ↗</a>` : ''}</div><div class="story-role mono">${esc(project.role)}</div>${project.credit ? `<p class="story-credit">${esc(project.credit)}</p>` : ''}</article>`;
   }).join('');
   $('showcaseStage').innerHTML = visibleProjects.map((project, index) => `<div class="showcase-card" data-id="${esc(project.id)}" aria-hidden="true"><div class="screen-top" aria-hidden="true"><span class="screen-dots"><i></i><i></i><i></i></span><span>SELECTED WORK / ${number(index + 1)}</span></div>${projectVisual(project)}</div>`).join('');
   $('projectJumps').innerHTML = visibleProjects.map((project, index) => `<button class="jump-button" type="button" data-jump="${index}" aria-label="Scroll to ${esc(project.title)}" aria-pressed="false">${number(index + 1)}</button>`).join('');
@@ -310,10 +312,10 @@ function openProject(project) {
   const facts = [
     ['Role', esc(project.role)],
     ['Focus', esc(project.focus)],
-    ['Tools', `<ul class="dialog-tools" aria-label="Project tools">${project.tags.map(tag => `<li>${esc(tag)}</li>`).join('')}</ul>`],
+    ['Tools & methods', `<ul class="dialog-tools" aria-label="Project tools and methods">${project.tags.map(tag => `<li>${esc(tag)}</li>`).join('')}</ul>`],
     ['Status', `<span class="dialog-status">${esc(project.status)}</span>`]
   ];
-  $('dialogContent').innerHTML = `<div class="dialog-cover">${projectVisual(project)}</div><div class="dialog-body"><p class="mono">${esc(project.category)}</p><h2 id="dialogTitle">${esc(project.title)}</h2><p class="dialog-summary">${esc(project.summary)}</p><dl class="dialog-facts">${facts.map(([label,value]) => `<div><dt>${label}</dt><dd>${value}</dd></div>`).join('')}</dl>${[['The challenge',project.problem],['The approach',project.approach],['The outcome',project.outcome]].map(([title,text]) => `<section class="case-section"><h3>${title}</h3><p>${esc(text)}</p></section>`).join('')}<div class="dialog-links">${project.links.map(link => `<a class="button-light" href="${esc(link.url)}" target="_blank" rel="noopener noreferrer">${esc(link.label)} <span aria-hidden="true">↗</span></a>`).join('')}</div></div>`;
+  $('dialogContent').innerHTML = `<div class="dialog-cover">${projectVisual(project)}</div><div class="dialog-body"><p class="mono">${esc(project.category)}</p><h2 id="dialogTitle">${esc(project.title)}</h2><p class="dialog-summary">${esc(project.summary)}</p>${project.credit ? `<p class="dialog-credit">${esc(project.credit)}</p>` : ''}<dl class="dialog-facts">${facts.map(([label,value]) => `<div><dt>${label}</dt><dd>${value}</dd></div>`).join('')}</dl>${[['The challenge',project.problem],['The approach',project.approach],['The outcome',project.outcome]].map(([title,text]) => `<section class="case-section"><h3>${title}</h3><p>${esc(text)}</p></section>`).join('')}${project.links.length ? `<div class="dialog-links">${project.links.map(link => `<a class="button-light" href="${esc(link.url)}" target="_blank" rel="noopener noreferrer">${esc(link.label)} <span aria-hidden="true">↗</span></a>`).join('')}</div>` : ''}</div>`;
   if (!dialog.open) dialog.showModal();
   dialog.scrollTop = 0;
   syncModalLock();
