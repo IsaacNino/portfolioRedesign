@@ -2,17 +2,19 @@ import { validateProjects, getCategories, filterProjects, escapeHtml as esc } fr
 import { projectVisual } from './content/project-visuals.js';
 import { disciplineVisual } from './content/discipline-visuals.js';
 import { practices } from './content/practice-data.js';
+import { createProjectMedia } from './content/project-media.js';
 import { brands } from './content/brand-data.js';
 
 const $ = id => document.getElementById(id);
 const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 const number = value => String(value).padStart(2, '0');
-$('brandNames').innerHTML = brands.map(brand => `<li>${esc(brand)}</li>`).join('');
+$('brandNames').innerHTML = brands.map(brand => `<li><img class="brand-logo brand-logo-${esc(brand.treatment)}${brand.tall ? ' brand-logo-tall' : ''}" src="./assets/images/brands/${esc(brand.file)}" alt="${esc(brand.name)}" width="160" height="60" loading="lazy"></li>`).join('');
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 const desktop = matchMedia('(min-width: 761px)');
 let userMotion;
 try { userMotion = localStorage.getItem('isaac-motion'); } catch { /* Storage is optional. */ }
 let motionEnabled = !reducedMotion.matches && userMotion !== 'off';
+const projectMedia = createProjectMedia({ motionAllowed: () => motionEnabled });
 let projects = [], visibleProjects = [], storyElements = [], cards = [], activeIndex = -1;
 let scrollScheduled = false;
 const activeGlitches = new Map();
@@ -107,6 +109,8 @@ function applyMotion() {
     revealObserver?.disconnect();
   }
   syncAmbientMotion();
+  if (!motionEnabled) projectMedia.resetManualPlayback();
+  projectMedia.sync();
   scheduleScroll();
 }
 $('motionToggle').addEventListener('click', () => {
@@ -161,9 +165,10 @@ function updateScroll() {
     cards[closest]?.style.setProperty('--image-y', `${(progress - .5) * -30}px`);
     cards[closest]?.style.setProperty('--image-scale', String(1 + Math.abs(progress - .5) * .035));
   }
+  projectMedia.sync();
 }
 addEventListener('scroll', scheduleScroll, { passive: true });
-addEventListener('resize', scheduleScroll);
+addEventListener('resize', () => { scheduleScroll(); projectMedia.refresh(); });
 function tilt(element, target, xName, yName, strength) {
   element.addEventListener('pointermove', event => {
     if (!motionEnabled || event.pointerType === 'touch') return;
@@ -263,6 +268,7 @@ function setActiveProject(index) {
     card.classList.toggle('active', i === index);
     card.classList.toggle('past', i < index);
     card.setAttribute('aria-hidden', String(i !== index));
+    card.inert = i !== index;
   });
   $('projectJumps').querySelectorAll('button').forEach((button, i) => button.setAttribute('aria-pressed', String(i === index)));
   $('showcaseNumber').textContent = `${number(index + 1)} / ${number(visibleProjects.length)}`;
@@ -273,6 +279,7 @@ function setActiveProject(index) {
   $('showcaseOpen').dataset.project = project.id;
   $('showcaseOpen').setAttribute('aria-label', `Read ${project.title} case study`);
   $('showcaseProgress').style.transform = `scaleX(${(index + 1) / visibleProjects.length})`;
+  projectMedia.sync();
 }
 function renderProjects(category = 'All work') {
   visibleProjects = filterProjects(projects, category);
@@ -290,6 +297,7 @@ function renderProjects(category = 'All work') {
   storyElements = [...$('projectStories').children];
   cards = [...$('showcaseStage').children];
   setActiveProject(0);
+  projectMedia.refresh();
   scheduleScroll();
 }
 $('projectJumps').addEventListener('click', event => {
@@ -307,7 +315,7 @@ $('projectFilters').addEventListener('click', event => {
 const dialog = $('projectDialog');
 const contactDialog = $('contactDialog');
 let lastProjectTrigger, returnHash = '#work';
-function syncModalLock() { document.body.classList.toggle('modal-open', dialog.open || contactDialog.open); }
+function syncModalLock() { document.body.classList.toggle('modal-open', dialog.open || contactDialog.open); projectMedia.refresh(); }
 function openProject(project) {
   const facts = [
     ['Role', esc(project.role)],

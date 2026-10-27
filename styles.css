@@ -641,3 +641,25 @@ html.boot-exit .boot-screen{animation:boot-unmask .46s cubic-bezier(.7,0,.3,1) b
 .practice-strip:hover>#practiceTrack,.motion-off .practice-strip>#practiceTrack{animation-play-state:paused}
 @keyframes practice-run{to{transform:translate3d(-50%,0,0)}}
 @media(prefers-reduced-motion:reduce){.practice-strip>#practiceTrack{animation:none;transform:none}}
+
+/* Quiet practice tags and original brand marks. */
+.capability-summary{max-width:440px;margin-top:18px;pointer-events:auto}
+.capability-label{display:block;color:#8a9ba8;font-size:8px;text-transform:uppercase;letter-spacing:.16em;margin-bottom:9px}
+.capability-tags{display:flex;flex-wrap:wrap;gap:6px 7px;list-style:none;margin:0;padding:0}
+.capability-tags li{font-size:9px;line-height:1.5;letter-spacing:.01em;color:#b5c5d0;border:1px solid #a8cfee26;padding:5px 8px;background:#0b172333}
+.brand-logos{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px 32px;list-style:none;padding:28px 0 32px;margin:0;border-bottom:1px solid #2b414f}
+.brand-logos li{display:flex;align-items:center;justify-content:center;min-height:90px;padding:15px 18px}
+.brand-logo{display:block;width:148px;height:46px;object-fit:contain;opacity:.52;transition:opacity .3s}
+.brand-logo-light{filter:brightness(0) invert(1)}
+.brand-logo-grayscale{filter:grayscale(1)}
+.brand-logo-tall{height:62px}
+.brand-logos li:hover .brand-logo{opacity:.84}
+.project-film{position:relative;background:#091019}
+.project-film video{display:block}
+.film-toggle{position:absolute;bottom:12px;right:12px;display:flex;align-items:center;gap:8px;border:1px solid #a7c9de5c;background:#09121ee8;color:#c5dceb;padding:9px 11px;font:9px 'IBM Plex Mono',monospace;cursor:pointer;z-index:3}
+.film-toggle:hover{background:#183448}
+.film-toggle:focus-visible{outline:2px solid var(--ice);outline-offset:4px}
+.film-toggle[hidden]{display:none}
+@media(max-width:1050px) and (min-width:761px){.capability-summary{max-width:43%}.capability-tags li{font-size:8px;padding:4px 6px}.capability-summary{margin-top:14px}}
+@media(max-width:760px){.capability-summary{max-width:380px;margin-top:16px}.capability-tags li{font-size:9px}.brand-logos{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 18px;padding:24px 0}.brand-logos li{min-height:82px;padding:13px}.brand-logo{width:130px;height:39px}.brand-logo-tall{height:56px}.film-toggle{bottom:9px;right:9px;font-size:8px}}
+@media(max-width:430px){.capability-tags{gap:6px}.capability-tags li{font-size:8px;padding:5px 7px}.brand-logo{width:112px;height:35px}.brand-logo-tall{height:51px}}

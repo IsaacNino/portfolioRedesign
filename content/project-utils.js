@@ -21,6 +21,7 @@ export function validateProjects(data) {
     if (p.accent !== undefined && !accents.includes(p.accent)) throw new Error(`${label}: unsupported accent.`);
     if (p.image && (!safeUrl(p.image.src, { image: true }) || typeof p.image.alt !== 'string' || !p.image.alt.trim())) throw new Error(`${label}: image needs a safe src and descriptive alt.`);
     if (p.image?.fit !== undefined && !['cover','contain'].includes(p.image.fit)) throw new Error(`${label}: image.fit must be cover or contain.`);
+    if (p.video && (!p.image || !safeUrl(p.video.src, { image: true }) || !/\.mp4(?:$|\?)/i.test(p.video.src) || typeof p.video.alt !== 'string' || !p.video.alt.trim())) throw new Error(`${label}: video needs an MP4 src, descriptive alt, and an image poster.`);
     if (p.credit !== undefined && (typeof p.credit !== 'string' || !p.credit.trim())) throw new Error(`${label}: credit must be nonempty text.`);
     if (!Array.isArray(p.links) || p.links.some(l => typeof l.label !== 'string' || !l.label.trim() || !safeUrl(l.url))) throw new Error(`${label}: links must contain labels and HTTPS URLs (or an empty array).`);
   });

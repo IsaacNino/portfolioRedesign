@@ -20,9 +20,13 @@
       ],
       "links": [],
       "image": {
-        "src": "./assets/images/projects/heinz-shake.jpg",
-        "alt": "Heinz Make It Shake TikTok effect showing the ketchup bottle, dance prompts and a score screen.",
+        "src": "./assets/images/projects/heinz-shake-poster.jpg",
+        "alt": "Heinz Make It Shake social AR gameplay showing the bottle-shaking interaction.",
         "fit": "contain"
+      },
+      "video": {
+        "src": "./assets/videos/heinz-shake.mp4",
+        "alt": "Heinz Make It Shake social AR gameplay showing the bottle-shaking interaction."
       }
     },
     {
@@ -49,9 +53,13 @@
         }
       ],
       "image": {
-        "src": "./assets/images/projects/funko-pop.jpg",
-        "alt": "Funko Pop! Yourself TikTok effect with selectable skin tones, hair and accessories.",
+        "src": "./assets/images/projects/funko-pop-poster.jpg",
+        "alt": "Funko Pop! Yourself character customization and virtual try-on demonstration.",
         "fit": "contain"
+      },
+      "video": {
+        "src": "./assets/videos/funko-pop.mp4",
+        "alt": "Funko Pop! Yourself character customization and virtual try-on demonstration."
       }
     },
     {
@@ -97,9 +105,13 @@
       ],
       "links": [],
       "image": {
-        "src": "./assets/images/projects/espolon.jpg",
-        "alt": "Espolòn Latin Grammys campaign artwork with a giant tequila bottle, a skeleton musician and neon signage above a city street.",
+        "src": "./assets/images/projects/espolon-poster.jpg",
+        "alt": "Espolòn Tequila Latin Grammys film with a skeleton bringing the bottle installation to life.",
         "fit": "contain"
+      },
+      "video": {
+        "src": "./assets/videos/espolon.mp4",
+        "alt": "Espolòn Tequila Latin Grammys film with a skeleton bringing the bottle installation to life."
       }
     },
     {

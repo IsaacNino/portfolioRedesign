@@ -142,7 +142,30 @@
             "type": "string",
             "minLength": 1,
             "description": "Agency or collaboration credit, separate from your personal role."
+          },
+          "video": {
+            "type": "object",
+            "required": [
+              "src",
+              "alt"
+            ],
+            "properties": {
+              "src": {
+                "type": "string",
+                "description": "Local ./assets/videos/...mp4 or HTTPS MP4 URL. Keep image as a still poster."
+              },
+              "alt": {
+                "type": "string",
+                "minLength": 1
+              }
+            },
+            "description": "Optional muted project film. Uses image as its poster; plays only while visible."
           }
+        },
+        "dependentRequired": {
+          "video": [
+            "image"
+          ]
         }
       }
     }

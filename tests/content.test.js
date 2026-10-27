@@ -11,7 +11,7 @@ test('published portfolio data validates and all categories filter correctly',()
   for(const category of getCategories(projects).slice(1))assert.ok(filterProjects(projects,category).every(p=>p.category===category));
 });
 test('adding a project creates its own filter and fallback artwork without layout edits',()=>{
-  const data=sample();const added={...data.projects[0],id:'new-experiment',title:'New experiment',category:'New category',featured:false};delete added.image;data.projects.push(added);
+  const data=sample();const added={...data.projects[0],id:'new-experiment',title:'New experiment',category:'New category',featured:false};delete added.image;delete added.video;data.projects.push(added);
   const projects=validateProjects(data);
   assert.ok(getCategories(projects).includes('New category'));
   assert.equal(filterProjects(projects,'New category').length,1);
@@ -34,4 +34,13 @@ test('supports agency credits and uncropped artwork without accepting invalid pr
 test('escapes user-authored content and allows an empty portfolio',()=>{
   assert.equal(escapeHtml('<script>"&'), '&lt;script&gt;&quot;&amp;');
   assert.deepEqual(validateProjects({projects:[]}),[]);
+});
+
+test('project films require a safe MP4 and descriptive still poster',()=>{
+  const data=sample();data.projects[0].video={src:'./assets/videos/demo.mp4',alt:'An interaction preview'};
+  assert.doesNotThrow(()=>validateProjects(data));
+  const markup=projectVisual(data.projects[0]);
+  assert.match(markup,/preload="none"/);assert.match(markup,/data-src=".\/assets\/videos\/demo.mp4"/);assert.match(markup,/poster=/);assert.doesNotMatch(markup,/autoplay/);
+  delete data.projects[0].image;assert.throws(()=>validateProjects(data));
+  for(const src of ['javascript:alert(1)','./assets/videos/../secret.mp4','./assets/videos/demo.gif']){const invalid=sample();invalid.projects[0].video={src,alt:'Preview'};assert.throws(()=>validateProjects(invalid));}
 });

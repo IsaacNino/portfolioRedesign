@@ -7,6 +7,7 @@ export async function check() {
   const data = JSON.parse(await readFile(resolve(root,'content/projects.json'),'utf8'));
   const projects = validateProjects(data);
   for (const p of projects) if (p.image?.src.startsWith('./')) await access(resolve(root,p.image.src));
+  for (const p of projects) if (p.video?.src.startsWith('./')) await access(resolve(root,p.video.src));
   const html = await readFile(resolve(root,'index.html'),'utf8');
   const assets = [...html.matchAll(/(?:src|href)="(\.\/[^"#]+)"/g)].map(m=>m[1]);
   for (const asset of assets) await access(resolve(root,asset));

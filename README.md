@@ -23,8 +23,9 @@ Edit `content/projects.json`. Its array order controls the portfolio order. Titl
 2. Update the title, category, summary, tags, role, focus, status, and case-study text.
 3. Add a screenshot in `assets/images/projects/`, then set `image.src` and meaningful `image.alt` text. A 1280 × 900 screenshot suits the preview frame.
 4. Set `image.fit` to `contain` for portrait media or artwork that should remain uncropped. Add an optional `credit` for agency and collaboration context, separate from your role.
-5. Add HTTPS project links, or use `"links": []` for work without a public destination.
-6. Run `npm run check` and preview before publishing.
+5. Optionally add a `video` with `src` pointing to an MP4 in `assets/videos/` and descriptive `alt` text. Keep `image` as its still poster. Original project films play only while visible and respect the motion preference; each also has its own play/pause control.
+6. Add HTTPS project links, or use `"links": []` for work without a public destination.
+7. Run `npm run check` and preview before publishing.
 
 Example (replace the illustrative copy with real project details):
 
@@ -62,9 +63,13 @@ To edit the switchboard, update `content/practice-data.js`. Keep each `projectId
 - `script.js`: scroll choreography, switchboard selection, filters, dialogs, and contact handling.
 - `assets/boot.js`: independent loading sequence, readiness checks, skip behavior, and fail-open timeout.
 - `content/practice-data.js`: switchboard layer titles, explanations, detail rows, tools, and related project IDs. Each practice has four editable layers.
-- `content/project-visuals.js`: image renderer and automatic placeholder.
+- `content/project-visuals.js`: image/video renderer and automatic placeholder.
 - `content/discipline-visuals.js`: original SVG practice maps for the four switchboard channels.
-- `content/brand-data.js`: the selected brand names shown above the work section.
+- `content/project-media.js`: lazy video loading, visibility, motion preferences, and playback controls.
+- `content/brand-data.js`: selected brand logos, alt text, and display treatment.
+- `assets/images/brands/sources.json`: official artwork sources and provenance.
+- `assets/videos/`: optimized original project loops.
+- The six “Working across” capability tags are editable in `index.html`.
 - `assets/images/projects/`: website screenshots and campaign imagery from Isaac’s cleared Subvrsive deck.
 - `assets/docs/Isaac-Nino-Resume.pdf`: existing résumé.
 
@@ -88,6 +93,10 @@ The existing Formspree endpoint remains `https://formspree.io/f/xqenwere`. The f
 
 The selected agency work leads the collection: Heinz Make It Shake, Funko Pop! Yourself, Coca-Cola Product Concepts, and Espolòn at the Latin Grammys. Existing independent projects and switchboard references remain available. Individual roles follow Isaac’s supplied attribution; agency credits appear separately.
 
-Campaign images are faithful captures of the supplied Google Slides artwork: Heinz slide 32, Funko slide 60, Coca-Cola slide 29, and Espolòn slide 24. The original deck export exceeded the available export size limit. Replace these with original media when available using the same paths. All source-deck work was cleared by Isaac for portfolio use.
+Heinz (slide 32), Funko (slide 60), and Espolòn (slide 24) now use the original embedded GIFs recovered losslessly from individual SVG slide exports. The GIFs were converted to silent H.264 MP4 loops without cropping or interpolation, preserving every source frame. Still posters were extracted from the same animations. Coca-Cola retains a faithful capture of the product concept grid on slide 29. All source-deck work was cleared by Isaac for portfolio use.
+
+Brand marks are authentic assets from official brand sites, stored locally with provenance in `assets/images/brands/sources.json`. CSS provides a subdued monochrome treatment while preserving proportions. Toyota retains its internal tonal contrast.
+
+Project films load only when playback starts. Offscreen, inactive, hidden-tab, and background-modal videos pause; desktop and mobile copies never intentionally play together. The global motion switch and reduced-motion preference disable automatic playback. An explicit clip play action remains available for visitors who prefer to control motion themselves.
 
 Heinz uses the Make It Shake material, not the separate Ketchup Tournament campaign or the unrelated copied text on slide 31. Coca-Cola images are explicitly speculative product concepts. The Funko outcome attributes the deck’s 21.3K+ user-generated video figure to Subvrsive. Espolòn view counts are omitted because the deck contains conflicting figures.

@@ -1,0 +1,108 @@
+{
+  "retrieved": "2026-10-27",
+  "assets": [
+    {
+      "brand": "Heinz",
+      "file": "heinz.png",
+      "sourcePage": "https://www.heinz.com/",
+      "assetUrl": "https://res.cloudinary.com/kraft-heinz-whats-cooking-ca/dxp-images/heinz/global/heinz-logo-black.png",
+      "dimensions": "2000 \u00d7 839",
+      "cssFilter": "brightness(0) invert(1)",
+      "transparent": true,
+      "bytes": 23990,
+      "sha256": "52797b47489b61b456f4d509c1e58fc4a0cef833e42d1d2a5424d390a3603084",
+      "notes": "Transparent official black wordmark with ESTD 1869."
+    },
+    {
+      "brand": "Funko",
+      "file": "funko.svg",
+      "sourcePage": "https://funko.com/",
+      "assetUrl": "https://funko.com/on/demandware.static/Sites-FunkoUS-Site/-/default/dw9eb30847/images/funko/svg/site-logo.svg",
+      "dimensions": "108 \u00d7 38",
+      "cssFilter": "brightness(0) invert(1)",
+      "transparent": true,
+      "bytes": 4765,
+      "sha256": "ffda28a55a0fdda62f64e4c3d70fbee99e97fb1d0ecf837c96f0ae1cc5a3106d",
+      "notes": "Official header SVG; black script wordmark and crown."
+    },
+    {
+      "brand": "Coca-Cola",
+      "file": "coca-cola.png",
+      "sourcePage": "https://www.coca-cola.com/us/en",
+      "assetUrl": "https://www.coca-cola.com/content/dam/onexp/us/en/homepage/CocaColalogor.png",
+      "dimensions": "573 \u00d7 180",
+      "cssFilter": "brightness(0) invert(1)",
+      "transparent": true,
+      "bytes": 9558,
+      "sha256": "360469e0de59b0da8b9b06f29a36965e4be801b8b240b9196b939ae9174b9f30",
+      "notes": "Transparent red Coca-Cola script wordmark; source homepage brand tile."
+    },
+    {
+      "brand": "Espol\u00f2n",
+      "file": "espolon.svg",
+      "sourcePage": "https://www.espolontequila.com/en-us/",
+      "assetUrl": "https://www.espolontequila.com/app/uploads/2024/04/espolon-logo.svg",
+      "dimensions": "647.597 \u00d7 131.022",
+      "cssFilter": "brightness(0) invert(1)",
+      "transparent": true,
+      "bytes": 25240,
+      "sha256": "c9c8600b0a551ffd9cef9e83718c27487ec695753385388a7aa4d4a7cbb83e6f",
+      "notes": "Official age-gate horizontal wordmark: pink ESPOL\u00d2N, black TEQUILA."
+    },
+    {
+      "brand": "Amazon",
+      "file": "amazon.svg",
+      "sourcePage": "https://www.aboutamazon.com/",
+      "assetUrl": "https://www.aboutamazon.com/",
+      "dimensions": "99 \u00d7 33",
+      "cssFilter": "brightness(0) invert(1)",
+      "transparent": true,
+      "bytes": 9816,
+      "sha256": "99cc06afc2c4461860638918e1129620dd839c4818846a33b3e870485ee86b39",
+      "notes": "Exact inline SVG extracted from data-testid=\"icon-LogoLightV2\" on official footer; white amazon with orange smile."
+    },
+    {
+      "brand": "Sony",
+      "file": "sony.svg",
+      "sourcePage": "https://www.sony.jp/",
+      "assetUrl": "https://www.sony.jp/header-footer/assets/img/GlobalHeader/logo.svg",
+      "dimensions": "500 \u00d7 88.03",
+      "cssFilter": "none",
+      "transparent": true,
+      "bytes": 2462,
+      "sha256": "33b612bab658532ae7965f8fafe16dcd0a1865c3fd675c630e7604fe8606d69f",
+      "notes": "Official white SONY wordmark SVG from Japanese corporate retail header."
+    },
+    {
+      "brand": "Toyota",
+      "file": "toyota.svg",
+      "sourcePage": "https://brand.toyota.com/guidelines/visual/logos",
+      "assetUrl": "https://brand.toyota.com/content/dam/brandhub/VIS_toyota_logo_horiz_white_RGB_2021.svg",
+      "dimensions": "838.249 \u00d7 224.242",
+      "cssFilter": "grayscale(1)",
+      "transparent": true,
+      "bytes": 3245,
+      "sha256": "8e94da3eb637e5f56563f3cce460243fe00a7ab2b167cc09f0c6de4b67db7e4c",
+      "notes": "Official horizontal white Toyota wordmark plus red staging platform with white emblem. Preserve tonal contrast; do not apply brightness(0) invert(1), which fills the entire platform."
+    },
+    {
+      "brand": "Universal Pictures",
+      "file": "universal.svg",
+      "sourcePage": "https://www.universalpictures.com/",
+      "assetUrl": "https://www.universalpictures.com/assets/static/logo.svg",
+      "dimensions": "689.08 \u00d7 365.173",
+      "cssFilter": "none",
+      "transparent": true,
+      "bytes": 17263,
+      "sha256": "08bf529abeea6f791fc92799a3eb1ee97f6963d4cfc437948ecfa9628087f8d8",
+      "notes": "Official transparent white Universal globe wordmark from site header. Taller aspect ratio; needs slightly taller display allowance."
+    }
+  ],
+  "verification": "All SVGs parsed as XML with no script tags and were rendered using Sharp. All eight assets visually inspected in contact-sheet.png. All files report alpha channels. Artwork not redrawn or altered.",
+  "integrationNotes": [
+    "Use img alt with brand name, preserve aspect ratios, allow clear space.",
+    "Opacity may be muted consistently in CSS; avoid uniform white filter on Toyota because it loses internal contrast.",
+    "Coca-Cola is raster 573px wide; adequate at modest logo-strip sizes.",
+    "Amazon SVG is exact markup extracted from the public official page, so assetUrl is the page URL, not a standalone download."
+  ]
+}
