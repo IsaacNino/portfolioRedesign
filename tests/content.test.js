@@ -8,7 +8,7 @@ const sample=()=>structuredClone(content);
 test('published portfolio data validates and all categories filter correctly',()=>{
   const projects=validateProjects(content);
   assert.equal(filterProjects(projects,'All work').length,projects.length);
-  for(const category of getCategories(projects).slice(1))assert.ok(filterProjects(projects,category).every(p=>p.category===category));
+  for(const category of getCategories(projects).slice(1))assert.ok(filterProjects(projects,category).every(p=>p.category===category||p.additionalCategories?.includes(category)));
 });
 test('adding a project creates its own filter and fallback artwork without layout edits',()=>{
   const data=sample();const added={...data.projects[0],id:'new-experiment',title:'New experiment',category:'New category',featured:false};delete added.image;delete added.video;data.projects.push(added);
@@ -43,4 +43,18 @@ test('project films require a safe MP4 and descriptive still poster',()=>{
   assert.match(markup,/preload="none"/);assert.match(markup,/data-src=".\/assets\/videos\/demo.mp4"/);assert.match(markup,/poster=/);assert.doesNotMatch(markup,/autoplay/);
   delete data.projects[0].image;assert.throws(()=>validateProjects(data));
   for(const src of ['javascript:alert(1)','./assets/videos/../secret.mp4','./assets/videos/demo.gif']){const invalid=sample();invalid.projects[0].video={src,alt:'Preview'};assert.throws(()=>validateProjects(invalid));}
+});
+
+test('CES postcard appears in both AI filters without duplicating projects or filter names',()=>{
+  const projects=validateProjects(content);
+  assert.deepEqual(filterProjects(projects,'Generative AI').map(p=>p.id),['coca-cola-product-concepts','postcard']);
+  assert.ok(filterProjects(projects,'AI & experiments').some(p=>p.id==='postcard'));
+  assert.equal(filterProjects(projects,'All work').filter(p=>p.id==='postcard').length,1);
+  assert.equal(getCategories(projects).filter(c=>c==='Generative AI').length,1);
+  const data=sample();data.projects[0].additionalCategories=['New discipline'];
+  assert.ok(getCategories(validateProjects(data)).includes('New discipline'));
+  assert.equal(filterProjects(data.projects,'New discipline')[0].id,data.projects[0].id);
+  for(const extra of ['Generative AI',[null],[''],['All work'],['Social AR'],['Generative AI','generative ai']]){
+    const invalid=sample();invalid.projects[0].additionalCategories=extra;assert.throws(()=>validateProjects(invalid));
+  }
 });

@@ -172,7 +172,10 @@
       "image": {
         "src": "./assets/images/projects/postcard.jpg",
         "alt": "The CES AI Postcard Generator introduction and its personalized postcard experience."
-      }
+      },
+      "additionalCategories": [
+        "Generative AI"
+      ]
     },
     {
       "id": "gallery",

@@ -160,6 +160,15 @@
               }
             },
             "description": "Optional muted project film. Uses image as its poster; plays only while visible."
+          },
+          "additionalCategories": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Optional additional filters. Keep category as the primary display label; do not repeat it here or use All work."
           }
         },
         "dependentRequired": {

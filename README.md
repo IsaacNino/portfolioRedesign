@@ -50,7 +50,7 @@ Example (replace the illustrative copy with real project details):
 }
 ```
 
-Remove `image` if no screenshot is ready; a simple typographic placeholder appears automatically. Categories create their own filters; `All work` is reserved. Keep IDs stable after sharing case-study URLs such as `/#project/intrust`. The optional legacy `featured` and `accent` fields remain accepted for compatibility but do not control this layout.
+Remove `image` if no screenshot is ready; a simple typographic placeholder appears automatically. Categories create their own filters; `All work` is reserved. Use `additionalCategories`, such as `["Generative AI"]`, to include a project in more filters while retaining its primary display category. Each project still appears only once in All work. Keep IDs stable after sharing case-study URLs such as `/#project/intrust`. The optional legacy `featured` and `accent` fields remain accepted for compatibility but do not control this layout.
 
 The JSON schema provides editor guidance. Runtime and build validation reject missing fields, duplicate IDs, unsafe URLs, and missing local images.
 

@@ -16,6 +16,12 @@ export function validateProjects(data) {
     if (!/^[a-z][a-z0-9]*(?:-[a-z0-9]+)*$/.test(p.id) || ids.has(p.id)) throw new Error(`${label}: use a unique lowercase hyphenated id.`);
     ids.add(p.id);
     if (p.category.trim().toLowerCase() === 'all work') throw new Error(`${label}: category "All work" is reserved for the filter.`);
+    if (p.additionalCategories !== undefined) {
+      const extra = p.additionalCategories;
+      if (!Array.isArray(extra) || extra.some(c => typeof c !== 'string' || !c.trim() || c !== c.trim() || c.toLowerCase() === 'all work')) throw new Error(`${label}: additionalCategories must be a list of nonempty category names.`);
+      const names = [p.category, ...extra].map(c => c.toLowerCase());
+      if (new Set(names).size !== names.length) throw new Error(`${label}: categories must be unique.`);
+    }
     if (!Array.isArray(p.tags) || !p.tags.length || p.tags.some(t => typeof t !== 'string' || !t.trim())) throw new Error(`${label}: tags must be a nonempty list of text.`);
     if (p.featured !== undefined && typeof p.featured !== 'boolean') throw new Error(`${label}: featured must be true or false.`);
     if (p.accent !== undefined && !accents.includes(p.accent)) throw new Error(`${label}: unsupported accent.`);
@@ -27,6 +33,6 @@ export function validateProjects(data) {
   });
   return data.projects;
 }
-export function getCategories(projects) { return ['All work', ...new Set(projects.map(p => p.category))]; }
-export function filterProjects(projects, category) { return category === 'All work' ? projects : projects.filter(p => p.category === category); }
+export function getCategories(projects) { return ['All work', ...new Set(projects.flatMap(p => [p.category, ...(p.additionalCategories || [])]))]; }
+export function filterProjects(projects, category) { return category === 'All work' ? projects : projects.filter(p => p.category === category || p.additionalCategories?.includes(category)); }
 export function escapeHtml(value = '') { return String(value).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
