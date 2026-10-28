@@ -10,7 +10,7 @@ const clamp = (value, min = 0, max = 1) => Math.min(max, Math.max(min, value));
 const number = value => String(value).padStart(2, '0');
 $('brandNames').innerHTML = brands.map(brand => `<li><img class="brand-logo brand-logo-${esc(brand.treatment)}${brand.tall ? ' brand-logo-tall' : ''}" src="./assets/images/brands/${esc(brand.file)}" alt="${esc(brand.name)}" width="160" height="60" loading="lazy"></li>`).join('');
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-const desktop = matchMedia('(min-width: 761px)');
+const desktop = matchMedia('(min-width: 961px)');
 let userMotion;
 try { userMotion = localStorage.getItem('isaac-motion'); } catch { /* Storage is optional. */ }
 let motionEnabled = !reducedMotion.matches && userMotion !== 'off';

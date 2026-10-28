@@ -663,3 +663,63 @@ html.boot-exit .boot-screen{animation:boot-unmask .46s cubic-bezier(.7,0,.3,1) b
 @media(max-width:1050px) and (min-width:761px){.capability-summary{max-width:43%}.capability-tags li{font-size:8px;padding:4px 6px}.capability-summary{margin-top:14px}}
 @media(max-width:760px){.capability-summary{max-width:380px;margin-top:16px}.capability-tags li{font-size:9px}.brand-logos{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 18px;padding:24px 0}.brand-logos li{min-height:82px;padding:13px}.brand-logo{width:130px;height:39px}.brand-logo-tall{height:56px}.film-toggle{bottom:9px;right:9px;font-size:8px}}
 @media(max-width:430px){.capability-tags{gap:6px}.capability-tags li{font-size:8px;padding:5px 7px}.brand-logo{width:112px;height:35px}.brand-logo-tall{height:51px}}
+
+/* Launch polish: comfortable touch targets and content-led small-screen spacing. */
+:is(.contact-pill,.hero-cta,.filter,.case-link,.button-light,.text-link,.film-toggle,.motion-toggle){min-height:44px}
+.round-button{width:44px;height:44px}
+.motion-toggle{bottom:max(15px,env(safe-area-inset-bottom));font-size:10px}
+.contact-dialog input,.contact-dialog textarea{font-size:16px;min-height:48px}
+.project-dialog,.contact-dialog{max-height:88dvh}
+.footer{padding-bottom:max(80px,calc(60px + env(safe-area-inset-bottom)))}
+.showcase-top{flex-wrap:wrap}
+.project-jumps{flex-wrap:wrap}
+.project-story .story-credit{font-size:11px}
+@media(max-width:960px){
+  .work-layout{display:block}
+  .showcase{display:none}
+  .project-story{min-height:0;padding:28px 0 55px;scroll-margin-top:35px}
+  .project-story>p{max-width:620px}
+  .mobile-media{display:block;border:1px solid #325970;padding:22px 16px;background:linear-gradient(145deg,#18384d,#0b1d2b);margin:5px 0 26px;overflow:hidden}
+  .mobile-media .project-visual{overflow:hidden}
+  .filter{font-size:11px;padding:11px 13px}
+  .film-toggle{font-size:10px}
+}
+@media(max-width:760px){
+  .hero{height:auto;min-height:0;max-height:none;padding-top:159px;padding-bottom:95px}
+  .hero-copy{position:relative;top:auto;transform:none!important}
+  .hero-copy>p{font-size:13px;line-height:1.85;max-width:44ch}
+  .hero-eyebrow{font-size:9px;line-height:1.7}
+  .hero-cta{font-size:11px;padding:14px 17px}
+  .capability-summary{max-width:440px;margin-top:22px}
+  .capability-label{font-size:9px}
+  .capability-tags li{font-size:10px;padding:6px 8px}
+  .portrait-composition{position:relative;top:auto;right:auto;left:auto;width:min(72%,380px);height:clamp(330px,85vw,430px);min-height:0;margin:48px auto 20px;transform:none!important}
+  .hero-scroll{bottom:105px;min-width:44px;align-items:center}
+  .contact-pill{font-size:10px}
+  .about-intro>p,.work-heading p,.project-story>p,.perspective p,.contact-bottom>p{font-size:13px;line-height:1.85}
+  .channel-button strong{font-size:13px}
+  .channel-button small{font-size:9px;line-height:1.65}
+  .channel-display-top .map-instruction{font-size:8px}
+  .layer-button{font-size:11px;min-height:46px}
+  .layer-heading h3{font-size:18px}
+  .layer-heading p{font-size:12px;line-height:1.85}
+  .layer-parts>div{grid-template-columns:72px minmax(0,1fr)}
+  .layer-parts dt{font-size:9px}
+  .layer-parts dd{font-size:12px;line-height:1.8}
+  .console-footer p{font-size:11px}
+  .story-role{font-size:10px;line-height:1.8}
+  .dialog-facts dd{font-size:13px}
+  .brand-heading p{font-size:11px}
+  .contact-actions>a{font-size:12px;min-height:44px;display:flex;align-items:center}
+  .footer>div{flex-wrap:wrap;gap:8px 20px}
+  .footer>div>a{display:inline-flex;align-items:center;min-height:44px}
+}
+@media(max-width:350px){
+  .site-header{gap:12px}
+  .contact-pill{padding-inline:10px;font-size:9px}
+  .hero-eyebrow{font-size:8px}
+  .channel-button{padding-inline:10px;grid-template-columns:14px minmax(0,1fr);gap:5px}
+  .channel-button strong{font-size:12px}
+  .layer-button{font-size:10px;gap:8px}
+}
+@media(pointer:coarse){.jump-button{width:44px;height:44px}}
