@@ -670,6 +670,8 @@ html.boot-exit .boot-screen{animation:boot-unmask .46s cubic-bezier(.7,0,.3,1) b
 .motion-toggle{bottom:max(15px,env(safe-area-inset-bottom));font-size:10px}
 .contact-dialog input,.contact-dialog textarea{font-size:16px;min-height:48px}
 .project-dialog,.contact-dialog{max-height:88dvh}
+.project-dialog .dialog-top{z-index:5}
+.project-dialog .dialog-cover video.project-image{height:min(44svh,380px);max-height:none;aspect-ratio:1280/900}
 .footer{padding-bottom:max(80px,calc(60px + env(safe-area-inset-bottom)))}
 .showcase-top{flex-wrap:wrap}
 .project-jumps{flex-wrap:wrap}
