@@ -1,0 +1,238 @@
+{
+  "$schema": "./projects.schema.json",
+  "projects": [
+    {
+      "id": "heinz-make-it-shake",
+      "category": "Social AR",
+      "title": "Heinz Make It Shake",
+      "summary": "A playful TikTok experience that turns the familiar act of shaking a ketchup bottle into a dance-led game.",
+      "role": "Visual Scripting / Social AR",
+      "focus": "Gamified interaction and responsive feedback",
+      "status": "Delivered / Campaign work",
+      "credit": "Created with the team at Subvrsive, in collaboration with Hogarth.",
+      "problem": "Translate Heinz’s bottle-shaking ritual into an experience people could play and share on TikTok.",
+      "approach": "I contributed the gamified visual scripting and Social AR work for Make It Shake. The experience brings together dance cues, a score and a playful end state to make participation feel like part of the campaign.",
+      "outcome": "A TikTok Branded Effect that turns a familiar product ritual into a participatory dance experience.",
+      "tags": [
+        "Visual scripting",
+        "Gamification",
+        "Social AR"
+      ],
+      "links": [],
+      "image": {
+        "src": "./assets/images/projects/heinz-shake-poster.jpg",
+        "alt": "Heinz Make It Shake social AR gameplay showing the bottle-shaking interaction.",
+        "fit": "contain"
+      },
+      "video": {
+        "src": "./assets/videos/heinz-shake.mp4",
+        "alt": "Heinz Make It Shake social AR gameplay showing the bottle-shaking interaction."
+      }
+    },
+    {
+      "id": "funko-pop-yourself",
+      "category": "Social AR",
+      "title": "Funko Pop! Yourself",
+      "summary": "A virtual try-on that lets people create their own Funko Pop! likeness through a series of character choices.",
+      "role": "Visual Scripting / Social AR",
+      "focus": "Character customization and interactive states",
+      "status": "Delivered / Campaign work",
+      "credit": "Created with the team at Subvrsive.",
+      "problem": "Bring the Pop! Yourself product into a social experience where people could see, customize and share their own character.",
+      "approach": "I worked on visual scripting and Social AR for the character customization experience. Users could choose skin tone, eyes, hair and accessories to create a Pop! that reflected them.",
+      "outcome": "An interactive character experience tied to the Pop! Yourself product. Subvrsive’s case study reports more than 21.3K user-generated videos.",
+      "tags": [
+        "Visual scripting",
+        "Character customization",
+        "Social AR"
+      ],
+      "links": [
+        {
+          "label": "See it on TikTok",
+          "url": "https://www.tiktok.com/@rug/video/7280624024344956206"
+        }
+      ],
+      "image": {
+        "src": "./assets/images/projects/funko-pop-poster.jpg",
+        "alt": "Funko Pop! Yourself character customization and virtual try-on demonstration.",
+        "fit": "contain"
+      },
+      "video": {
+        "src": "./assets/videos/funko-pop.mp4",
+        "alt": "Funko Pop! Yourself character customization and virtual try-on demonstration."
+      }
+    },
+    {
+      "id": "coca-cola-product-concepts",
+      "category": "Generative AI",
+      "title": "Coca-Cola Product Concepts",
+      "summary": "Generative image-making to explore potential products, flavors and collaborations across the Coca-Cola brand family.",
+      "role": "Generative Image Creation",
+      "focus": "Product concepts and brand exploration",
+      "status": "Concept development",
+      "credit": "Created with the team at Subvrsive for The Coca-Cola Company.",
+      "problem": "Make emerging product ideas tangible early enough to support creative discussions about potential flavors and collaborations.",
+      "approach": "I used ComfyUI, FLUX and Stable Diffusion to generate product concept imagery, exploring how proposed ideas could look across the Coca-Cola portfolio. Open-source tooling supported experimentation with different visual directions.",
+      "outcome": "A collection of speculative product images for creative development and discussion. The visuals explore potential products and collaborations.",
+      "tags": [
+        "ComfyUI",
+        "FLUX",
+        "Stable Diffusion"
+      ],
+      "links": [],
+      "image": {
+        "src": "./assets/images/projects/coca-cola-concepts.jpg",
+        "alt": "A collection of AI-generated product concepts for Coca-Cola brands, including Sprite, Fanta, Gold Peak and smartwater.",
+        "fit": "contain"
+      }
+    },
+    {
+      "id": "espolon-latin-grammys",
+      "category": "Creative strategy",
+      "title": "Espolòn at the Latin Grammys",
+      "summary": "A surreal FOOH campaign that brings Espolòn’s characters into a larger-than-life city scene for the Latin Grammys.",
+      "role": "Creative Strategy / Guidance",
+      "focus": "Campaign concept and cultural context",
+      "status": "Delivered / Campaign work",
+      "credit": "Created with the team at Subvrsive.",
+      "problem": "Celebrate Hispanic and Latin creators with a campaign idea that could capture attention around the Latin Grammys.",
+      "approach": "My contribution centered on creative strategy and guidance for the FOOH concept, helping connect Espolòn’s visual identity with the cultural moment.",
+      "outcome": "The team delivered a FOOH activation built around Espolòn’s distinctive characters and Latin music culture.",
+      "tags": [
+        "Creative strategy",
+        "Concept development",
+        "FOOH"
+      ],
+      "links": [],
+      "image": {
+        "src": "./assets/images/projects/espolon-poster.jpg",
+        "alt": "Espolòn Tequila Latin Grammys film with a skeleton bringing the bottle installation to life.",
+        "fit": "contain"
+      },
+      "video": {
+        "src": "./assets/videos/espolon.mp4",
+        "alt": "Espolòn Tequila Latin Grammys film with a skeleton bringing the bottle installation to life."
+      }
+    },
+    {
+      "id": "intrust",
+      "category": "Tools & systems",
+      "featured": true,
+      "accent": "blue",
+      "title": "InTrust",
+      "summary": "Estate planning software for law firms, designed to turn structured intake data into high-fidelity legal document packages.",
+      "role": "Product Developer / Workflow Designer",
+      "focus": "Legal document automation and workflow design",
+      "status": "Built / Iterating",
+      "problem": "Estate packages are often assembled through repetitive manual drafting, formatting, and document coordination. The challenge was to preserve legal formatting precision while making the workflow faster and easier to repeat.",
+      "approach": "I built a local-first desktop workflow that guides intake, applies rule-based logic, and generates formatted Word documents while respecting strict legal document conventions.",
+      "outcome": "The result is a practical automation tool that reduces repetitive drafting effort and creates a foundation for bespoke firm-specific estate planning workflows.",
+      "tags": [
+        "Tauri",
+        "React",
+        "Rust",
+        "DOCX generation"
+      ],
+      "links": [
+        {
+          "label": "Visit project",
+          "url": "https://www.getintrust.com/"
+        }
+      ],
+      "image": {
+        "src": "./assets/images/projects/intrust.jpg",
+        "alt": "InTrust website showing its estate planning workspace and document workflow."
+      }
+    },
+    {
+      "id": "postcard",
+      "category": "AI & experiments",
+      "featured": false,
+      "accent": "blue",
+      "title": "CES AI Postcard Generator",
+      "summary": "A mobile-first interactive postcard concept using prompt-driven personalization to turn event identity into a shareable generated artifact.",
+      "role": "Creative Technologist / Web Developer",
+      "focus": "Generative interaction design and event engagement",
+      "status": "Built / Concept Prototype",
+      "problem": "Most event touchpoints are forgettable. The challenge was to create a lightweight, memorable interaction that could turn a quick scan into a personalized creative artifact.",
+      "approach": "I designed a short prompt flow that captures a visitor’s CES mindset and translates it into a generated postcard composition with a consistent visual frame.",
+      "outcome": "The concept creates a flexible bridge between physical networking, mobile interaction, and generative media.",
+      "tags": [
+        "Tailwind",
+        "JavaScript",
+        "FLUX Generative AI",
+        "Prompt Matrix"
+      ],
+      "links": [
+        {
+          "label": "Visit project",
+          "url": "https://cespostcard26.vercel.app/"
+        }
+      ],
+      "image": {
+        "src": "./assets/images/projects/postcard.jpg",
+        "alt": "The CES AI Postcard Generator introduction and its personalized postcard experience."
+      },
+      "additionalCategories": [
+        "Generative AI"
+      ]
+    },
+    {
+      "id": "gallery",
+      "category": "Interactive experiences",
+      "featured": false,
+      "accent": "blue",
+      "title": "Dell Foundation Digital Gallery",
+      "summary": "A large-format digital gallery experience blending media, interaction, and storytelling for a foundation-facing display environment.",
+      "role": "Creative Technologist / Web Developer",
+      "focus": "Large-format web experience and content system",
+      "status": "Built / Delivered Prototype",
+      "problem": "The experience needed to organize rich media and story content for a large display environment without feeling like a conventional website.",
+      "approach": "I built a fullscreen interactive gallery structure with cinematic tile behavior, modal content, video embeds, and layout logic suited for large-screen viewing.",
+      "outcome": "The result was an immersive digital gallery prototype that made foundation stories easier to browse, present, and experience.",
+      "tags": [
+        "Tailwind",
+        "JavaScript"
+      ],
+      "links": [
+        {
+          "label": "Visit project",
+          "url": "https://digital-museum-gallery.vercel.app/"
+        }
+      ],
+      "image": {
+        "src": "./assets/images/projects/gallery.jpg",
+        "alt": "Dell Foundation Digital Museum with its collection of illustrated story tiles."
+      }
+    },
+    {
+      "id": "dogwood",
+      "category": "Web & design",
+      "featured": false,
+      "accent": "blue",
+      "title": "Dogwood Counseling Website",
+      "summary": "A calm, trust-centered web presence for a Boulder therapist, designed around clarity, warmth, accessibility, and local discoverability.",
+      "role": "Web Developer / Front-End Builder",
+      "focus": "Client site design, trust-building, and light SEO",
+      "status": "Built / Delivered",
+      "problem": "The provider needed a web presence that felt calmer, more trustworthy, and more aligned with the emotional tone of therapy work.",
+      "approach": "I focused on simple information architecture, warm visual language, clear service framing, and accessible contact pathways.",
+      "outcome": "The site became a more polished and approachable digital front door for prospective clients.",
+      "tags": [
+        "Tailwind",
+        "JavaScript",
+        "SEO"
+      ],
+      "links": [
+        {
+          "label": "Visit project",
+          "url": "https://www.dogwoodcounseling-mb.com/"
+        }
+      ],
+      "image": {
+        "src": "./assets/images/projects/dogwood.jpg",
+        "alt": "Dogwood Counseling website introducing its warm, approachable therapy services."
+      }
+    }
+  ]
+}

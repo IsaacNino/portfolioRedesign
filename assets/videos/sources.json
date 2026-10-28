@@ -1,0 +1,31 @@
+{
+  "sourceDeck": "https://docs.google.com/presentation/d/1zHTqF8ht9qTAB-BH_2c4XHLgwv0RwtiR3GyrYpg0yt8/edit",
+  "method": "Original embedded GIFs recovered from individual SVG slide exports. H.264 MP4 conversions preserve all source frames; no cropping, interpolation, or generated visuals. Even dimensions padded where necessary. Audio absent.",
+  "clearance": "Isaac confirmed all work in the source deck is cleared for his portfolio.",
+  "clips": [
+    {
+      "project": "Heinz Make It Shake",
+      "file": "heinz-shake.mp4",
+      "poster": "../images/projects/heinz-shake-poster.jpg",
+      "slide": 32,
+      "durationSeconds": 14.7,
+      "sourceFrames": 147
+    },
+    {
+      "project": "Funko Pop! Yourself",
+      "file": "funko-pop.mp4",
+      "poster": "../images/projects/funko-pop-poster.jpg",
+      "slide": 60,
+      "durationSeconds": 16.4,
+      "sourceFrames": 164
+    },
+    {
+      "project": "Espol\u00f2n Latin Grammys",
+      "file": "espolon.mp4",
+      "poster": "../images/projects/espolon-poster.jpg",
+      "slide": 24,
+      "durationSeconds": 12.31,
+      "sourceFrames": 123
+    }
+  ]
+}
