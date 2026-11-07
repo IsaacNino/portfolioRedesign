@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Isaac Nino — Pearl / Cobalt draft</title>
+<style>
+:root{color-scheme:dark;--preview-accent:#f5f7ff;--preview-signal:#3d5afe;font-family:ui-monospace,SFMono-Regular,Consolas,monospace;background:#090d11;color:#eef5f8}*{box-sizing:border-box}html,body{height:100%;margin:0}body{display:flex;flex-direction:column;overflow:hidden}header{flex:none;padding:12px 22px;border-bottom:1px solid #344550}.toolbar{display:flex;align-items:center;justify-content:space-between;gap:16px}.identity{display:flex;align-items:center;gap:12px}.title{font-size:12px;font-weight:600}.note{font-size:10px;color:#9eafbc}.controls{display:flex;gap:5px;padding:3px;border:1px solid #344550}button{min-height:44px;border:0;background:transparent;color:#bccad3;padding:8px 13px;font:11px ui-monospace,SFMono-Regular,Consolas,monospace;cursor:pointer;white-space:nowrap}button[aria-pressed=true]{background:var(--preview-accent);color:#071007}button:focus-visible{outline:2px solid #fff;outline-offset:3px}.swatch{display:block;width:12px;height:12px;background:var(--preview-accent);box-shadow:16px 0 0 var(--preview-signal);margin-right:16px}.description{font-size:11px;color:#a8b9c5;margin:10px 0 0;line-height:1.5;min-height:17px}.description strong{font-weight:500;color:var(--preview-accent)}.viewport{flex:1;min-height:0;width:100%;display:block;border:0;background:#030507}@media(max-width:1000px){.note{display:none}}@media(max-width:700px){header{padding:11px 14px}.toolbar{flex-wrap:wrap;gap:11px}.controls{width:100%;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:2px}button{min-height:44px;padding:8px 4px;font-size:9px;white-space:normal}.title{font-size:11px}.description{font-size:10px;margin-top:9px;min-height:30px}}
+</style>
+</head>
+<body>
+<header><div class="toolbar"><div class="identity"><i class="swatch" aria-hidden="true"></i><span class="title">Isaac Nino / Pearl + Cobalt</span><span class="note">Local draft — live site unchanged</span></div><div class="controls" role="group" aria-label="Compare palettes"><button type="button" data-palette="current" aria-pressed="false">Original colors</button><button type="button" data-palette="pearl-cobalt" aria-pressed="true">Pearl / Cobalt</button></div></div><p class="description" id="paletteDescription" role="status"><strong>Holographic Pearl / Electric Cobalt.</strong> Pearl highlights and electric blue actions on Void Black.</p></header>
+<iframe id="site" class="viewport" title="Interactive portfolio palette preview" src="./index.html#home"></iframe>
+<script>
+const frame=document.querySelector('#site');
+const studies={
+ current:{accent:'#a2d7ff',signal:'#ff7067',title:'Original colors.',description:'The live site’s graphite and icy blue, applied to this updated layout for comparison.'},
+ 'pearl-cobalt':{accent:'#f5f7ff',signal:'#3d5afe',title:'Holographic Pearl / Electric Cobalt.',description:'Pearl highlights and electric blue actions on Void Black.'}
+};
+const requestedPalette=new URLSearchParams(location.search).get('palette');
+let palette=Object.hasOwn(studies,requestedPalette)?requestedPalette:'pearl-cobalt';
+function applyPalette(){
+ const doc=frame.contentDocument;
+ const sheet=doc?.querySelector('#paletteStyles');
+ if(sheet)sheet.disabled=palette==='current';
+ if(doc)doc.documentElement.dataset.accent=palette;
+ document.querySelectorAll('[data-palette]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.palette===palette)));
+ const study=studies[palette];
+ document.documentElement.style.setProperty('--preview-accent',study.accent);
+ document.documentElement.style.setProperty('--preview-signal',study.signal);
+ const strong=document.createElement('strong');strong.textContent=study.title;
+ document.querySelector('#paletteDescription').replaceChildren(strong,document.createTextNode(' '+study.description));
+}
+document.querySelectorAll('[data-palette]').forEach(button=>button.addEventListener('click',()=>{palette=button.dataset.palette;history.replaceState(null,'','?palette='+palette);applyPalette();}));
+frame.addEventListener('load',()=>{applyPalette();frame.contentDocument?.querySelector('#bootSkip')?.click();frame.contentWindow.scrollTo({top:0,behavior:'instant'});});
+applyPalette();
+</script>
+</body>
+</html>

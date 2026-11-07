@@ -725,3 +725,6 @@ html.boot-exit .boot-screen{animation:boot-unmask .46s cubic-bezier(.7,0,.3,1) b
   .layer-button{font-size:10px;gap:8px}
 }
 @media(pointer:coarse){.jump-button{width:44px;height:44px}}
+
+/* The switchboard follows selected work; the introduction remains compact. */
+.about-intro{margin-bottom:32px}

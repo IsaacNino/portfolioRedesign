@@ -21,13 +21,13 @@ export const practices = {
     ]
   },
   interaction: {
-    label:'Interaction', projectId:'gallery', caption:'Interface states / Dell gallery process study',
-    tools:'Spatial layout / State transitions / Media / JavaScript',
+    label:'Interaction', projectId:'funko-pop-yourself', caption:'Character customization / Funko process study',
+    tools:'Visual scripting / Social AR / Interaction design',
     layers:[
-      { id:'browse', label:'Browse', title:'Make a collection feel discoverable.', description:'The gallery organizes stories as a visual field. Large tiles give visitors a way into the content while making sense on a large-format display.', parts:[['Structure','A collection of story tiles'],['Hierarchy','Image-led entry points'],['Context','A fullscreen display environment']] },
-      { id:'select', label:'Select', title:'Make the next move feel obvious.', description:'Tile behavior connects curiosity to action. The visual response should help someone understand which story they are entering without losing the broader collection.', parts:[['Trigger','A visitor chooses a story'],['Feedback','The selected tile becomes the focus'],['Continuity','Keep the spatial context legible']] },
-      { id:'focus', label:'Immerse', title:'Give the story room to unfold.', description:'Modal content and embedded video create a focused view within the gallery. The layout shifts from browsing many stories to engaging with one.', parts:[['State','Focused story view'],['Content','Narrative and rich media'],['Attention','A clear foreground and background']] },
-      { id:'return', label:'Return', title:'The way back is part of the experience.', description:'An immersive view still needs an understandable exit. The transition back to the collection completes the interaction and invites another discovery.', parts:[['Action','Close the focused story'],['Destination','The gallery collection'],['Rhythm','Explore, focus, return, repeat']] }
+      { id:'choices', label:'Choices', title:'Give people room to see themselves.', description:'Funko’s Pop! Yourself experience brings skin tone, eyes, hair, and accessories into a series of character choices. Each control needs to feel like a small, understandable creative decision.', parts:[['Inputs','Skin tone, eyes, hair, accessories'],['Intent','A character that feels personal'],['Context','A playful Social AR experience']] },
+      { id:'state', label:'State', title:'Make each choice part of a whole.', description:'Visual scripting connects the customization controls to the character. This study separates the selected attributes so the relationship between a choice and its visual result is easy to follow.', parts:[['Trigger','Choose a character attribute'],['State','The current combination of choices'],['Feedback','A corresponding visual change']] },
+      { id:'preview', label:'Preview', title:'Let the response carry the interaction.', description:'The character preview is where separate choices become a recognizable likeness. My work connected the visual scripting and Social AR behavior behind that customization experience.', parts:[['Composition','Attributes combined into one character'],['Response','Visible feedback as choices change'],['Craft','Visual scripting / Social AR']] },
+      { id:'expression', label:'Expression', title:'Turn customization into self-expression.', description:'The goal is more than choosing options. A personal Pop! gives people a playful way to participate in the brand’s world and create something they want to share.', parts:[['Result','A personalized Pop! likeness'],['Participation','Try on, customize, and share'],['Principle','The interaction belongs to the person']] }
     ]
   },
   web: {
