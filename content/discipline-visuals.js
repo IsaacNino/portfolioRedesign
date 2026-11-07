@@ -26,13 +26,28 @@ function ai(active) {
     group('iteration',active,panel(500,24,240,281,'POSTCARD / OUTPUT','04')+box(517,77,206,158,'postcard')+line('M517 207 567 135 607 179 655 108 723 207','postcard-art')+line('M529 90h42M529 97h26','postcard-detail')+text(533,220,'CES 2026','postcard-word')+text(516,260,'REVIEW THE COMPOSITION','accent-label')+text(516,282,'Intent / framing / expression','small-note')+line('M620 305V350H270V280H234','feedback')+line('M242 275l-8 5 8 5','feedback')+text(404,342,'Creative judgment loops back','small-note'));
 }
 function interaction(active) {
-  const focused=active==='focus';
-  return text(20,22,'COLLECTION / INTERFACE STATE','lane-title')+text(533,22,'STATE REGISTER','lane-title')+
-    group('browse',active,box(20,42,469,270,'viewport')+box(20,42,469,31,'window-bar')+text(34,62,'DIGITAL GALLERY','module-title')+Array.from({length:6},(_,i)=>{const x=36+(i%3)*148,y=91+Math.floor(i/3)*100;return box(x,y,136,87,`tile ${active==='select'&&i===1?'tile-picked':''}`)+line(`M${x+9} ${y+59}l25-28 22 16 29-33 40 45`,'tile-landscape')+text(x+9,y+77,`STORY / 0${i+1}`,'small-note');}).join(''))+
-    group('select',active,line('M180 87h144v95H180z','selection-ring')+box(315,174,14,14,'cursor')+line('M329 181H510V144H533','feedback'))+
-    group('focus',active,focused?box(20,73,469,239,'modal-scrim')+box(85,86,341,208,'story-modal')+text(101,109,'STORY IN FOCUS','module-title')+box(101,123,181,117,'media-block')+line('M169 158l33 23-33 23z','play-symbol')+bars(300,136,[104,91,104,78],14)+bars(101,258,[196,273],13)+text(399,109,'×','close-symbol'):line('M489 220H533','bus'))+
-    ['Browse the field','Select a story','Focus on media','Return to explore'].map((s,i)=>{const id=['browse','select','focus','return'][i], y=42+i*71;return group(id,active,box(533,y,207,57,'state-row')+text(546,y+22,`0${i+1} / ${s}`,'field-label')+text(546,y+42,['Collection + spatial cues','Tile feedback + continuity','Modal + embedded media','Close + restore context'][i],'small-note'));}).join('')+
-    group('return',active,line('M637 312V356H112V313','feedback')+line('M107 322l5-9 5 9','feedback')+text(230,349,'Every focused view has a way back','small-note'));
+  const attributes=['SKIN TONE','EYES','HAIR','ACCESSORIES'];
+  const choices=attributes.map((label,i)=>{
+    const y=99+i*49;
+    return text(34,y,label,'small-note')+Array.from({length:4},(_,j)=>box(34+j*43,y+8,34,20,j===(i%4)?'contact-region':'field')+(j===(i%4)?text(46+j*43,y+22,'+','accent-label'):'')).join('');
+  }).join('');
+  const register=attributes.map((label,i)=>{
+    const y=88+i*49;
+    return box(278,y,170,42,'state-row')+text(289,y+15,label,'small-note')+text(289,y+31,['Selected tone','Selected eyes','Selected hairstyle','Selected accessory'][i],'field-label');
+  }).join('');
+  return text(20,22,'01 / PERSONAL CHOICES','lane-title')+text(264,22,'02 / STATE REGISTER','lane-title')+text(508,22,'03 / VISUAL RESPONSE','lane-title')+
+    group('choices',active,panel(20,42,204,267,'CUSTOMIZATION','01')+choices)+
+    line('M224 173H264','bus')+
+    group('state',active,panel(264,42,198,267,'CURRENT COMBINATION','02')+register)+
+    line('M462 173H508','bus')+
+    group('preview',active,panel(508,42,232,267,'CHARACTER STUDY','03')+
+      box(546,92,156,162,'character-frame')+
+      '<rect x="568" y="110" width="112" height="83" rx="22" class="character-head"/>'+
+      line('M570 137v-8q0-21 22-21h67q21 0 21 21v14l-22-19-19 11-17-12-20 14-14-9z','character-hair')+
+      '<circle cx="596" cy="158" r="10" class="character-eye"/><circle cx="652" cy="158" r="10" class="character-eye"/>'+
+      line('M603 197h42l12 39h-66zM602 238v14M646 238v14','character-body')+
+      line('M624 193v-7m-6-2h12','rule')+text(530,278,'Choices → a personal likeness','small-note')+text(530,294,'Illustrative interaction model','small-note'))+
+    group('expression',active,box(20,333,720,42,'review-band')+text(34,350,'04 / SELF-EXPRESSION','accent-label')+text(34,366,'Try on. Customize. Make it yours.','small-note')+line('M624 309v14H120v-14','feedback')+line('M115 315l5-6 5 6','feedback')+text(508,359,'A character worth sharing','field-label'));
 }
 function web(active) {
   return text(20,22,'CONTENT SYSTEM / ONE INTENT, TWO SCALES','lane-title')+

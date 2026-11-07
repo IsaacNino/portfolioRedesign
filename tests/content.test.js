@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFile} from 'node:fs/promises';
 import {validateProjects,getCategories,filterProjects,safeUrl,escapeHtml} from '../content/project-utils.js';
+import {practices} from '../content/practice-data.js';
 import {projectVisual} from '../content/project-visuals.js';
 const content=JSON.parse(await readFile(new URL('../content/projects.json',import.meta.url),'utf8'));
 const sample=()=>structuredClone(content);
@@ -47,14 +48,19 @@ test('project films require a safe MP4 and descriptive still poster',()=>{
 
 test('CES postcard appears in both AI filters without duplicating projects or filter names',()=>{
   const projects=validateProjects(content);
-  assert.deepEqual(filterProjects(projects,'Generative AI').map(p=>p.id),['coca-cola-product-concepts','postcard']);
+  assert.deepEqual(filterProjects(projects,'Generative AI').map(p=>p.id),['postcard']);
   assert.ok(filterProjects(projects,'AI & experiments').some(p=>p.id==='postcard'));
   assert.equal(filterProjects(projects,'All work').filter(p=>p.id==='postcard').length,1);
   assert.equal(getCategories(projects).filter(c=>c==='Generative AI').length,1);
   const data=sample();data.projects[0].additionalCategories=['New discipline'];
   assert.ok(getCategories(validateProjects(data)).includes('New discipline'));
   assert.equal(filterProjects(data.projects,'New discipline')[0].id,data.projects[0].id);
-  for(const extra of ['Generative AI',[null],[''],['All work'],['Social AR'],['Generative AI','generative ai']]){
+  for(const extra of ['Generative AI',[null],[''],['All work'],[content.projects[0].category],['Generative AI','generative ai']]){
     const invalid=sample();invalid.projects[0].additionalCategories=extra;assert.throws(()=>validateProjects(invalid));
   }
+});
+
+test('every switchboard study links to an available project',()=>{
+  const ids=new Set(content.projects.map(project=>project.id));
+  for(const practice of Object.values(practices))assert.ok(ids.has(practice.projectId),`Missing related project: ${practice.projectId}`);
 });

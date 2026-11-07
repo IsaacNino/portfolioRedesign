@@ -384,10 +384,6 @@ try {
   if (!response.ok) throw new Error(`Content request returned ${response.status}`);
   projects = validateProjects(await response.json());
   $('navCount').textContent = number(projects.length);
-  if (projects.length) {
-    const marqueeProjects = [...projects, projects[0]];
-    $('heroMarquee').innerHTML = marqueeProjects.map(project => `<span>${esc(project.title)}<sup>${number(projects.indexOf(project) + 1)}</sup></span>`).join('');
-  }
   $('projectFilters').innerHTML = getCategories(projects).map((category,index) => `<button class="filter" type="button" aria-pressed="${index === 0}" data-category="${esc(category)}">${esc(category)}</button>`).join('');
   renderProjects(); updatePracticeProject(); syncProjectHash();
   window.signalBoot?.ready('work');

@@ -2,10 +2,14 @@ import { readFile, access } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { resolve } from 'node:path';
 import { validateProjects } from '../content/project-utils.js';
+import { practices } from '../content/practice-data.js';
 export async function check() {
   const root = fileURLToPath(new URL('../',import.meta.url));
   const data = JSON.parse(await readFile(resolve(root,'content/projects.json'),'utf8'));
   const projects = validateProjects(data);
+  for (const practice of Object.values(practices)) {
+    if (!projects.some(project => project.id === practice.projectId)) throw new Error(`Missing switchboard project: ${practice.projectId}`);
+  }
   for (const p of projects) if (p.image?.src.startsWith('./')) await access(resolve(root,p.image.src));
   for (const p of projects) if (p.video?.src.startsWith('./')) await access(resolve(root,p.video.src));
   const html = await readFile(resolve(root,'index.html'),'utf8');
